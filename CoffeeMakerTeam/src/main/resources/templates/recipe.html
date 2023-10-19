@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Add Recipe</title>
+	<meta http-equiv="Content-Type" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, charset=UTF-8">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	<link rel="stylesheet" href="css/app.css" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Montserrat&family=Open+Sans+Condensed:ital,wght@1,300&display=swap"
+		rel="stylesheet">
+
+</head>
+
+
+<body>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+		crossorigin="anonymous"></script>
+
+	<script>
+		/*<![CDATA[*/
+		var app = angular.module('myApp', []);
+		app.controller('recipeCtrl', function ($scope, $http, $timeout) {
+
+			/* Define the Recipe model */
+			$scope.recipe = {
+
+				"name": "",
+				"price": null,
+				"ingredients": [],
+			};
+
+			/**
+			 * Gets the ingredients from the ingredients endpoint
+			 */
+			$scope.getIngredients = function () {
+				$http.get("/api/v1/ingredients/").then(function (successResponse) {
+					$scope.ingredientsList = successResponse.data;
+
+				}, function (errorResponse) {
+
+					// Save the message in scope and display it in html
+					$scope.message = errorResponse.data.message;
+				});
+			};
+
+			/**
+			 * Submits the recipe to the recipes endpoint for creation.
+			 */
+			$scope.submitRecipe = function () {
+				// Check if all fields were supplied.
+				if (hasAllFields()) {
+					// body will hold our response body
+					let body = {};
+
+					body.name = $scope.recipe.name;
+					body.price = $scope.recipe.price;
+					body.ingredients = []
+
+					$scope.recipe.ingredients.forEach((ingredient) => {
+						let currIngredient = {}; // Make a new ingredient to add to the final recipe
+
+						let copied = structuredClone(ingredient) // Deep copy the ingredient to another variable
+
+						delete copied.amount; // Delete the amount property, we don't want it showing up in our JSON string
+
+						// Use the json string of the copied ingredient as the key and the value is the amount.
+						currIngredient[angular.toJson(copied)] = ingredient.amount;
+
+						// Add the ingredient we made to our recipe
+						body.ingredients.push(currIngredient);
+
+					});
+
+					$http.post("/api/v1/recipes/", body).then(function (successResponse) {
+
+						// Reset the form if successful.
+						$scope.reset();
+
+						// Save the message in scope and display it in html
+						$scope.message = successResponse.data.message;
+
+					}, function (errorResponse) {
+
+						// Save the message in scope and display it in html
+						$scope.message = errorResponse.data.message;
+					});
+
+					// Cool animation for the message changing
+					animateMessage();
+				}
+
+			};
+
+			/**
+			 * Resets the form
+			 */
+			$scope.reset = function () {
+				// Reset the recipe
+				$scope.recipe = {
+
+					"name": "",
+					"price": null,
+					"ingredients": [],
+				};
+
+				$scope.message = "";
+
+				// Reset the dropdown
+				$scope.getIngredients();
+			}
+
+			$scope.moveIngredientToRecipe = function (ingredient) {
+
+				// Remove the ingredient from the ingredients dropdown
+				$scope.ingredientsList.splice($scope.ingredientsList.indexOf(ingredient), 1);
+
+				// Add it to the recipe
+				$scope.recipe.ingredients.push(ingredient);
+
+				// Use $timeout to delay scrolling until after the DOM has updated
+				$timeout(function () {
+					var table = document.getElementById('scrollable-table');
+					table.scrollTo({top: table.scrollHeight, behavior: 'smooth'});
+				});
+
+
+			}
+
+
+			$scope.moveIngredientToDropdown = function (ingredient) {
+
+				// Remove the ingredient from the recipe
+				$scope.recipe.ingredients.splice($scope.recipe.ingredients.indexOf(ingredient), 1);
+
+				// Add it to the ingredients dropdown
+				$scope.ingredientsList.push(ingredient);
+			}
+
+			function hasAllFields() {
+				if ($scope.recipe.name != "" && $scope.recipe.price != null) {
+					for (let i = 0; i < $scope.recipe.ingredients.length; i++) {
+						if (!('amount' in $scope.recipe.ingredients[i]) || $scope.recipe.ingredients[i].amount == undefined) {
+							return false
+						}
+					}
+
+					return true;
+				}
+
+				return false;
+			}
+
+
+			// Animate the message changing.
+			function animateMessage() {
+
+				// Refrenced this: https://stackoverflow.com/a/58353279
+				const element = document.getElementById('message')
+
+				element.classList.remove('messageAnimation'); // reset animation
+				void element.offsetWidth; // trigger reflow
+				element.classList.add('messageAnimation'); // start animation
+			}
+
+
+			/* Get the ingredients list immediately */
+			$scope.getIngredients();
+
+
+		});
+
+		/*]]>*/
+	</script>
+
+	<style>
+		.scroll-table {
+			max-height: 40vh;
+			overflow: auto;
+			display: block;
+		}
+
+		.messageAnimation {
+			animation-name: jump-shaking;
+			animation-duration: 0.83s;
+			animation-timing-function: ease-in-out;
+		}
+
+		@keyframes inAndOut {
+
+			0% {
+				background-color: rgba(66, 148, 226, 0);
+				color: black;
+
+			}
+
+			50% {
+				background-color: rgba(66, 148, 226, 1);
+				color: white;
+			}
+
+			100% {
+				background-color: rgba(66, 148, 226, 0);
+				color: black;
+			}
+
+		}
+
+		/* Referenced this: https://unused-css.com/blog/css-shake-animation/ */
+		@keyframes jump-shaking {
+			0% {
+				transform: translateX(0)
+			}
+
+			25% {
+				transform: translateY(-9px)
+			}
+
+			35% {
+				transform: translateY(-9px) rotate(2deg)
+			}
+
+			55% {
+				transform: translateY(-9px) rotate(-2deg)
+			}
+
+			65% {
+				transform: translateY(-9px) rotate(2deg)
+			}
+
+			75% {
+				transform: translateY(-9px) rotate(-2deg)
+			}
+
+			100% {
+				transform: translateY(0) rotate(0)
+			}
+		}
+	</style>
+
+	<div class="ms-3 mt-3" ng-app="myApp" ng-controller="recipeCtrl">
+		<h1 class="ms-3">Add a Recipe</h1>
+		<form>
+
+			<div class="ms-3 mb-2 w-75">
+				<label for="recipe-name" class="form-label fs-6">Name </label>
+				<input ng-model="recipe.name" type="text" class="form-control" placeholder="Recipe Name"
+					id="recipe-name" aria-describedby="recipeName" required>
+			</div>
+
+			<div class="ms-3">
+				<label for="recipe-price" class="form-label fs-6 mb-2">Price</label>
+				<div class="input-group mb-3 w-75 ">
+					<input ng-model="recipe.price" type="number" class="form-control" placeholder="0"
+						aria-label="recipe-price" id="recipe-price" required min="0">
+					<span class="input-group-text" id="inputGroup-sizing-sm">¢</span>
+
+				</div>
+			</div>
+
+
+			<div class="dropdown ms-3 mb-1">
+				<button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+					aria-expanded="false">
+					Add Ingredient
+				</button>
+
+				<ul class="dropdown-menu">
+					<li ng-repeat="ingredient in ingredientsList"><a class="dropdown-item"
+							ng-click="moveIngredientToRecipe(ingredient)">{{ingredient.name}}</a></li>
+				</ul>
+
+			</div>
+
+			<!-- Make this table scrollable -->
+			<div id="scrollable-table" class="scroll-table w-75 m-3 pe-2">
+				<table class="table table-striped table-responsive-sm" style="border: 1px solid #DEE2E6;">
+					<!--Head Begins Here-->
+					<thead>
+						<tr>
+							<!-- colspan makes the header span all three columns -->
+							<th class="fs-6" scope="col" style="text-align: center" colspan="3">Ingredients </th>
+						</tr>
+					</thead>
+					<!--Body Begins Here-->
+					<tbody>
+						<!-- Rows filled in with ng-repeat -->
+						<tr ng-repeat="ingredient in recipe.ingredients">
+							<td class="fs-6">{{ingredient.name}}</td>
+							<td class="d-flex">
+								<input ng-model="ingredient.amount" type="number" class="form-control" placeholder="0"
+									required min="0">
+								<button type="button" class="btn btn-danger btn-sm ms-2"
+									ng-click="moveIngredientToDropdown(ingredient)">X</button>
+							</td>
+						</tr>
+
+						<!-- Place holder row for when the table is empty -->
+						<tr ng-if="recipe.ingredients.length === 0">
+							<td height="35"></td>
+						</tr>
+
+					</tbody>
+				</table>
+				<!--End of Table-->
+			</div>
+
+			<div class="row w-75 ms-3">
+				<div class="col p-0">
+					<button type="submit" class="btn btn-primary btn-sm" ng-click="submitRecipe()">Submit</button>
+
+					<button type="button" class="btn btn-secondary btn-sm" ng-click="reset()">Reset</button>
+				</div>
+
+				<div class="col p-0">
+					<a href="/index" class="btn btn-secondary btn-sm float-end">Back to Home</a>
+				</div>
+			</div>
+
+
+		</form>
+
+		<div class="col m-3 w-75">
+			<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
+		</div>
+
+	</div>
+
+</body>

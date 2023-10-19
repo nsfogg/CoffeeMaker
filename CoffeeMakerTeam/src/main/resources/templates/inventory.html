@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Add Inventory</title>
+	<meta http-equiv="Content-Type" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, charset=UTF-8">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	<link rel="stylesheet" href="css/app.css" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Montserrat&family=Open+Sans+Condensed:ital,wght@1,300&display=swap"
+		rel="stylesheet">
+
+	<style>
+		table tr td,
+		table tr th {
+			background-color: transparent !important;
+		}
+	</style>
+
+</head>
+
+
+<body>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+		crossorigin="anonymous"></script>
+
+	<script>
+
+		/*<![CDATA[*/
+		var app = angular.module('myApp', []);
+		app.controller('inventoryCtrl', function ($scope, $http) {
+
+			$scope.inventory = {
+
+				"id": null,
+				"ingredients": [],
+
+			};
+
+			/**
+			 * Gets the inventory from the inventory endpoint
+			 */
+			$scope.getInventory = function () {
+				$http.get("/api/v1/inventory/").then(function (successResponse) {
+					$scope.inventoryObject = successResponse.data;
+
+					$scope.parseInventory();
+
+				}, function (errorResponse) {
+
+					// Save the message in scope and display it in html
+					$scope.message = errorResponse.data.message;
+				});
+			};
+
+			/**
+			* Parses the inventory information into usable angular objects
+			*/
+			$scope.parseInventory = function () {
+
+				let len = $scope.inventoryObject.inventory.length;
+
+				$scope.inventory.id = $scope.inventoryObject.id;
+
+				for (var i = 0; i < len; i++) {
+
+					let entry = Object.entries($scope.inventoryObject.inventory[i])[0];
+
+					let parsedIngredient = JSON.parse(entry[0]);
+
+					let parsedAmount = entry[1];
+
+					$scope.inventory.ingredients[i] = {"id": parsedIngredient.id, "name": parsedIngredient.name, "amount": parsedAmount};
+
+				}
+
+			}
+
+			$scope.updateInventory = function () {
+
+
+				let body = {};
+
+				body.id = $scope.inventory.id;
+				body.inventory = [];
+
+				for (var i = 0; i < $scope.inventory.ingredients.length; i++) {
+
+					let ingr = $scope.inventory.ingredients[i];
+
+					let current = {};
+
+					let copy = structuredClone(ingr);
+
+					delete copy.amount;
+					delete copy.addAmount;
+
+					current[angular.toJson(copy)] = ingr.addAmount == undefined ? 0 : ingr.addAmount;
+
+					body.inventory.push(current);
+
+				}
+
+
+				$http.put("/api/v1/inventory/", body).then(function (successResponse) {
+					$scope.inventoryObject = successResponse.data;
+					
+					$scope.parseInventory();
+
+					$scope.message = "Inventory has been successfully updated";
+
+				}, function (errorResponse) {
+
+					$scope.message = errorResponse.data.message;
+				});
+				
+				animateMessage();
+
+			}
+
+			$scope.reset = function () {
+
+				$scope.message = "";
+
+				for (var i = 0; i < $scope.inventory.ingredients.length; i++) {
+					$scope.inventory.ingredients[i].addAmount = undefined;
+				}
+
+			}
+
+
+			// Animate the message changing.
+			function animateMessage() {
+
+				// Refrenced this: https://stackoverflow.com/a/58353279
+				const element = document.getElementById('message')
+
+				element.classList.remove('messageAnimation'); // reset animation
+				void element.offsetWidth; // trigger reflow
+				element.classList.add('messageAnimation'); // start animation
+			};
+
+			$scope.getInventory();
+
+		});
+
+		/*]]>*/
+	</script>
+
+	<style>
+		.messageAnimation {
+			animation-name: jump-shaking;
+			animation-duration: 0.83s;
+			animation-timing-function: ease-in-out;
+		}
+
+		@keyframes inAndOut {
+
+			0% {
+				background-color: rgba(66, 148, 226, 0);
+				color: black;
+
+			}
+
+			50% {
+				background-color: rgba(66, 148, 226, 1);
+				color: white;
+			}
+
+			100% {
+				background-color: rgba(66, 148, 226, 0);
+				color: black;
+			}
+
+		}
+
+		/* Referenced this: https://unused-css.com/blog/css-shake-animation/ */
+		@keyframes jump-shaking {
+			0% {
+				transform: translateX(0)
+			}
+
+			25% {
+				transform: translateY(-9px)
+			}
+
+			35% {
+				transform: translateY(-9px) rotate(2deg)
+			}
+
+			55% {
+				transform: translateY(-9px) rotate(-2deg)
+			}
+
+			65% {
+				transform: translateY(-9px) rotate(2deg)
+			}
+
+			75% {
+				transform: translateY(-9px) rotate(-2deg)
+			}
+
+			100% {
+				transform: translateY(0) rotate(0)
+			}
+		}
+	</style>
+
+	<div class="ms-3 mt-3" ng-app="myApp" ng-controller="inventoryCtrl">
+
+		<h1 class="ms-3">Add Inventory</h1>
+
+		<div class="ms-3 me-4" style="background-color:#EFEEEE">
+
+			<form id="add-inventory" ng-submit="updateInventory()">
+
+				<table class="table">
+
+					<thead>
+						<tr>
+							<th scope="col" class="fs-4 fw-bold">Ingredient List</th>
+							<th scope="col" class="fs-4 fw-bold">Current Qty</th>
+							<th scope="col" class="fs-4 fw-bold">Qty to Add</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="ingredient in inventory.ingredients">
+							<td class="fs-5">{{ingredient.name}}</td>
+							<td class="fs-5">{{ingredient.amount}}</td>
+							<td class="d-flex">
+								<input ng-model="ingredient.addAmount" type="number" placeholder="0"
+									class="form-control text-end w-25" required min="0"></input>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+		</div>
+
+		<div class="row w-100 ms-3">
+			<div class="col p-0">
+				<button type="submit" class="btn btn-primary btn-sm">Submit Inventory</button>
+
+				<button type="reset" class="btn btn-secondary btn-sm" ng-click="reset()">Reset</button>
+			</div>
+
+			<div class="col p-0 me-5">
+				<a href="/index" class="btn btn-secondary btn-sm float-end">Back to Home</a>
+			</div>
+		</div>
+
+
+		<div class="col m-3 w-75">
+			<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
+		</div>
+	</div>
+
+	</form>
+
+</body>
