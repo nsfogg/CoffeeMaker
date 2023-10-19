@@ -41,10 +41,10 @@ jobs:
           java-version: '11'
 
       - name: Copy config files for Spring Boot
-        run: cp CoffeeMaker-Individual/src/main/resources/application.yml.template CoffeeMaker-Individual/src/main/resources/application.yml
+        run: cp CoffeeMakerTeam/src/main/resources/application.yml.template CoffeeMakerTeam/src/main/resources/application.yml
         
       - name: Edit config file with DB credentials (do not change this!)
-        run: sed -i 's/localhost/docker/g' CoffeeMaker-Individual/src/main/resources/application.yml && sed -i 's/password\:/password\:\ ${{ secrets.TEST_DB_PW }}/g' CoffeeMaker-Individual/src/main/resources/application.yml
+        run: sed -i 's/localhost/docker/g' CoffeeMakerTeam/src/main/resources/application.yml && sed -i 's/password\:/password\:\ ${{ secrets.TEST_DB_PW }}/g' CoffeeMakerTeam/src/main/resources/application.yml
           
       - name: Clean up Docker containers
         run: (docker stop $(docker ps -a -q) || true) && (docker rm $(docker ps -a -q) || true)
@@ -59,12 +59,12 @@ jobs:
         run: mysql -uroot -h docker -p${{ secrets.TEST_DB_PW }} -e 'SELECT version()'
       
       - name: Build CoffeeMaker with Maven
-        run: cd CoffeeMaker-Individual && mvn --batch-mode --update-snapshots clean test checkstyle:checkstyle
+        run: cd CoffeeMakerTeam && mvn --batch-mode --update-snapshots clean test checkstyle:checkstyle
  
       - name: Generate coverage badges
         id: jacoco
         run: > 
-            python3 .github/generate_badge.py "CoffeeMaker-Individual/target/site/jacoco-ut/jacoco.csv"
+            python3 .github/generate_badge.py "CoffeeMakerTeam/target/site/jacoco-ut/jacoco.csv"
             ".github/badges" "jacoco.svg" "branches.svg" "true" "true"
             "fail" "70" "50" "false" "false" "100 90 80 70 60 0" "#4c1 #97ca00 #a4a61d #dfb317 #fe7d37 #e05d44"
             
@@ -83,7 +83,7 @@ jobs:
         id: publishJacoco
         uses: engr-csc326-itrust/jacoco-report@v1.02
         with:
-          paths: ${{ github.workspace }}/CoffeeMaker-Individual/target/site/jacoco-ut/jacoco.xml
+          paths: ${{ github.workspace }}/CoffeeMakerTeam/target/site/jacoco-ut/jacoco.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 70
           min-coverage-changed-files: 70          
