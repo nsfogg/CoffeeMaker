@@ -101,7 +101,7 @@ public class User extends DomainObject {
     /**
      * @return the userName
      */
-    private String getUserName () {
+    public String getUserName () {
         return userName;
     }
 
@@ -115,7 +115,7 @@ public class User extends DomainObject {
     /**
      * @return the password
      */
-    private int getPassword () {
+    public int getPassword () {
         return password;
     }
 
