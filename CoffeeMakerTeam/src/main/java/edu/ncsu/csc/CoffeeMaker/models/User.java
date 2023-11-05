@@ -123,7 +123,7 @@ public class User extends DomainObject {
      * @param userName
      *            the userName to set
      */
-    private void setUserName ( final String userName ) {
+    public void setUserName ( final String userName ) {
         this.userName = userName;
     }
 
@@ -131,7 +131,7 @@ public class User extends DomainObject {
      * @param permissions
      *            the permissions to set
      */
-    private void setPermissions ( final Integer permissions ) {
+    public void setPermissions ( final Integer permissions ) {
         this.permissions = permissions;
     }
 
@@ -139,7 +139,7 @@ public class User extends DomainObject {
      * @param password
      *            the password to set
      */
-    private void setPassword ( final int password ) {
+    public void setPassword ( final int password ) {
         this.password = password;
     }
 
