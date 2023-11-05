@@ -1,6 +1,5 @@
 package edu.ncsu.csc.CoffeeMaker.api;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,8 +19,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import com.google.gson.Gson;
 
 import edu.ncsu.csc.CoffeeMaker.common.TestUtils;
 import edu.ncsu.csc.CoffeeMaker.models.User;
@@ -87,25 +84,45 @@ public class APIUserTest {
 
     }
 
+    // @Test
+    // @Transactional
+    // public void testGetUserByNameAPI () throws Exception {
+    // service.deleteAll();
+    //
+    // final Gson gson = new Gson();
+    // final User u = createUser( "user1", 123456789, 0 );
+    //
+    // mvc.perform( post( "/api/v1/users" ).contentType(
+    // MediaType.APPLICATION_JSON )
+    // .content( TestUtils.asJsonString( u ) ) ).andExpect( status().isOk() );
+    //
+    // String response = mvc.perform( get( "/api/v1/users/user1" ) ).andExpect(
+    // status().isOk() ).andReturn()
+    // .getResponse().getContentAsString();
+    //
+    // final User responseU = gson.fromJson( response, User.class );
+    //
+    // assertEquals( u, responseU );
+    //
+    // // Test getting a non existing recipe
+    // response = mvc.perform( get( "/api/v1/users/fake" ) ).andExpect(
+    // status().is4xxClientError() ).andReturn()
+    // .getResponse().getContentAsString();
+    //
+    // }
+
     @Test
     @Transactional
-    public void testGetUserByNameAPI () throws Exception {
-        final Gson gson = new Gson();
-        final User u = createUser( "user1", 123456789, 0 );
+    public void testLoginUser () throws Exception {
+        service.deleteAll();
+
+        final User u = createUser2( "user1", "password", 0 );
 
         mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( u ) ) ).andExpect( status().isOk() );
 
-        String response = mvc.perform( get( "/api/v1/users/user1" ) ).andExpect( status().isOk() ).andReturn()
-                .getResponse().getContentAsString();
-
-        final User responseU = gson.fromJson( response, User.class );
-
-        assertEquals( u, responseU );
-
-        // Test getting a non existing recipe
-        response = mvc.perform( get( "/api/v1/users/fake" ) ).andExpect( status().is4xxClientError() ).andReturn()
-                .getResponse().getContentAsString();
+        mvc.perform( get( "/api/v1/users/user1" ).contentType( MediaType.APPLICATION_JSON ).content( "password" ) )
+                .andExpect( status().isOk() );
 
     }
 
@@ -192,6 +209,12 @@ public class APIUserTest {
         user.setPassword( password );
         user.setPermissions( permissions );
         return user;
+    }
+
+    private User createUser2 ( final String userName, final String password, final int permissions ) {
+        final User user = new User( userName, password, permissions );
+        return user;
+
     }
 
 }

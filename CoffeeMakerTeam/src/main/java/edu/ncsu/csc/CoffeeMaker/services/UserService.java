@@ -40,8 +40,8 @@ public class UserService extends Service<User, Long> {
      *            Name of the recipe to find
      * @return found recipe, null if none
      */
-    public User findByName ( final String name ) {
-        return userRepository.findByName( name );
+    public User findByName ( final String userName ) {
+        return userRepository.findByUserName( userName );
     }
 
 }

@@ -21,6 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      *            Name of the recipe
      * @return Found User, null if none.
      */
-    User findByName ( String name );
+    User findByUserName ( String userName );
 
 }

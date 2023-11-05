@@ -8,8 +8,8 @@ import javax.validation.constraints.Min;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import edu.ncsu.csc.CoffeeMaker.utils.RecipeDeserializer;
-import edu.ncsu.csc.CoffeeMaker.utils.RecipeSerializer;
+import edu.ncsu.csc.CoffeeMaker.utils.UserDeserializer;
+import edu.ncsu.csc.CoffeeMaker.utils.UserSerializer;
 
 /**
  * Recipe for the coffee maker. Recipe is tied to the database using Hibernate
@@ -19,11 +19,11 @@ import edu.ncsu.csc.CoffeeMaker.utils.RecipeSerializer;
  * @author Kai Presler-Marshall
  */
 @Entity
-@JsonDeserialize ( using = RecipeDeserializer.class )
-@JsonSerialize ( using = RecipeSerializer.class )
+@JsonDeserialize ( using = UserDeserializer.class )
+@JsonSerialize ( using = UserSerializer.class )
 public class User extends DomainObject {
 
-    /** Recipe id */
+    /** User id */
     @Id
     @GeneratedValue
     private Long    id = 0L;
@@ -78,6 +78,13 @@ public class User extends DomainObject {
         setPermissions( permissions );
     }
 
+    public User ( final String userName, final String password, final int perms ) {
+        this();
+        setUserName( userName );
+        setPassword( hashPassword( password ) );
+        setPermissions( perms );
+    }
+
     /**
      * Get the ID of the Recipe
      *
@@ -108,7 +115,7 @@ public class User extends DomainObject {
     /**
      * @return the permissions
      */
-    private Integer getPermissions () {
+    public Integer getPermissions () {
         return permissions;
     }
 

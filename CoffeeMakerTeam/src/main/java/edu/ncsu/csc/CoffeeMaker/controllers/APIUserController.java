@@ -133,7 +133,7 @@ public class APIUserController extends APIController {
      *         does not exist
      */
     @DeleteMapping ( BASE_PATH + "/users/{userName}" )
-    public ResponseEntity deleteRecipe ( @PathVariable final String userName ) {
+    public ResponseEntity deleteUser ( @PathVariable final String userName ) {
         final User user = service.findByName( userName );
         if ( null == user ) {
             return new ResponseEntity( errorResponse( "No user found for username " + userName ),
