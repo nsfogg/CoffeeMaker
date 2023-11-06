@@ -51,7 +51,7 @@ public class User extends DomainObject {
     // private List orders;
 
     /**
-     * Default Constructor for Recipe (Used by Hibernate)
+     * Default Constructor for User used for guest orders
      *
      */
     public User () {
@@ -63,12 +63,16 @@ public class User extends DomainObject {
     }
 
     /**
-     * A minimalist constructor that takes only the required fields of a Recipe.
+     * A full constructor that takes everything
      *
-     * @param name
-     *            the name of this recipe
-     * @param price
-     *            the price of this recipe
+     * @param userName
+     *            the name of this user
+     * @param id
+     *            the id of the user
+     * @param password
+     *            the password of the user
+     * @param perms
+     *            the permissions of the user
      */
     public User ( final String userName, final Long id, final String password, final int perms ) {
         this();
@@ -79,7 +83,7 @@ public class User extends DomainObject {
     }
 
     /**
-     * Get the ID of the Recipe
+     * Get the ID of the user
      *
      * @return the ID
      */
@@ -89,7 +93,7 @@ public class User extends DomainObject {
     }
 
     /**
-     * Set the ID of the Recipe (Used by Hibernate)
+     * Set the ID of the user (Used by Hibernate)
      *
      * @param id
      *            the ID
@@ -99,21 +103,21 @@ public class User extends DomainObject {
     }
 
     /**
-     * @return the userName
+     * @return the userName of the user
      */
     private String getUserName () {
         return userName;
     }
 
     /**
-     * @return the permissions
+     * @return the permissions of the user
      */
     private Integer getPermissions () {
         return permissions;
     }
 
     /**
-     * @return the password
+     * @return the hashed password of the user
      */
     private int getPassword () {
         return password;
@@ -161,7 +165,7 @@ public class User extends DomainObject {
 
     /**
      *
-     * @return
+     * @return true if the user is the manager. False otherwise
      */
     public boolean isManager () {
         return getPermissions() == 2;
@@ -169,7 +173,7 @@ public class User extends DomainObject {
 
     /**
      *
-     * @return
+     * @return true if the user is the barista. False otherwise
      */
     public boolean isBarista () {
         return getPermissions() == 1;
@@ -177,7 +181,7 @@ public class User extends DomainObject {
 
     /**
      *
-     * @return
+     * @return true if the user is the customer. False otherwise
      */
     public boolean isCustomer () {
         return getPermissions() == 0;
