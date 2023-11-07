@@ -154,7 +154,7 @@ public class User extends DomainObject {
      * @param password
      *            the password to set
      */
-    public int hashPassword ( final String password ) {
+    public static int hashPassword ( final String password ) {
         return password.hashCode();
     }
 

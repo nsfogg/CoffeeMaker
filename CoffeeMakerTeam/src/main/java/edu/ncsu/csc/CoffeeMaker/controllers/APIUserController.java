@@ -74,7 +74,7 @@ public class APIUserController extends APIController {
     public ResponseEntity login ( @PathVariable final String userName, @RequestBody final String password ) {
         final User user = getUser( userName );
 
-        if ( user != null && user.getPassword() == password.hashCode() ) {
+        if ( user != null && user.getPassword() == User.hashPassword( password ) ) {
             return new ResponseEntity( user, HttpStatus.OK );
         }
 
