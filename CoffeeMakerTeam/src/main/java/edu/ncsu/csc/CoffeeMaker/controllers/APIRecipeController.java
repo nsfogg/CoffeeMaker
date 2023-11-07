@@ -64,15 +64,9 @@ public class APIRecipeController extends APIController {
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return null;
         }
-        final User checkUser = userService.findByName( user.getUserName() );
-        if ( checkUser.isBarista() ) {
-            return null;
-        }
-        // return list of recipes based on user
-        if ( checkUser.isCustomer() ) {
-            return service.findByCustomer( checkUser );
-        }
-        // else is a manager return all recipes in the system
+
+        // Return all recipes since everyone should have access to view the
+        // recipes
         return service.findAll();
     }
 

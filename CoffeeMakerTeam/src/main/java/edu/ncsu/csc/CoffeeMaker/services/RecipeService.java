@@ -1,7 +1,5 @@
 package edu.ncsu.csc.CoffeeMaker.services;
 
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
-import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.repositories.RecipeRepository;
 
 /**
@@ -46,9 +43,4 @@ public class RecipeService extends Service<Recipe, Long> {
     public Recipe findByName ( final String name ) {
         return recipeRepository.findByName( name );
     }
-
-    public List<Recipe> findByCustomer ( final User user ) {
-        return recipeRepository.findByCustomer( user );
-    }
-
 }
