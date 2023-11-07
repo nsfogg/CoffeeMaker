@@ -60,7 +60,7 @@ public class APIRecipeController extends APIController {
      * @return JSON representation of all recipies
      */
     @GetMapping ( BASE_PATH + "/recipes" )
-    public List<Recipe> getRecipes ( final User user ) {
+    public List<Recipe> getRecipes ( @RequestBody final User user ) {
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return null;
         }
@@ -79,7 +79,7 @@ public class APIRecipeController extends APIController {
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/recipes/{name}" )
-    public ResponseEntity getRecipe ( @PathVariable ( "name" ) final String name, final User user ) {
+    public ResponseEntity getRecipe ( @PathVariable ( "name" ) final String name, @RequestBody final User user ) {
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -106,7 +106,11 @@ public class APIRecipeController extends APIController {
      *         the inventory, or an error if it could not be
      */
     @PostMapping ( BASE_PATH + "/recipes" )
-    public ResponseEntity createRecipe ( @RequestBody final Recipe recipe, final User user ) {
+    public ResponseEntity createRecipe ( @RequestBody final RecipeUserDTO body ) {
+
+        final User user = body.authUser;
+        final Recipe recipe = body.newRecipe;
+
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -142,7 +146,7 @@ public class APIRecipeController extends APIController {
      *         does not exist
      */
     @DeleteMapping ( BASE_PATH + "/recipes/{name}" )
-    public ResponseEntity deleteRecipe ( @PathVariable final String name, final User user ) {
+    public ResponseEntity deleteRecipe ( @PathVariable final String name, @RequestBody final User user ) {
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -173,8 +177,11 @@ public class APIRecipeController extends APIController {
      *         does not exist
      */
     @PutMapping ( BASE_PATH + "/recipes/{name}" )
-    public ResponseEntity editRecipe ( @PathVariable final String name, @RequestBody final Recipe recipe,
-            final User user ) {
+    public ResponseEntity editRecipe ( @PathVariable final String name, @RequestBody final RecipeUserDTO body ) {
+
+        final User user = body.authUser;
+        final Recipe recipe = body.newRecipe;
+
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -191,5 +198,10 @@ public class APIRecipeController extends APIController {
         r.updateRecipe( recipe );
         service.save( r );
         return new ResponseEntity( successResponse( name + " was successfully updated." ), HttpStatus.OK );
+    }
+
+    public class RecipeUserDTO {
+        public Recipe newRecipe;
+        public User   authUser;
     }
 }

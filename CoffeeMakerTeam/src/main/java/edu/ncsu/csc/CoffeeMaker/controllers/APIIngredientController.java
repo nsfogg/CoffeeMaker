@@ -76,7 +76,7 @@ public class APIIngredientController extends APIController {
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/ingredients" )
-    public ResponseEntity getIngredients ( final User user ) {
+    public ResponseEntity getIngredients ( @RequestBody final User user ) {
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -100,7 +100,7 @@ public class APIIngredientController extends APIController {
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/ingredients/{name}" )
-    public ResponseEntity getIngredient ( @PathVariable final String name, final User user ) {
+    public ResponseEntity getIngredient ( @PathVariable final String name, @RequestBody final User user ) {
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -136,8 +136,12 @@ public class APIIngredientController extends APIController {
      *         saved to the db, or an error if it could not be
      */
     @PostMapping ( BASE_PATH + "/ingredients" )
-    public ResponseEntity createIngredient ( @RequestBody final Ingredient ingredient,
-            @RequestParam ( "amount" ) final Integer amount, final User user ) {
+    public ResponseEntity createIngredient ( @RequestBody final IngredientUserDTO body,
+            @RequestParam ( "amount" ) final Integer amount ) {
+
+        final Ingredient ingredient = body.ingredient;
+        final User user = body.authUser;
+
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -207,8 +211,12 @@ public class APIIngredientController extends APIController {
      * @return response to the request
      */
     @PutMapping ( BASE_PATH + "/ingredients/{name}" )
-    public ResponseEntity updateIngredient ( @PathVariable final String name, @RequestBody final Ingredient ingredient,
-            final User user ) {
+    public ResponseEntity updateIngredient ( @PathVariable final String name,
+            @RequestBody final IngredientUserDTO body ) {
+
+        final Ingredient ingredient = body.ingredient;
+        final User user = body.authUser;
+
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -244,7 +252,7 @@ public class APIIngredientController extends APIController {
      *         ingredient does not exist
      */
     @DeleteMapping ( BASE_PATH + "/ingredients/{name}" )
-    public ResponseEntity deleteIngredient ( @PathVariable final String name, final User user ) {
+    public ResponseEntity deleteIngredient ( @PathVariable final String name, @RequestBody final User user ) {
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -286,5 +294,10 @@ public class APIIngredientController extends APIController {
         ingredientService.delete( ingredient );
 
         return new ResponseEntity( successResponse( name + " was deleted successfully" ), HttpStatus.OK );
+    }
+
+    public class IngredientUserDTO {
+        Ingredient ingredient;
+        User       authUser;
     }
 }

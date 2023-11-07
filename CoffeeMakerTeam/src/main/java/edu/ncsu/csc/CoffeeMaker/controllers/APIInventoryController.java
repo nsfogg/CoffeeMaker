@@ -56,7 +56,7 @@ public class APIInventoryController extends APIController {
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/inventory" )
-    public ResponseEntity getInventory ( final User user ) {
+    public ResponseEntity getInventory ( @RequestBody final User user ) {
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -85,7 +85,11 @@ public class APIInventoryController extends APIController {
      * @return response to the request
      */
     @PutMapping ( BASE_PATH + "/inventory" )
-    public ResponseEntity updateInventory ( @RequestBody final Inventory inventory, final User user ) {
+    public ResponseEntity updateInventory ( @RequestBody final InventoryUserDTO body ) {
+
+        final Inventory inventory = body.inventory;
+        final User user = body.authUser;
+
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -109,5 +113,10 @@ public class APIInventoryController extends APIController {
         // Save it.
         service.save( inventoryCurrent );
         return new ResponseEntity( inventoryCurrent, HttpStatus.OK );
+    }
+
+    public class InventoryUserDTO {
+        Inventory inventory;
+        User      authUser;
     }
 }

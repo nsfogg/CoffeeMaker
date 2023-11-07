@@ -70,8 +70,12 @@ public class APICoffeeController extends APIController {
      * @return The change the customer is due if successful
      */
     @PostMapping ( BASE_PATH + "/makecoffee/{name}" )
-    public ResponseEntity makeCoffee ( @PathVariable ( "name" ) final String name, @RequestBody final int amtPaid,
-            final User user ) {
+    public ResponseEntity makeCoffee ( @PathVariable ( "name" ) final String name,
+            @RequestBody final PaidUserDTO body ) {
+
+        final User user = body.authUser;
+        final int amtPaid = body.paid;
+
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
@@ -128,5 +132,10 @@ public class APICoffeeController extends APIController {
         }
         // not enough money
         return change;
+    }
+
+    public class PaidUserDTO {
+        int  paid;
+        User authUser;
     }
 }

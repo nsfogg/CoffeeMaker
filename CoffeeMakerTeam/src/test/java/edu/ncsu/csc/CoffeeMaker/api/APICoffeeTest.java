@@ -24,9 +24,11 @@ import edu.ncsu.csc.CoffeeMaker.common.TestUtils;
 import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
+import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
+import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
@@ -45,6 +47,9 @@ public class APICoffeeTest {
     @Autowired
     private IngredientService ingredientService;
 
+    @Autowired
+    private UserService       userService;
+
     /**
      * Sets up the tests.
      */
@@ -53,6 +58,14 @@ public class APICoffeeTest {
         recipeService.deleteAll();
         inventoryService.deleteAll();
         ingredientService.deleteAll();
+        userService.deleteAll();
+
+        final User customer = new User( "customer", "password", 0 );
+        userService.save( customer );
+        final User barista = new User( "barista", "password", 1 );
+        userService.save( barista );
+        final User manager = new User( "manager", "password", 2 );
+        userService.save( manager );
 
         final Inventory ivt = inventoryService.getInventory();
 
