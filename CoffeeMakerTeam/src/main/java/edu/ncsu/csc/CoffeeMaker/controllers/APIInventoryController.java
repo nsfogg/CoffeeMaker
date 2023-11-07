@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
+import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
+import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
  * This is the controller that holds the REST endpoints that handle add and
@@ -31,7 +33,21 @@ public class APIInventoryController extends APIController {
      * manipulating the Inventory model
      */
     @Autowired
-    private InventoryService service;
+    private InventoryService  service;
+
+    /**
+     * UserService object, to be autowired in by Spring to allow for
+     * manipulating the User model
+     */
+    @Autowired
+    private UserService       userService;
+
+    /**
+     * UserController object, to be autowired in by Spring to allow for
+     * manipulating the User Controller
+     */
+    @Autowired
+    private APIUserController control;
 
     /**
      * REST API endpoint to provide GET access to the CoffeeMaker's singleton
@@ -40,9 +56,23 @@ public class APIInventoryController extends APIController {
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/inventory" )
-    public ResponseEntity getInventory () {
+    public ResponseEntity getInventory ( final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        final User checkUser = userService.findByName( user.getUserName() );
+
+        if ( !checkUser.isManager() ) {
+            return new ResponseEntity( errorResponse( "Cannot view the inventory" ), HttpStatus.BAD_REQUEST );
+        }
         final Inventory inventory = service.getInventory();
+        if ( checkUser.getPermissions() != 2 ) {
+
+            return new ResponseEntity( errorResponse( "Cannot view the inventory" ), HttpStatus.BAD_REQUEST );
+        }
         return new ResponseEntity( inventory, HttpStatus.OK );
+
     }
 
     /**
@@ -55,7 +85,16 @@ public class APIInventoryController extends APIController {
      * @return response to the request
      */
     @PutMapping ( BASE_PATH + "/inventory" )
-    public ResponseEntity updateInventory ( @RequestBody final Inventory inventory ) {
+    public ResponseEntity updateInventory ( @RequestBody final Inventory inventory, final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        final User checkUser = userService.findByName( user.getUserName() );
+        if ( !checkUser.isManager() ) {
+
+            return new ResponseEntity( errorResponse( "Cannot edit the inventory" ), HttpStatus.BAD_REQUEST );
+        }
         final Inventory inventoryCurrent = service.getInventory();
 
         // Update the inventory
