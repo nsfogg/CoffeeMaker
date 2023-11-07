@@ -52,6 +52,7 @@ public class MappingController {
     public String addIngredientPage ( final Model model ) {
         return "ingredient";
     }
+
     /**
      * On a GET request to /deleterecipe, the DeleteRecipeController will return
      * /src/main/resources/templates/deleterecipe.html.
@@ -104,6 +105,45 @@ public class MappingController {
     @GetMapping ( { "/makecoffee", "/makecoffee.html" } )
     public String makeCoffeeForm ( final Model model ) {
         return "makecoffee";
+    }
+
+    /**
+     * On a GET request to /login, the LoginController will return
+     * /src/main/resources/templates/login.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/login", "/login.html" } )
+    public String makeLoginForm ( final Model model ) {
+        return "login";
+    }
+
+    /**
+     * On a GET request to /newcustomer, the NewCustomerController will return
+     * /src/main/resources/templates/newcustomer.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/newcustomer", "/newcustomer.html" } )
+    public String makeNewCustomerForm ( final Model model ) {
+        return "newcustomer";
+    }
+
+    /**
+     * On a GET request to /newstaff, the NewStaffController will return
+     * /src/main/resources/templates/newstaff.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/newstaff", "/newstaff.html" } )
+    public String makeNewStaffForm ( final Model model ) {
+        return "newstaff";
     }
 
 }
