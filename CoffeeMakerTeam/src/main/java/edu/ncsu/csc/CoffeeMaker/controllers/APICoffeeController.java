@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.PaidUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.models.User;
@@ -77,7 +78,7 @@ public class APICoffeeController extends APIController {
         final int amtPaid = body.paid;
 
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
-            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+            return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
         }
         final User checkUser = userService.findByName( user.getUserName() );
@@ -134,8 +135,4 @@ public class APICoffeeController extends APIController {
         return change;
     }
 
-    public class PaidUserDTO {
-        int  paid;
-        User authUser;
-    }
 }
