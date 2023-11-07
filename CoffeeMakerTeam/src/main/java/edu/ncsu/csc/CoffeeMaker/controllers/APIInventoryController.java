@@ -33,14 +33,21 @@ public class APIInventoryController extends APIController {
      * manipulating the Inventory model
      */
     @Autowired
-    private InventoryService service;
+    private InventoryService  service;
 
     /**
      * UserService object, to be autowired in by Spring to allow for
      * manipulating the User model
      */
     @Autowired
-    private UserService      userService;
+    private UserService       userService;
+
+    /**
+     * UserController object, to be autowired in by Spring to allow for
+     * manipulating the User Controller
+     */
+    @Autowired
+    private APIUserController control;
 
     /**
      * REST API endpoint to provide GET access to the CoffeeMaker's singleton
@@ -50,8 +57,15 @@ public class APIInventoryController extends APIController {
      */
     @GetMapping ( BASE_PATH + "/inventory" )
     public ResponseEntity getInventory ( final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
         final User checkUser = userService.findByName( user.getUserName() );
 
+        if ( !checkUser.isManager() ) {
+            return new ResponseEntity( errorResponse( "Cannot view the inventory" ), HttpStatus.BAD_REQUEST );
+        }
         final Inventory inventory = service.getInventory();
         if ( checkUser.getPermissions() != 2 ) {
 
@@ -72,8 +86,12 @@ public class APIInventoryController extends APIController {
      */
     @PutMapping ( BASE_PATH + "/inventory" )
     public ResponseEntity updateInventory ( @RequestBody final Inventory inventory, final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
         final User checkUser = userService.findByName( user.getUserName() );
-        if ( checkUser.getPermissions() != 2 ) {
+        if ( !checkUser.isManager() ) {
 
             return new ResponseEntity( errorResponse( "Cannot edit the inventory" ), HttpStatus.BAD_REQUEST );
         }

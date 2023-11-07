@@ -54,8 +54,13 @@ public class APIIngredientController extends APIController {
     @Autowired
     private InventoryService  inventoryService;
 
+    /**
+     * UserController object, to be autowired in by Spring to allow for
+     * manipulating the User Controller
+     */
     @Autowired
     private APIUserController control;
+
     /**
      * UserService object, to be autowired in by Spring to allow for
      * manipulating the User model
@@ -78,7 +83,7 @@ public class APIIngredientController extends APIController {
         }
         final User checkUser = userService.findByName( user.getUserName() );
 
-        if ( checkUser.getPermissions() == 0 ) {
+        if ( checkUser.isCustomer() || checkUser.isBarista() ) {
             return new ResponseEntity( errorResponse( "Cannot view the current lsit of ingredients" ),
                     HttpStatus.FORBIDDEN );
         }
@@ -96,9 +101,13 @@ public class APIIngredientController extends APIController {
      */
     @GetMapping ( BASE_PATH + "/ingredients/{name}" )
     public ResponseEntity getIngredient ( @PathVariable final String name, final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
         final Ingredient ingredient = ingredientService.findByName( name );
         final User currUser = userService.findByName( user.getUserName() );
-        if ( currUser.getPermissions() == 0 ) {
+        if ( currUser.isCustomer() ) {
             return new ResponseEntity( errorResponse( "Cannot view the current lsit of ingredients" ),
                     HttpStatus.FORBIDDEN );
         }
@@ -129,8 +138,12 @@ public class APIIngredientController extends APIController {
     @PostMapping ( BASE_PATH + "/ingredients" )
     public ResponseEntity createIngredient ( @RequestBody final Ingredient ingredient,
             @RequestParam ( "amount" ) final Integer amount, final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
         final User currUser = userService.findByName( user.getUserName() );
-        if ( currUser.getPermissions() == 0 ) {
+        if ( currUser.isCustomer() || currUser.isBarista() ) {
             return new ResponseEntity( errorResponse( "Cannot create a new ingredient" ), HttpStatus.FORBIDDEN );
         }
         if ( null != ingredientService.findByName( ingredient.getName() ) ) {
@@ -196,8 +209,12 @@ public class APIIngredientController extends APIController {
     @PutMapping ( BASE_PATH + "/ingredients/{name}" )
     public ResponseEntity updateIngredient ( @PathVariable final String name, @RequestBody final Ingredient ingredient,
             final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
         final User currUser = userService.findByName( user.getUserName() );
-        if ( currUser.getPermissions() == 0 || currUser.getPermissions() == 1 ) {
+        if ( currUser.isCustomer() || currUser.isBarista() ) {
             return new ResponseEntity( errorResponse( "Cannot update a ingredient based on current permissions" ),
                     HttpStatus.FORBIDDEN );
         }
@@ -228,8 +245,12 @@ public class APIIngredientController extends APIController {
      */
     @DeleteMapping ( BASE_PATH + "/ingredients/{name}" )
     public ResponseEntity deleteIngredient ( @PathVariable final String name, final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
         final User currUser = userService.findByName( user.getUserName() );
-        if ( currUser.isCustomer() || currUser.getPermissions() == 1 ) {
+        if ( currUser.isCustomer() || currUser.isBarista() ) {
             return new ResponseEntity( errorResponse( "Cannot update a ingredient based on current permissions" ),
                     HttpStatus.FORBIDDEN );
         }

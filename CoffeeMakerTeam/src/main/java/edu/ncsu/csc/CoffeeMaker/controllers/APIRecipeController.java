@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
+import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
+import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
  * This is the controller that holds the REST endpoints that handle CRUD
@@ -36,7 +38,21 @@ public class APIRecipeController extends APIController {
      * manipulating the Recipe model
      */
     @Autowired
-    private RecipeService service;
+    private RecipeService     service;
+
+    /**
+     * UserService object, to be autowired in by Spring to allow for
+     * manipulating the User model
+     */
+    @Autowired
+    private UserService       userService;
+
+    /**
+     * UserController object, to be autowired in by Spring to allow for
+     * manipulating the User Controller
+     */
+    @Autowired
+    private APIUserController control;
 
     /**
      * REST API method to provide GET access to all recipes in the system
@@ -44,7 +60,19 @@ public class APIRecipeController extends APIController {
      * @return JSON representation of all recipies
      */
     @GetMapping ( BASE_PATH + "/recipes" )
-    public List<Recipe> getRecipes () {
+    public List<Recipe> getRecipes ( final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return null;
+        }
+        final User checkUser = userService.findByName( user.getUserName() );
+        if ( checkUser.isBarista() ) {
+            return null;
+        }
+        // return list of recipes based on user
+        if ( checkUser.isCustomer() ) {
+            return service.findByCustomer( checkUser );
+        }
+        // else is a manager return all recipes in the system
         return service.findAll();
     }
 
@@ -57,8 +85,17 @@ public class APIRecipeController extends APIController {
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/recipes/{name}" )
-    public ResponseEntity getRecipe ( @PathVariable ( "name" ) final String name ) {
+    public ResponseEntity getRecipe ( @PathVariable ( "name" ) final String name, final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
         final Recipe recipe = service.findByName( name );
+        // final User checkUser = userService.findByName( user.getUserName() );
+        // if ( checkUser.isCustomer() ) {
+        // return new ResponseEntity( errorResponse( " Cannot view" ),
+        // HttpStatus.FORBIDDEN );
+        // }
         return null == recipe
                 ? new ResponseEntity( errorResponse( "No recipe found with name " + name ), HttpStatus.NOT_FOUND )
                 : new ResponseEntity( recipe, HttpStatus.OK );
@@ -75,7 +112,15 @@ public class APIRecipeController extends APIController {
      *         the inventory, or an error if it could not be
      */
     @PostMapping ( BASE_PATH + "/recipes" )
-    public ResponseEntity createRecipe ( @RequestBody final Recipe recipe ) {
+    public ResponseEntity createRecipe ( @RequestBody final Recipe recipe, final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        final User checkUser = userService.findByName( user.getUserName() );
+        if ( !checkUser.isManager() ) {
+            return new ResponseEntity( errorResponse( " Current user cannot create a Recipe" ), HttpStatus.FORBIDDEN );
+        }
         if ( null != service.findByName( recipe.getName() ) ) {
             return new ResponseEntity( errorResponse( "Recipe with the name " + recipe.getName() + " already exists" ),
                     HttpStatus.CONFLICT );
@@ -103,7 +148,15 @@ public class APIRecipeController extends APIController {
      *         does not exist
      */
     @DeleteMapping ( BASE_PATH + "/recipes/{name}" )
-    public ResponseEntity deleteRecipe ( @PathVariable final String name ) {
+    public ResponseEntity deleteRecipe ( @PathVariable final String name, final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        final User checkUser = userService.findByName( user.getUserName() );
+        if ( !checkUser.isManager() ) {
+            return new ResponseEntity( errorResponse( " Current user cannot create a Recipe" ), HttpStatus.FORBIDDEN );
+        }
         final Recipe recipe = service.findByName( name );
         if ( null == recipe ) {
             return new ResponseEntity( errorResponse( "No recipe found for name " + name ), HttpStatus.NOT_FOUND );
@@ -126,8 +179,16 @@ public class APIRecipeController extends APIController {
      *         does not exist
      */
     @PutMapping ( BASE_PATH + "/recipes/{name}" )
-    public ResponseEntity editRecipe ( @PathVariable final String name, @RequestBody final Recipe recipe ) {
-
+    public ResponseEntity editRecipe ( @PathVariable final String name, @RequestBody final Recipe recipe,
+            final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        final User checkUser = userService.findByName( user.getUserName() );
+        if ( !checkUser.isManager() ) {
+            return new ResponseEntity( errorResponse( " Current user cannot create a Recipe" ), HttpStatus.FORBIDDEN );
+        }
         final Recipe r = service.findByName( name );
         if ( null == r ) {
             return new ResponseEntity( errorResponse( "No recipe found for name " + name ), HttpStatus.NOT_FOUND );
