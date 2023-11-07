@@ -24,12 +24,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import edu.ncsu.csc.CoffeeMaker.common.TestUtils;
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.InventoryUserDTO;
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.PaidUserDTO;
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.RecipeUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
+import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
+import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
@@ -54,6 +59,15 @@ public class APITest {
     @Autowired
     private IngredientService     ingredientService;
 
+    @Autowired
+    private UserService           userService;
+
+    final User                    customer = new User( "customer", "password", 0 );
+
+    final User                    barista  = new User( "barista", "password", 1 );
+
+    final User                    manager  = new User( "manager", "password", 2 );
+
     /**
      * Sets up the tests.
      */
@@ -63,6 +77,11 @@ public class APITest {
         recipeService.deleteAll();
         inventoryService.deleteAll();
         ingredientService.deleteAll();
+        userService.deleteAll();
+
+        userService.save( customer );
+        userService.save( barista );
+        userService.save( manager );
     }
 
     @Test
@@ -70,8 +89,10 @@ public class APITest {
     public void ensureRecipe () throws Exception {
 
         // Ensure the inventory is initially empty
-        final String response = mvc.perform( get( "/api/v1/inventory" ) ).andExpect( status().isOk() ).andReturn()
-                .getResponse().getContentAsString();
+        final String response = mvc
+                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
         // Learned how to parse json strings to objects here
         final Inventory responseInventory = TestUtils.asInventory( response );
@@ -88,7 +109,8 @@ public class APITest {
 
         // Put the inventory
         mvc.perform( put( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( responseInventory ) ) ).andExpect( status().isOk() );
+                .content( TestUtils.asJsonString( new InventoryUserDTO( responseInventory, manager ) ) ) )
+                .andExpect( status().isOk() );
 
         assertEquals( 1, responseInventory.getInventory().size() );
 
@@ -96,8 +118,10 @@ public class APITest {
         assertTrue( responseInventory.getInventory().containsKey( i ) );
         assertTrue( responseInventory.getInventory().containsValue( 10 ) );
 
-        String recipe = mvc.perform( get( "/api/v1/recipes" ) ).andDo( print() ).andExpect( status().isOk() )
-                .andReturn().getResponse().getContentAsString();
+        String recipe = mvc
+                .perform( get( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
         if ( !recipe.contains( "Mocha" ) ) {
             final Recipe r = new Recipe();
@@ -106,22 +130,27 @@ public class APITest {
             r.addIngredient( savedI, 2 );
 
             mvc.perform( post( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
-                    .content( TestUtils.asJsonString( r ) ) ).andExpect( status().isOk() );
+                    .content( TestUtils.asJsonString( new RecipeUserDTO( r, manager ) ) ) )
+                    .andExpect( status().isOk() );
 
         }
 
-        recipe = mvc.perform( get( "/api/v1/recipes" ) ).andDo( print() ).andExpect( status().isOk() ).andReturn()
-                .getResponse().getContentAsString();
+        recipe = mvc
+                .perform( get( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
         assertTrue( recipe.contains( "Mocha" ) );
 
         // Make coffee
         mvc.perform( post( "/api/v1/makecoffee/Mocha" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( 100 ) ) ).andExpect( status().isOk() );
+                .content( TestUtils.asJsonString( new PaidUserDTO( 100, customer ) ) ) ).andExpect( status().isOk() );
 
         // Ensure the inventory is initially empty
-        final String response1 = mvc.perform( get( "/api/v1/inventory" ) ).andExpect( status().isOk() ).andReturn()
-                .getResponse().getContentAsString();
+        final String response1 = mvc
+                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
         // Learned how to parse json strings to objects here
         final Inventory responseInventory1 = TestUtils.asInventory( response1 );
