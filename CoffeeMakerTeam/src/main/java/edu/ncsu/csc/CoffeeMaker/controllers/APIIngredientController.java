@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
+import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
+import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
  * Controller class for Ingredient API, works with IngredientService and Recipe
@@ -52,6 +54,15 @@ public class APIIngredientController extends APIController {
     @Autowired
     private InventoryService  inventoryService;
 
+    @Autowired
+    private APIUserController control;
+    /**
+     * UserService object, to be autowired in by Spring to allow for
+     * manipulating the User model
+     */
+    @Autowired
+    private UserService       userService;
+
     /**
      * REST API endpoint to provide GET access to the CoffeeMaker's ingredients
      * list. This will convert the ingredients list to a JSON Array of
@@ -60,7 +71,17 @@ public class APIIngredientController extends APIController {
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/ingredients" )
-    public ResponseEntity getIngredients () {
+    public ResponseEntity getIngredients ( final User user ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        final User checkUser = userService.findByName( user.getUserName() );
+
+        if ( checkUser.getPermissions() == 0 ) {
+            return new ResponseEntity( errorResponse( "Cannot view the current lsit of ingredients" ),
+                    HttpStatus.FORBIDDEN );
+        }
         final List<Ingredient> ingredients = ingredientService.findAll();
         return new ResponseEntity( ingredients, HttpStatus.OK );
     }
@@ -74,9 +95,13 @@ public class APIIngredientController extends APIController {
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/ingredients/{name}" )
-    public ResponseEntity getIngredient ( @PathVariable final String name ) {
+    public ResponseEntity getIngredient ( @PathVariable final String name, final User user ) {
         final Ingredient ingredient = ingredientService.findByName( name );
-
+        final User currUser = userService.findByName( user.getUserName() );
+        if ( currUser.getPermissions() == 0 ) {
+            return new ResponseEntity( errorResponse( "Cannot view the current lsit of ingredients" ),
+                    HttpStatus.FORBIDDEN );
+        }
         if ( ingredient != null ) {
             return new ResponseEntity( ingredient, HttpStatus.OK );
         }
@@ -103,7 +128,11 @@ public class APIIngredientController extends APIController {
      */
     @PostMapping ( BASE_PATH + "/ingredients" )
     public ResponseEntity createIngredient ( @RequestBody final Ingredient ingredient,
-            @RequestParam ( "amount" ) final Integer amount ) {
+            @RequestParam ( "amount" ) final Integer amount, final User user ) {
+        final User currUser = userService.findByName( user.getUserName() );
+        if ( currUser.getPermissions() == 0 ) {
+            return new ResponseEntity( errorResponse( "Cannot create a new ingredient" ), HttpStatus.FORBIDDEN );
+        }
         if ( null != ingredientService.findByName( ingredient.getName() ) ) {
             return new ResponseEntity(
                     errorResponse( "Ingredient with the name " + ingredient.getName() + " already exists" ),
@@ -165,8 +194,13 @@ public class APIIngredientController extends APIController {
      * @return response to the request
      */
     @PutMapping ( BASE_PATH + "/ingredients/{name}" )
-    public ResponseEntity updateIngredient ( @PathVariable final String name,
-            @RequestBody final Ingredient ingredient ) {
+    public ResponseEntity updateIngredient ( @PathVariable final String name, @RequestBody final Ingredient ingredient,
+            final User user ) {
+        final User currUser = userService.findByName( user.getUserName() );
+        if ( currUser.getPermissions() == 0 || currUser.getPermissions() == 1 ) {
+            return new ResponseEntity( errorResponse( "Cannot update a ingredient based on current permissions" ),
+                    HttpStatus.FORBIDDEN );
+        }
         final Ingredient i = ingredientService.findByName( name );
         if ( null == i ) {
             return new ResponseEntity( errorResponse( "Ingredient with the name " + name + " does not exist" ),
@@ -193,7 +227,12 @@ public class APIIngredientController extends APIController {
      *         ingredient does not exist
      */
     @DeleteMapping ( BASE_PATH + "/ingredients/{name}" )
-    public ResponseEntity deleteIngredient ( @PathVariable final String name ) {
+    public ResponseEntity deleteIngredient ( @PathVariable final String name, final User user ) {
+        final User currUser = userService.findByName( user.getUserName() );
+        if ( currUser.isCustomer() || currUser.getPermissions() == 1 ) {
+            return new ResponseEntity( errorResponse( "Cannot update a ingredient based on current permissions" ),
+                    HttpStatus.FORBIDDEN );
+        }
         final Ingredient ingredient = ingredientService.findByName( name );
         if ( null == ingredient ) {
             return new ResponseEntity( errorResponse( "No ingredient found for name " + name ), HttpStatus.NOT_FOUND );

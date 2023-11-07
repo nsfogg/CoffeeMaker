@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
+import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
+import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
  * This is the controller that holds the REST endpoints that handle add and
@@ -34,15 +36,29 @@ public class APIInventoryController extends APIController {
     private InventoryService service;
 
     /**
+     * UserService object, to be autowired in by Spring to allow for
+     * manipulating the User model
+     */
+    @Autowired
+    private UserService      userService;
+
+    /**
      * REST API endpoint to provide GET access to the CoffeeMaker's singleton
      * Inventory. This will convert the Inventory to JSON.
      *
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/inventory" )
-    public ResponseEntity getInventory () {
+    public ResponseEntity getInventory ( final User user ) {
+        final User checkUser = userService.findByName( user.getUserName() );
+
         final Inventory inventory = service.getInventory();
+        if ( checkUser.getPermissions() != 2 ) {
+
+            return new ResponseEntity( errorResponse( "Cannot view the inventory" ), HttpStatus.BAD_REQUEST );
+        }
         return new ResponseEntity( inventory, HttpStatus.OK );
+
     }
 
     /**
@@ -55,7 +71,12 @@ public class APIInventoryController extends APIController {
      * @return response to the request
      */
     @PutMapping ( BASE_PATH + "/inventory" )
-    public ResponseEntity updateInventory ( @RequestBody final Inventory inventory ) {
+    public ResponseEntity updateInventory ( @RequestBody final Inventory inventory, final User user ) {
+        final User checkUser = userService.findByName( user.getUserName() );
+        if ( checkUser.getPermissions() != 2 ) {
+
+            return new ResponseEntity( errorResponse( "Cannot edit the inventory" ), HttpStatus.BAD_REQUEST );
+        }
         final Inventory inventoryCurrent = service.getInventory();
 
         // Update the inventory
