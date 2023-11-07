@@ -130,7 +130,7 @@ public class APIUserController extends APIController {
                         HttpStatus.OK );
             }
         }
-        return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
+        return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
                 HttpStatus.FORBIDDEN );
     }
 
@@ -145,13 +145,17 @@ public class APIUserController extends APIController {
      *         does not exist
      */
     @DeleteMapping ( BASE_PATH + "/users/{userName}" )
-    public ResponseEntity deleteUser ( @PathVariable final String userName ) {
-        final User user = service.findByName( userName );
-        if ( null == user ) {
+    public ResponseEntity deleteUser ( @PathVariable final String userName, @RequestBody final User user ) {
+        if ( !authenticate( user.getUserName(), user.getPassword() ) || !user.isManager() ) {
+            return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        final User userToDelete = service.findByName( userName );
+        if ( null == userToDelete ) {
             return new ResponseEntity( errorResponse( "No user found for username " + userName ),
                     HttpStatus.NOT_FOUND );
         }
-        service.delete( user );
+        service.delete( userToDelete );
         return new ResponseEntity( successResponse( userName + " was deleted successfully" ), HttpStatus.OK );
     }
 }

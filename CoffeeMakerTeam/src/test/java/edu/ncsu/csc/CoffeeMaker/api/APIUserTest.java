@@ -120,24 +120,6 @@ public class APIUserTest {
 
     }
 
-    @Test
-    @Transactional
-    public void testUserAPI () throws Exception {
-
-        service.deleteAll();
-
-        final User user = new User();
-
-        user.setUserName( "user1" );
-        user.setPassword( 123456789 );
-
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( user ) ) );
-
-        Assertions.assertEquals( 1, (int) service.count() );
-
-    }
-
     // @Test
     // @Transactional
     // public void testGetUserByNameAPI () throws Exception {
@@ -168,15 +150,20 @@ public class APIUserTest {
     @Test
     @Transactional
     public void testLoginUser () throws Exception {
-        service.deleteAll();
 
-        final User u = createUser2( "user1", "password", 0 );
-
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( u ) ) ).andExpect( status().isOk() );
-
+        // create the user
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user1" )
+                .param( "password", "password" ).param( "permission", "0" ).content( TestUtils.asJsonString( u ) ) )
+                .andExpect( status().isOk() );
+        // log in
         mvc.perform( get( "/api/v1/users/user1" ).contentType( MediaType.APPLICATION_JSON ).content( "password" ) )
                 .andExpect( status().isOk() );
+        // now use an invalid user
+        mvc.perform( get( "/api/v1/users/user2" ).contentType( MediaType.APPLICATION_JSON ).content( "password" ) )
+                .andExpect( status().isNotFound() );
+        // now use an invalid passowrd
+        mvc.perform( get( "/api/v1/users/user1" ).contentType( MediaType.APPLICATION_JSON ).content( "notmypassword" ) )
+                .andExpect( status().isNotFound() );
 
     }
 
@@ -185,90 +172,49 @@ public class APIUserTest {
     public void testDeleteUser () throws Exception {
 
         // Testing adding and deleting 1 user
-        Assertions.assertEquals( 0, service.findAll().size(), "There should be no Users in the CoffeeMaker" );
+        Assertions.assertEquals( 1, service.findAll().size(), "There should be only the admin in CoffeeMaker" );
 
-        final User u1 = createUser( "user1", 123456789, 0 );
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( u1 ) ) ).andExpect( status().isOk() );
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user1" )
+                .param( "password", "password" ).param( "permission", "0" ).content( TestUtils.asJsonString( u ) ) )
+                .andExpect( status().isOk() );
 
-        Assertions.assertEquals( 1, service.findAll().size(), "There should only be one user in the CoffeeMaker" );
+        Assertions.assertEquals( 2, service.findAll().size(), "There should only be 2 user in the CoffeeMaker" );
 
-        mvc.perform( delete( "/api/v1/users/user1" ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/users/user1" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( u ) ) ).andExpect( status().isOk() );
 
         // Testing adding and deleting 2 users
 
-        Assertions.assertEquals( 0, service.findAll().size(), "There should be no users in the CoffeeMaker" );
+        Assertions.assertEquals( 1, service.findAll().size(), "There should be one users in the CoffeeMaker" );
 
-        final User u2 = createUser( "user2", 123456789, 1 );
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( u2 ) ) ).andExpect( status().isOk() );
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user2" )
+                .param( "password", "password" ).param( "permission", "1" ).content( TestUtils.asJsonString( u ) ) )
+                .andExpect( status().isOk() );
 
-        final User u3 = createUser( "user3", 123456789, 2 );
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( u3 ) ) ).andExpect( status().isOk() );
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user3" )
+                .param( "password", "password" ).param( "permission", "2" ).content( TestUtils.asJsonString( u ) ) )
+                .andExpect( status().isOk() );
 
-        Assertions.assertEquals( 2, service.findAll().size(), "There should only be two users in the CoffeeMaker" );
+        Assertions.assertEquals( 3, service.findAll().size(), "There should only be two users in the CoffeeMaker" );
 
-        mvc.perform( delete( "/api/v1/users/user2" ) ).andExpect( status().isOk() );
-        mvc.perform( delete( "/api/v1/users/user3" ) ).andExpect( status().isOk() );
+        // test an unauthorized deletion
 
-        // Testing adding and deleting 3 users
+        mvc.perform( delete( "/api/v1/users/user2" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
 
-        Assertions.assertEquals( 0, service.findAll().size(), "There should be no recipes in the CoffeeMaker" );
+        mvc.perform( delete( "/api/v1/users/user2" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( u ) ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/users/user3" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( u ) ) ).andExpect( status().isOk() );
 
-        final User u4 = createUser( "user4", 123456789, 0 );
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( u4 ) ) ).andExpect( status().isOk() );
+        // Testing deleting a fake users
 
-        final User u5 = createUser( "user5", 123456789, 1 );
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( u5 ) ) ).andExpect( status().isOk() );
+        Assertions.assertEquals( 1, service.findAll().size(), "There should be no recipes in the CoffeeMaker" );
 
-        final User u6 = createUser( "user6", 123456789, 2 );
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( u6 ) ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/users/user3" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( u ) ) ).andExpect( status().isNotFound() );
 
-        Assertions.assertEquals( 3, service.findAll().size(), "There should only be three users in the CoffeeMaker" );
-
-        mvc.perform( delete( "/api/v1/users/user4" ) ).andExpect( status().isOk() );
-        mvc.perform( delete( "/api/v1/users/user5" ) ).andExpect( status().isOk() );
-        mvc.perform( delete( "/api/v1/users/user6" ) ).andExpect( status().isOk() );
-
-        Assertions.assertEquals( 0, service.findAll().size(), "There should be no users in the CoffeeMaker" );
+        Assertions.assertEquals( 1, service.findAll().size(), "There should be no users in the CoffeeMaker" );
 
     }
-
-    @Test
-    @Transactional
-    public void testConcurrentUsers () throws Exception {
-
-        // Testing deletions of the same user by concurrent users
-
-        Assertions.assertEquals( 0, service.findAll().size(), "There should be no Users in the CoffeeMaker" );
-
-        final User u1 = createUser( "user1", 123456789, 0 );
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( u1 ) ) ).andExpect( status().isOk() );
-
-        Assertions.assertEquals( 1, service.findAll().size(), "There should only be one user in the CoffeeMaker" );
-
-        mvc.perform( delete( "/api/v1/users/user1" ) ).andExpect( status().isOk() );
-
-        mvc.perform( delete( "/api/v1/users/user1" ) ).andExpect( status().is4xxClientError() );
-    }
-
-    private User createUser ( final String userName, final int password, final int permissions ) {
-        final User user = new User();
-        user.setUserName( userName );
-        user.setPassword( password );
-        user.setPermissions( permissions );
-        return user;
-    }
-
-    private User createUser2 ( final String userName, final String password, final int permissions ) {
-        final User user = new User( userName, password, permissions );
-        return user;
-
-    }
-
 }
