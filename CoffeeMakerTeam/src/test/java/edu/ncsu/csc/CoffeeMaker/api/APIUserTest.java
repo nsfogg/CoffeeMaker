@@ -1,5 +1,6 @@
 package edu.ncsu.csc.CoffeeMaker.api;
 
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,6 +42,8 @@ public class APIUserTest {
     @Autowired
     private UserService           service;
 
+    User                          u = null;
+
     /**
      * Sets up the tests.
      */
@@ -49,20 +52,71 @@ public class APIUserTest {
         mvc = MockMvcBuilders.webAppContextSetup( context ).build();
 
         service.deleteAll();
+        u = new User( "admin", "password", 2 );
+        service.save( u );
     }
 
     @Test
     @Transactional
-    public void ensureUser () throws Exception {
-        service.deleteAll();
+    public void makeUser () throws Exception {
 
-        final User u = new User();
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user1" )
+                .param( "password", "password" ).param( "permission", "0" ).content( TestUtils.asJsonString( u ) ) )
+                .andExpect( status().isOk() );
 
-        u.setUserName( "user1" );
-        u.setPassword( 123456789 );
+        User fetchedUser = service.findByName( "user1" );
+        assertEquals( 2, service.count() );
+        assertEquals( "user1", fetchedUser.getUserName() );
+        assertEquals( 0, fetchedUser.getPermissions().intValue() );
+        assertEquals( User.hashPassword( "password" ), fetchedUser.getPassword() );
 
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( u ) ) ).andExpect( status().isOk() );
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user1" )
+                .param( "password", "password" ).param( "permission", "0" ).content( TestUtils.asJsonString( u ) ) )
+                .andExpect( status().isConflict() );
+
+        assertEquals( 2, service.count() );
+
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user2" )
+                .param( "password", "complexPassword" ).param( "permission", "0" )
+                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isOk() );
+
+        fetchedUser = service.findByName( "user2" );
+        assertEquals( 3, service.count() );
+        assertEquals( "user2", fetchedUser.getUserName() );
+        assertEquals( 0, fetchedUser.getPermissions().intValue() );
+        assertEquals( User.hashPassword( "complexPassword" ), fetchedUser.getPassword() );
+
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "barista" )
+                .param( "password", "badPassword" ).param( "permission", "1" )
+                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
+
+        assertEquals( 3, service.count() );
+
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "barista" )
+                .param( "password", "badPassword" ).param( "permission", "1" ).content( TestUtils.asJsonString( u ) ) )
+                .andExpect( status().isOk() );
+
+        fetchedUser = service.findByName( "barista" );
+        assertEquals( 4, service.count() );
+        assertEquals( "barista", fetchedUser.getUserName() );
+        assertEquals( 1, fetchedUser.getPermissions().intValue() );
+        assertEquals( User.hashPassword( "badPassword" ), fetchedUser.getPassword() );
+
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "manager" )
+                .param( "password", "iamthebest" ).param( "permission", "2" )
+                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
+
+        assertEquals( 4, service.count() );
+
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "manager" )
+                .param( "password", "iamthebest" ).param( "permission", "2" ).content( TestUtils.asJsonString( u ) ) )
+                .andExpect( status().isOk() );
+
+        fetchedUser = service.findByName( "manager" );
+        assertEquals( 5, service.count() );
+        assertEquals( "manager", fetchedUser.getUserName() );
+        assertEquals( 2, fetchedUser.getPermissions().intValue() );
+        assertEquals( User.hashPassword( "iamthebest" ), fetchedUser.getPassword() );
 
     }
 
