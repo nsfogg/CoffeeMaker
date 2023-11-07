@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.RecipeUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
@@ -200,8 +201,4 @@ public class APIRecipeController extends APIController {
         return new ResponseEntity( successResponse( name + " was successfully updated." ), HttpStatus.OK );
     }
 
-    public class RecipeUserDTO {
-        public Recipe newRecipe;
-        public User   authUser;
-    }
 }
