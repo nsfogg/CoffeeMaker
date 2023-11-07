@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.NamePasswordPermissionUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
@@ -113,8 +113,13 @@ public class APIUserController extends APIController {
      *         an error if it could not be
      */
     @PostMapping ( BASE_PATH + "/users" )
-    public ResponseEntity makeUser ( @RequestParam final String userName, @RequestParam final String password,
-            @RequestParam final int permission, @RequestBody final User user ) {
+    public ResponseEntity makeUser ( @RequestBody final NamePasswordPermissionUserDTO body ) {
+
+        final String userName = body.name;
+        final String password = body.password;
+        final int permission = body.permission;
+        final User user = body.authUser;
+
         if ( getUser( userName ) != null ) {
             return new ResponseEntity( errorResponse( "User already in system." ), HttpStatus.CONFLICT );
         }

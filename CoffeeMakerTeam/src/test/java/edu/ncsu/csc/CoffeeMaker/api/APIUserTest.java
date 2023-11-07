@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import edu.ncsu.csc.CoffeeMaker.common.TestUtils;
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.NamePasswordPermissionUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
@@ -60,8 +61,8 @@ public class APIUserTest {
     @Transactional
     public void makeUser () throws Exception {
 
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user1" )
-                .param( "password", "password" ).param( "permission", "0" ).content( TestUtils.asJsonString( u ) ) )
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new NamePasswordPermissionUserDTO( "user1", "password", 0, u ) ) ) )
                 .andExpect( status().isOk() );
 
         User fetchedUser = service.findByName( "user1" );
@@ -70,15 +71,16 @@ public class APIUserTest {
         assertEquals( 0, fetchedUser.getPermissions().intValue() );
         assertEquals( User.hashPassword( "password" ), fetchedUser.getPassword() );
 
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user1" )
-                .param( "password", "password" ).param( "permission", "0" ).content( TestUtils.asJsonString( u ) ) )
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new NamePasswordPermissionUserDTO( "user1", "password", 0, u ) ) ) )
                 .andExpect( status().isConflict() );
 
         assertEquals( 2, service.count() );
 
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user2" )
-                .param( "password", "complexPassword" ).param( "permission", "0" )
-                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isOk() );
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString(
+                        new NamePasswordPermissionUserDTO( "user2", "complexPassword", 0, new User() ) ) ) )
+                .andExpect( status().isOk() );
 
         fetchedUser = service.findByName( "user2" );
         assertEquals( 3, service.count() );
@@ -86,14 +88,15 @@ public class APIUserTest {
         assertEquals( 0, fetchedUser.getPermissions().intValue() );
         assertEquals( User.hashPassword( "complexPassword" ), fetchedUser.getPassword() );
 
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "barista" )
-                .param( "password", "badPassword" ).param( "permission", "1" )
-                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString(
+                        new NamePasswordPermissionUserDTO( "barista", "badpassword", 1, new User() ) ) ) )
+                .andExpect( status().isForbidden() );
 
         assertEquals( 3, service.count() );
 
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "barista" )
-                .param( "password", "badPassword" ).param( "permission", "1" ).content( TestUtils.asJsonString( u ) ) )
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).content(
+                TestUtils.asJsonString( new NamePasswordPermissionUserDTO( "barista", "badPassword", 1, u ) ) ) )
                 .andExpect( status().isOk() );
 
         fetchedUser = service.findByName( "barista" );
@@ -102,14 +105,16 @@ public class APIUserTest {
         assertEquals( 1, fetchedUser.getPermissions().intValue() );
         assertEquals( User.hashPassword( "badPassword" ), fetchedUser.getPassword() );
 
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "manager" )
-                .param( "password", "iamthebest" ).param( "permission", "2" )
-                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils
+                        .asJsonString( new NamePasswordPermissionUserDTO( "manager", "iamthebest", 2, new User() ) ) ) )
+                .andExpect( status().isForbidden() );
 
         assertEquals( 4, service.count() );
 
         mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "manager" )
-                .param( "password", "iamthebest" ).param( "permission", "2" ).content( TestUtils.asJsonString( u ) ) )
+                .param( "password", "iamthebest" ).param( "permission", "2" ).content(
+                        TestUtils.asJsonString( new NamePasswordPermissionUserDTO( "manager", "iamthebest", 2, u ) ) ) )
                 .andExpect( status().isOk() );
 
         fetchedUser = service.findByName( "manager" );
@@ -152,8 +157,8 @@ public class APIUserTest {
     public void testLoginUser () throws Exception {
 
         // create the user
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user1" )
-                .param( "password", "password" ).param( "permission", "0" ).content( TestUtils.asJsonString( u ) ) )
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new NamePasswordPermissionUserDTO( "user1", "password", 0, u ) ) ) )
                 .andExpect( status().isOk() );
         // log in
         mvc.perform( get( "/api/v1/users/user1" ).contentType( MediaType.APPLICATION_JSON ).content( "password" ) )
@@ -174,8 +179,8 @@ public class APIUserTest {
         // Testing adding and deleting 1 user
         Assertions.assertEquals( 1, service.findAll().size(), "There should be only the admin in CoffeeMaker" );
 
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user1" )
-                .param( "password", "password" ).param( "permission", "0" ).content( TestUtils.asJsonString( u ) ) )
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new NamePasswordPermissionUserDTO( "user1", "password", 0, u ) ) ) )
                 .andExpect( status().isOk() );
 
         Assertions.assertEquals( 2, service.findAll().size(), "There should only be 2 user in the CoffeeMaker" );
@@ -187,12 +192,12 @@ public class APIUserTest {
 
         Assertions.assertEquals( 1, service.findAll().size(), "There should be one users in the CoffeeMaker" );
 
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user2" )
-                .param( "password", "password" ).param( "permission", "1" ).content( TestUtils.asJsonString( u ) ) )
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new NamePasswordPermissionUserDTO( "user2", "password", 1, u ) ) ) )
                 .andExpect( status().isOk() );
 
-        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON ).param( "userName", "user3" )
-                .param( "password", "password" ).param( "permission", "2" ).content( TestUtils.asJsonString( u ) ) )
+        mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new NamePasswordPermissionUserDTO( "user3", "password", 2, u ) ) ) )
                 .andExpect( status().isOk() );
 
         Assertions.assertEquals( 3, service.findAll().size(), "There should only be two users in the CoffeeMaker" );
