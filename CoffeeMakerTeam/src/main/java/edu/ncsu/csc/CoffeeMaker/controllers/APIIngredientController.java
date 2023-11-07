@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.IngredientUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
@@ -294,10 +295,5 @@ public class APIIngredientController extends APIController {
         ingredientService.delete( ingredient );
 
         return new ResponseEntity( successResponse( name + " was deleted successfully" ), HttpStatus.OK );
-    }
-
-    public class IngredientUserDTO {
-        Ingredient ingredient;
-        User       authUser;
     }
 }
