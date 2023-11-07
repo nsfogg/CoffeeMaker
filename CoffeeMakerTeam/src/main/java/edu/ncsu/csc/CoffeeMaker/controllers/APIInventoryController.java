@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.InventoryUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
@@ -67,10 +68,6 @@ public class APIInventoryController extends APIController {
             return new ResponseEntity( errorResponse( "Cannot view the inventory" ), HttpStatus.BAD_REQUEST );
         }
         final Inventory inventory = service.getInventory();
-        if ( checkUser.getPermissions() != 2 ) {
-
-            return new ResponseEntity( errorResponse( "Cannot view the inventory" ), HttpStatus.BAD_REQUEST );
-        }
         return new ResponseEntity( inventory, HttpStatus.OK );
 
     }
@@ -115,8 +112,4 @@ public class APIInventoryController extends APIController {
         return new ResponseEntity( inventoryCurrent, HttpStatus.OK );
     }
 
-    public class InventoryUserDTO {
-        Inventory inventory;
-        User      authUser;
-    }
 }

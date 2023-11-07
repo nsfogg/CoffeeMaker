@@ -25,7 +25,9 @@ import com.google.gson.Gson;
 
 import edu.ncsu.csc.CoffeeMaker.common.TestUtils;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
+import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
+import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -44,6 +46,15 @@ public class APIRecipeTest {
     @Autowired
     private RecipeService         service;
 
+    @Autowired
+    private UserService           userService;
+
+    final User                    customer = new User( "customer", "password", 0 );
+
+    final User                    barista  = new User( "barista", "password", 1 );
+
+    final User                    manager  = new User( "manager", "password", 2 );
+
     /**
      * Sets up the tests.
      */
@@ -52,6 +63,11 @@ public class APIRecipeTest {
         mvc = MockMvcBuilders.webAppContextSetup( context ).build();
 
         service.deleteAll();
+        userService.deleteAll();
+
+        userService.save( customer );
+        userService.save( barista );
+        userService.save( manager );
     }
 
     @Test
