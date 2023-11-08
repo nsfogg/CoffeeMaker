@@ -71,14 +71,8 @@ public class APIUserController extends APIController {
      * @return ResponseEntity indicating success if user successfully logged in
      *         or failure otherwise
      */
-    @GetMapping ( BASE_PATH + "/users/{userName}/{password}" )
-    public ResponseEntity login ( @PathVariable final String userName, @PathVariable final String password ) {
-
-        if ( getUser( "admin" ) == null ) {
-            final User u = new User( "admin", "password", 2 );
-            service.save( u );
-        }
-
+    @GetMapping ( BASE_PATH + "/users/{userName}" )
+    public ResponseEntity login ( @PathVariable final String userName, @RequestBody final String password ) {
         final User user = getUser( userName );
 
         if ( user != null && user.getPassword() == User.hashPassword( password ) ) {
@@ -132,34 +126,17 @@ public class APIUserController extends APIController {
         // we are making a customer
         if ( permission == 0 ) {
             service.save( new User( userName, password, permission ) );
-            return new ResponseEntity( successResponse( userName + " successfully created" ), HttpStatus.OK );
+            return new ResponseEntity( successResponse( user.getUserName() + " successfully created" ), HttpStatus.OK );
         }
         else {
             if ( authenticate( user.getUserName(), user.getPassword() ) && user.isManager() ) {
                 service.save( new User( userName, password, permission ) );
-                return new ResponseEntity( successResponse( userName + " successfully created" ), HttpStatus.OK );
+                return new ResponseEntity( successResponse( user.getUserName() + " successfully created" ),
+                        HttpStatus.OK );
             }
         }
         return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
                 HttpStatus.FORBIDDEN );
-    }
-
-    /**
-     * REST API method to provide POST access to the User model. This is used to
-     * create a new User by automatically converting the JSON RequestBody
-     * provided to a User object. Invalid JSON will fail.
-     *
-     * @param recipe
-     *            The valid User to be saved.
-     * @return ResponseEntity indicating success if the User could be saved, or
-     *         an error if it could not be
-     */
-    @PostMapping ( BASE_PATH + "/makeadmin" )
-    public ResponseEntity makeAdmin () {
-
-        final User u = new User( "admin", "password", 2 );
-        service.save( u );
-        return new ResponseEntity( successResponse( "Admin made" ), HttpStatus.OK );
     }
 
     /**
