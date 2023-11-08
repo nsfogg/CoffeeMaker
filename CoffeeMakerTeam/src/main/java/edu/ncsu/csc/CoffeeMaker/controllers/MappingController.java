@@ -24,7 +24,46 @@ public class MappingController {
      */
     @GetMapping ( { "/index", "/" } )
     public String index ( final Model model ) {
-        return "index";
+        return "login";
+    }
+
+    /**
+     * On a GET request to /customerindex, the IndexController will return
+     * /src/main/resources/templates/customerindex.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/customerindex", "/customerindex.html" } )
+    public String customerIndexPage ( final Model model ) {
+        return "customerindex";
+    }
+
+    /**
+     * On a GET request to /baristaindex, the IndexController will return
+     * /src/main/resources/templates/baristaindex.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/baristaindex", "/baristaindex.html" } )
+    public String baristaIndexPage ( final Model model ) {
+        return "baristaindex";
+    }
+
+    /**
+     * On a GET request to /managerindex, the IndexController will return
+     * /src/main/resources/templates/managerindex.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/managerindex", "/managerindex.html" } )
+    public String managerIndexPage ( final Model model ) {
+        return "managerindex";
     }
 
     /**
@@ -52,6 +91,7 @@ public class MappingController {
     public String addIngredientPage ( final Model model ) {
         return "ingredient";
     }
+
     /**
      * On a GET request to /deleterecipe, the DeleteRecipeController will return
      * /src/main/resources/templates/deleterecipe.html.
@@ -104,6 +144,45 @@ public class MappingController {
     @GetMapping ( { "/makecoffee", "/makecoffee.html" } )
     public String makeCoffeeForm ( final Model model ) {
         return "makecoffee";
+    }
+
+    /**
+     * On a GET request to /login, the LoginController will return
+     * /src/main/resources/templates/login.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/login", "/login.html" } )
+    public String makeLoginForm ( final Model model ) {
+        return "login";
+    }
+
+    /**
+     * On a GET request to /newcustomer, the NewCustomerController will return
+     * /src/main/resources/templates/newcustomer.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/newcustomer", "/newcustomer.html" } )
+    public String makeNewCustomerForm ( final Model model ) {
+        return "newcustomer";
+    }
+
+    /**
+     * On a GET request to /newstaff, the NewStaffController will return
+     * /src/main/resources/templates/newstaff.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/newstaff", "/newstaff.html" } )
+    public String makeNewStaffForm ( final Model model ) {
+        return "newstaff";
     }
 
 }
