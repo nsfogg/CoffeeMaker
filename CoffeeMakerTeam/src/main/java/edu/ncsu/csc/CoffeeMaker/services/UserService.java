@@ -36,7 +36,7 @@ public class UserService extends Service<User, Long> {
     /**
      * Find a recipe with the provided name
      *
-     * @param name
+     * @param userName
      *            Name of the recipe to find
      * @return found recipe, null if none
      */

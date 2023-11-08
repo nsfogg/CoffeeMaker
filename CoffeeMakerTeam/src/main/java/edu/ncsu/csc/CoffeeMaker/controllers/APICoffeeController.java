@@ -66,8 +66,8 @@ public class APICoffeeController extends APIController {
      *
      * @param name
      *            recipe name
-     * @param amtPaid
-     *            amount paid
+     * @param body
+     *            User information
      * @return The change the customer is due if successful
      */
     @PostMapping ( BASE_PATH + "/makecoffee/{name}" )

@@ -54,6 +54,8 @@ public class APIInventoryController extends APIController {
      * REST API endpoint to provide GET access to the CoffeeMaker's singleton
      * Inventory. This will convert the Inventory to JSON.
      *
+     * @param user
+     *            the current user
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/inventory" )
@@ -77,8 +79,8 @@ public class APIInventoryController extends APIController {
      * Inventory. This will update the Inventory of the CoffeeMaker by adding
      * amounts from the Inventory provided to the CoffeeMaker's stored inventory
      *
-     * @param inventory
-     *            amounts to add to inventory
+     * @param body
+     *            the current users information to authenticate
      * @return response to the request
      */
     @PutMapping ( BASE_PATH + "/inventory" )

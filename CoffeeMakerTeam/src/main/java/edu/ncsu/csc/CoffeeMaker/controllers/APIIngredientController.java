@@ -74,6 +74,8 @@ public class APIIngredientController extends APIController {
      * list. This will convert the ingredients list to a JSON Array of
      * Ingredient objects.
      *
+     * @param user
+     *            the current user
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/ingredients" )
@@ -98,6 +100,8 @@ public class APIIngredientController extends APIController {
      *
      * @param name
      *            in which to get the ingredient with
+     * @param user
+     *            the current user
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/ingredients/{name}" )
@@ -128,8 +132,8 @@ public class APIIngredientController extends APIController {
      * the initial amount passed in the request body is invalid an error
      * response will be returned and DB changes will be rolled back.
      *
-     * @param ingredient
-     *            The valid Ingredient to be saved.
+     * @param body
+     *            The Current representation of the user to authenticate
      * @param amount
      *            the initial amount of the ingredient in the inventory.
      *
@@ -207,8 +211,8 @@ public class APIIngredientController extends APIController {
      *
      * @param name
      *            the name of the ingredient to update
-     * @param ingredient
-     *            the updated ingredient object
+     * @param body
+     *            the current users information to authenticate
      * @return response to the request
      */
     @PutMapping ( BASE_PATH + "/ingredients/{name}" )
@@ -249,6 +253,8 @@ public class APIIngredientController extends APIController {
      *
      * @param name
      *            The name of the Ingredient to delete
+     * @param user
+     *            the current user
      * @return Success if the ingredient could be deleted; an error if the
      *         ingredient does not exist
      */

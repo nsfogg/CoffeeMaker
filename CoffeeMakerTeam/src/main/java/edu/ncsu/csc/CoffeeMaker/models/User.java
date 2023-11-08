@@ -38,11 +38,12 @@ public class User extends DomainObject {
     /** hashed password for user */
     private int     password;
 
-    /**
-     * The ingredients of this recipe and their corresponding amounts.
-     *
-     * Resources referenced: https://www.baeldung.com/hibernate-persisting-maps
-     */
+    // /**
+    // * The ingredients of this recipe and their corresponding amounts.
+    // *
+    // * Resources referenced:
+    // https://www.baeldung.com/hibernate-persisting-maps
+    // */
     // @ElementCollection ( fetch = FetchType.EAGER )
     // @CollectionTable ( name = "recipe_ingredients", joinColumns = @JoinColumn
     // ( name = "recipe_id" ) )
@@ -82,6 +83,16 @@ public class User extends DomainObject {
         setPermissions( permissions );
     }
 
+    /**
+     * A user constructor that does not take in their unique id
+     *
+     * @param userName
+     *            the name of the user
+     * @param password
+     *            the password of the user
+     * @param perms
+     *            the users permission levels
+     */
     public User ( final String userName, final String password, final int perms ) {
         this();
         setUserName( userName );
@@ -110,6 +121,8 @@ public class User extends DomainObject {
     }
 
     /**
+     * Will get the userName
+     *
      * @return the userName of the user
      */
     public String getUserName () {
@@ -117,6 +130,8 @@ public class User extends DomainObject {
     }
 
     /**
+     * Will get the users permission level
+     *
      * @return the permissions of the user
      */
     public Integer getPermissions () {
@@ -124,6 +139,8 @@ public class User extends DomainObject {
     }
 
     /**
+     * Will get the users password
+     *
      * @return the hashed password of the user
      */
     public int getPassword () {
@@ -131,6 +148,8 @@ public class User extends DomainObject {
     }
 
     /**
+     * Will set the users name
+     *
      * @param userName
      *            the userName to set
      */
@@ -139,6 +158,8 @@ public class User extends DomainObject {
     }
 
     /**
+     * Will set the users permissions
+     *
      * @param permissions
      *            the permissions to set
      */
@@ -147,6 +168,8 @@ public class User extends DomainObject {
     }
 
     /**
+     * Will set the users password
+     *
      * @param password
      *            the password to set
      */
@@ -155,22 +178,29 @@ public class User extends DomainObject {
     }
 
     /**
+     * Will hash the users password
+     *
      * @param password
      *            the password to set
+     * @return the hashed password
      */
     public static int hashPassword ( final String password ) {
         return password.hashCode();
     }
 
     /**
+     * Order object that contains a recipe
      *
      * @param recipe
+     *            the recipe for the order
+     * @return null if order does not exist, else the order Objecgt
      */
     public Order order ( final Recipe recipe ) {
         return null;
     }
 
     /**
+     * Will check the users permission level for manager
      *
      * @return true if the user is the manager. False otherwise
      */
@@ -179,6 +209,7 @@ public class User extends DomainObject {
     }
 
     /**
+     * Will check the users permission level for barista
      *
      * @return true if the user is the barista. False otherwise
      */
@@ -187,6 +218,7 @@ public class User extends DomainObject {
     }
 
     /**
+     * Will check the users permission level for customer
      *
      * @return true if the user is the customer. False otherwise
      */

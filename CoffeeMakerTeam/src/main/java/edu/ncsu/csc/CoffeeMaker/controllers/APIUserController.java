@@ -52,7 +52,7 @@ public class APIUserController extends APIController {
      * REST API method to provide GET access to a specific user, as indicated by
      * the path variable provided (the name of the user desired)
      *
-     * @param name
+     * @param userName
      *            user name
      * @return User
      */
@@ -100,15 +100,15 @@ public class APIUserController extends APIController {
         return false;
     }
 
-    // TODO: getOrders
+    // getOrders
 
     /**
      * REST API method to provide POST access to the User model. This is used to
      * create a new User by automatically converting the JSON RequestBody
      * provided to a User object. Invalid JSON will fail.
      *
-     * @param recipe
-     *            The valid User to be saved.
+     * @param body
+     *            current users information to authenticate
      * @return ResponseEntity indicating success if the User could be saved, or
      *         an error if it could not be
      */
@@ -144,8 +144,10 @@ public class APIUserController extends APIController {
      * Inventory, by making a DELETE request to the API endpoint and indicating
      * the recipe to delete (as a path variable)
      *
-     * @param name
-     *            The name of the Recipe to delete
+     * @param userName
+     *            The name of the user
+     * @param user
+     *            the current user
      * @return Success if the recipe could be deleted; an error if the recipe
      *         does not exist
      */

@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * Finds a User object with the provided name. Spring will generate code to
      * make this happen.
      *
-     * @param name
+     * @param userName
      *            Name of the recipe
      * @return Found User, null if none.
      */

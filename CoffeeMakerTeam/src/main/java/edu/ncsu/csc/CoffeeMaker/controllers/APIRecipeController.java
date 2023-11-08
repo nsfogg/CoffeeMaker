@@ -58,6 +58,8 @@ public class APIRecipeController extends APIController {
     /**
      * REST API method to provide GET access to all recipes in the system
      *
+     * @param user
+     *            the current user
      * @return JSON representation of all recipies
      */
     @GetMapping ( BASE_PATH + "/recipes" )
@@ -77,6 +79,8 @@ public class APIRecipeController extends APIController {
      *
      * @param name
      *            recipe name
+     * @param user
+     *            the current user
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/recipes/{name}" )
@@ -101,8 +105,8 @@ public class APIRecipeController extends APIController {
      * to create a new Recipe by automatically converting the JSON RequestBody
      * provided to a Recipe object. Invalid JSON will fail.
      *
-     * @param recipe
-     *            The valid Recipe to be saved.
+     * @param body
+     *            current users information to be authenticated
      * @return ResponseEntity indicating success if the Recipe could be saved to
      *         the inventory, or an error if it could not be
      */
@@ -143,6 +147,8 @@ public class APIRecipeController extends APIController {
      *
      * @param name
      *            The name of the Recipe to delete
+     * @param user
+     *            the current user
      * @return Success if the recipe could be deleted; an error if the recipe
      *         does not exist
      */
@@ -172,8 +178,8 @@ public class APIRecipeController extends APIController {
      *
      * @param name
      *            name of the recipe to update
-     * @param recipe
-     *            recipe to be updated
+     * @param body
+     *            current users information to authenticate
      * @return Success if the recipe could be updated; an error if the recipe
      *         does not exist
      */
