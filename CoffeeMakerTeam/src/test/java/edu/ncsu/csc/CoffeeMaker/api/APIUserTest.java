@@ -161,14 +161,11 @@ public class APIUserTest {
                 .content( TestUtils.asJsonString( new NamePasswordPermissionUserDTO( "user1", "password", 0, u ) ) ) )
                 .andExpect( status().isOk() );
         // log in
-        mvc.perform( get( "/api/v1/users/user1" ).contentType( MediaType.APPLICATION_JSON ).content( "password" ) )
-                .andExpect( status().isOk() );
+        mvc.perform( get( "/api/v1/users/user1/password" ) ).andExpect( status().isOk() );
         // now use an invalid user
-        mvc.perform( get( "/api/v1/users/user2" ).contentType( MediaType.APPLICATION_JSON ).content( "password" ) )
-                .andExpect( status().isNotFound() );
+        mvc.perform( get( "/api/v1/users/user2/password" ) ).andExpect( status().isNotFound() );
         // now use an invalid passowrd
-        mvc.perform( get( "/api/v1/users/user1" ).contentType( MediaType.APPLICATION_JSON ).content( "notmypassword" ) )
-                .andExpect( status().isNotFound() );
+        mvc.perform( get( "/api/v1/users/user1/notmypassword" ) ).andExpect( status().isNotFound() );
 
     }
 
