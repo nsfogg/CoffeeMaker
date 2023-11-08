@@ -28,6 +28,45 @@ public class MappingController {
     }
 
     /**
+     * On a GET request to /customerindex, the IndexController will return
+     * /src/main/resources/templates/customerindex.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/customerindex", "/customerindex.html" } )
+    public String customerIndexPage ( final Model model ) {
+        return "customerindex";
+    }
+
+    /**
+     * On a GET request to /baristaindex, the IndexController will return
+     * /src/main/resources/templates/baristaindex.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/baristaindex", "/baristaindex.html" } )
+    public String baristaIndexPage ( final Model model ) {
+        return "baristaindex";
+    }
+
+    /**
+     * On a GET request to /managerindex, the IndexController will return
+     * /src/main/resources/templates/managerindex.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/managerindex", "/managerindex.html" } )
+    public String managerIndexPage ( final Model model ) {
+        return "managerindex";
+    }
+
+    /**
      * On a GET request to /recipe, the RecipeController will return
      * /src/main/resources/templates/recipe.html.
      *
@@ -52,6 +91,7 @@ public class MappingController {
     public String addIngredientPage ( final Model model ) {
         return "ingredient";
     }
+
     /**
      * On a GET request to /deleterecipe, the DeleteRecipeController will return
      * /src/main/resources/templates/deleterecipe.html.
