@@ -8,10 +8,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.PaidUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
+import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
+import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
  *
@@ -33,14 +36,28 @@ public class APICoffeeController extends APIController {
      * manipulating the Inventory model
      */
     @Autowired
-    private InventoryService inventoryService;
+    private InventoryService  inventoryService;
 
     /**
      * RecipeService object, to be autowired in by Spring to allow for
      * manipulating the Recipe model
      */
     @Autowired
-    private RecipeService    recipeService;
+    private RecipeService     recipeService;
+
+    /**
+     * UserService object, to be autowired in by Spring to allow for
+     * manipulating the User model
+     */
+    @Autowired
+    private UserService       userService;
+
+    /**
+     * UserController object, to be autowired in by Spring to allow for
+     * manipulating the User Controller
+     */
+    @Autowired
+    private APIUserController control;
 
     /**
      * REST API method to make coffee by completing a POST request with the ID
@@ -54,7 +71,20 @@ public class APICoffeeController extends APIController {
      * @return The change the customer is due if successful
      */
     @PostMapping ( BASE_PATH + "/makecoffee/{name}" )
-    public ResponseEntity makeCoffee ( @PathVariable ( "name" ) final String name, @RequestBody final int amtPaid ) {
+    public ResponseEntity makeCoffee ( @PathVariable ( "name" ) final String name,
+            @RequestBody final PaidUserDTO body ) {
+
+        final User user = body.authUser;
+        final int amtPaid = body.paid;
+
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        final User checkUser = userService.findByName( user.getUserName() );
+        if ( !checkUser.isCustomer() ) {
+            return new ResponseEntity( errorResponse( "Only customers can order coffee" ), HttpStatus.BAD_REQUEST );
+        }
         final Recipe recipe = recipeService.findByName( name );
         if ( recipe == null ) {
             return new ResponseEntity( errorResponse( "No recipe selected" ), HttpStatus.NOT_FOUND );
@@ -104,4 +134,5 @@ public class APICoffeeController extends APIController {
         // not enough money
         return change;
     }
+
 }

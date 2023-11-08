@@ -24,10 +24,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import edu.ncsu.csc.CoffeeMaker.common.TestUtils;
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.InventoryUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
+import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
+import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
@@ -49,6 +52,15 @@ public class APIInventoryTest {
     @Autowired
     private IngredientService     ingredientService;
 
+    @Autowired
+    private UserService           userService;
+
+    final User                    customer = new User( "customer", "password", 0 );
+
+    final User                    barista  = new User( "barista", "password", 1 );
+
+    final User                    manager  = new User( "manager", "password", 2 );
+
     /**
      * Sets up the tests.
      */
@@ -57,6 +69,11 @@ public class APIInventoryTest {
         mvc = MockMvcBuilders.webAppContextSetup( context ).build();
         inventoryService.deleteAll();
         ingredientService.deleteAll();
+        userService.deleteAll();
+
+        userService.save( customer );
+        userService.save( barista );
+        userService.save( manager );
     }
 
     @Test
@@ -64,8 +81,10 @@ public class APIInventoryTest {
     public void testGetInventory () throws Exception {
 
         // Ensure the inventory is initially empty
-        String response = mvc.perform( get( "/api/v1/inventory" ) ).andExpect( status().isOk() ).andReturn()
-                .getResponse().getContentAsString();
+        String response = mvc
+                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
         final Inventory responseInventory = TestUtils.asInventory( response );
 
@@ -81,11 +100,20 @@ public class APIInventoryTest {
         responseInventory.addNewIngredient( ingredientService.findByName( "Vanilla" ), 10 );
 
         mvc.perform( put( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( responseInventory ) ) ).andExpect( status().isOk() );
+                .content( TestUtils.asJsonString( new InventoryUserDTO( responseInventory, manager ) ) ) )
+                .andExpect( status().isOk() );
 
         // Check the changes are reflected in the response from GET
-        response = mvc.perform( get( "/api/v1/inventory" ) ).andExpect( status().isOk() ).andReturn().getResponse()
-                .getContentAsString();
+        response = mvc
+                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+
+        mvc.perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( customer ) ) ).andExpect( status().isBadRequest() );
+
+        mvc.perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
 
         assertEquals( 1, responseInventory.getInventory().size() );
         assertTrue( responseInventory.getInventory().containsKey( i ) );
@@ -98,8 +126,10 @@ public class APIInventoryTest {
     public void testUpdateInventory () throws Exception {
 
         // Ensure the inventory is initially empty
-        String response = mvc.perform( get( "/api/v1/inventory" ) ).andExpect( status().isOk() ).andReturn()
-                .getResponse().getContentAsString();
+        String response = mvc
+                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
         Inventory responseInventory = TestUtils.asInventory( response );
 
@@ -115,11 +145,14 @@ public class APIInventoryTest {
 
         // Put the new ingredient in the inventory
         mvc.perform( put( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( responseInventory ) ) ).andExpect( status().isOk() );
+                .content( TestUtils.asJsonString( new InventoryUserDTO( responseInventory, manager ) ) ) )
+                .andExpect( status().isOk() );
 
         // Check the changes are reflected in the response from GET
-        response = mvc.perform( get( "/api/v1/inventory" ) ).andExpect( status().isOk() ).andReturn().getResponse()
-                .getContentAsString();
+        response = mvc
+                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
         responseInventory = TestUtils.asInventory( response );
 
@@ -140,11 +173,22 @@ public class APIInventoryTest {
         chocolate = ingredientService.findByName( "Chocolate" );
         responseInventory.addNewIngredient( chocolate, 5 );
         mvc.perform( put( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( responseInventory ) ) ).andExpect( status().isOk() );
+                .content( TestUtils.asJsonString( new InventoryUserDTO( responseInventory, manager ) ) ) )
+                .andExpect( status().isOk() );
+
+        mvc.perform( put( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new InventoryUserDTO( responseInventory, customer ) ) ) )
+                .andExpect( status().isBadRequest() );
+
+        mvc.perform( put( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new InventoryUserDTO( responseInventory, new User() ) ) ) )
+                .andExpect( status().isForbidden() );
 
         // Check the changes are reflected in the response from GET
-        response = mvc.perform( get( "/api/v1/inventory" ) ).andExpect( status().isOk() ).andReturn().getResponse()
-                .getContentAsString();
+        response = mvc
+                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
         responseInventory = TestUtils.asInventory( response );
 
@@ -163,8 +207,10 @@ public class APIInventoryTest {
     public void testThrowsExceptionInventory () throws Exception {
 
         // Ensure the inventory is initially empty
-        final String response = mvc.perform( get( "/api/v1/inventory" ) ).andExpect( status().isOk() ).andReturn()
-                .getResponse().getContentAsString();
+        final String response = mvc
+                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
         final Inventory responseInventory = TestUtils.asInventory( response );
 
@@ -176,7 +222,8 @@ public class APIInventoryTest {
         final Map<Ingredient, Integer> inv = responseInventory.getInventory();
         inv.put( i, -10 );
         mvc.perform( put( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( responseInventory ) ) ).andExpect( status().is4xxClientError() );
+                .content( TestUtils.asJsonString( new InventoryUserDTO( responseInventory, manager ) ) ) )
+                .andExpect( status().is4xxClientError() );
 
     }
 }
