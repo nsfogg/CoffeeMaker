@@ -159,6 +159,10 @@
 				return false;
 			};
 			
+			$scope.moveToLogin = function () {
+				window.location.href = 'login.html';
+			}
+			
 			$scope.submitCustomer = function () {
 
 				if (hasAllFields()) {
@@ -252,9 +256,11 @@
 					aria-describedby="password" ng-model="customer.password" id="password" required>
 			</div>
 			
-			<div class="row w-100 ms-3 mt-5">
+		<div class="row w-100 ms-3 mt-5">
 			<div class="col p-0 mt-0">
 				
+				<button class="btn btn-primary btn-sm float-left bottom-button ms-3" 
+					ng-click="moveToLogin()">Home</button>
 				
 				<button type="submit" class="btn btn-primary btn-sm float-end bottom-button ms-3" ng-click="submitCustomer()">Submit</button>
 
@@ -264,8 +270,6 @@
 		</div>
 			
 		</form>
-		
-		<a href="login"><button class="btn btn-primary btn-sm float-left bottom-button ms-3">Home</button></a>
 		
 		<div class="col m-3 w-75">
             <label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
