@@ -6,41 +6,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
-import edu.ncsu.csc.CoffeeMaker.models.Recipe;
-import edu.ncsu.csc.CoffeeMaker.repositories.RecipeRepository;
+import edu.ncsu.csc.CoffeeMaker.models.User;
+import edu.ncsu.csc.CoffeeMaker.repositories.UserRepository;
 
 /**
- * The RecipeService is used to handle CRUD operations on the Recipe model. In
+ * The UserService is used to handle CRUD operations on the User model. In
  * addition to all functionality from `Service`, we also have functionality for
- * retrieving a single Recipe by name.
+ * retrieving a single User by name.
  *
  * @author Kai Presler-Marshall
  *
  */
 @Component
 @Transactional
-public class RecipeService extends Service<Recipe, Long> {
+public class UserService extends Service<User, Long> {
 
     /**
      * RecipeRepository, to be autowired in by Spring and provide CRUD
      * operations on Recipe model.
      */
     @Autowired
-    private RecipeRepository recipeRepository;
+    private UserRepository userRepository;
 
     @Override
-    protected JpaRepository<Recipe, Long> getRepository () {
-        return recipeRepository;
+    protected JpaRepository<User, Long> getRepository () {
+        return userRepository;
     }
 
     /**
      * Find a recipe with the provided name
      *
-     * @param name
+     * @param userName
      *            Name of the recipe to find
      * @return found recipe, null if none
      */
-    public Recipe findByName ( final String name ) {
-        return recipeRepository.findByName( name );
+    public User findByName ( final String userName ) {
+        return userRepository.findByUserName( userName );
     }
+
 }

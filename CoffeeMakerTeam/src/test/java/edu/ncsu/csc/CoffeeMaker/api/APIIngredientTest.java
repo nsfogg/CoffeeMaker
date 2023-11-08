@@ -30,11 +30,14 @@ import org.springframework.web.context.WebApplicationContext;
 import com.google.gson.reflect.TypeToken;
 
 import edu.ncsu.csc.CoffeeMaker.common.TestUtils;
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.IngredientUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
+import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
+import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -62,6 +65,15 @@ public class APIIngredientTest {
     @Autowired
     private RecipeService         rService;
 
+    @Autowired
+    private UserService           userService;
+
+    final User                    customer = new User( "customer", "password", 0 );
+
+    final User                    barista  = new User( "barista", "password", 1 );
+
+    final User                    manager  = new User( "manager", "password", 2 );
+
     /**
      * Sets up the tests.
      */
@@ -72,7 +84,11 @@ public class APIIngredientTest {
         rService.deleteAll();
         inventoryService.deleteAll();
         ingredientService.deleteAll();
+        userService.deleteAll();
 
+        userService.save( customer );
+        userService.save( barista );
+        userService.save( manager );
     }
 
     @Test
@@ -81,8 +97,9 @@ public class APIIngredientTest {
 
         final Ingredient i = new Ingredient( "Vanilla" );
 
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "10" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i, manager ) ) ) )
                 .andExpect( status().isOk() );
 
     }
@@ -93,22 +110,33 @@ public class APIIngredientTest {
 
         final Ingredient i = new Ingredient( "Vanilla" );
 
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "10" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i, manager ) ) ) )
                 .andExpect( status().isOk() );
 
-        String response = mvc.perform( get( "/api/v1/ingredients/Vanilla" ) ).andExpect( status().isOk() ).andReturn()
-                .getResponse().getContentAsString();
+        String response = mvc
+                .perform( get( "/api/v1/ingredients/Vanilla" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
         final Ingredient responseI = TestUtils.gson.fromJson( response, Ingredient.class );
 
         assertEquals( "Vanilla", responseI.getName() );
 
         // Test getting a non existing ingredient
-        response = mvc.perform( get( "/api/v1/ingredients/dummy" ) ).andExpect( status().is4xxClientError() )
-                .andReturn().getResponse().getContentAsString();
+        response = mvc
+                .perform( get( "/api/v1/ingredients/dummy" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().is4xxClientError() ).andReturn().getResponse().getContentAsString();
 
-        System.out.println( response );
+        mvc.perform( get( "/api/v1/ingredients/Vanilla" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( customer ) ) ).andExpect( status().is4xxClientError() ).andReturn()
+                .getResponse().getContentAsString();
+
+        mvc.perform( get( "/api/v1/ingredients/Vanilla" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().is4xxClientError() ).andReturn()
+                .getResponse().getContentAsString();
 
     }
 
@@ -127,8 +155,21 @@ public class APIIngredientTest {
         assertEquals( i1, ingredientService.findByName( "Vanilla" ) );
 
         final Ingredient i2 = new Ingredient( "Vanilla" );
-        mvc.perform( post( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( i2 ) ) ).andExpect( status().is4xxClientError() );
+        mvc.perform( post( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON ).param( "amount", "10" )
+                .content( TestUtils.asJsonString( new IngredientUserDTO( i2, manager ) ) ) )
+                .andExpect( status().isConflict() );
+
+        Assertions.assertEquals( 1, ingredientService.count(), "There should only one ingredient in the CoffeeMaker" );
+
+        mvc.perform( post( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON ).param( "amount", "10" )
+                .content( TestUtils.asJsonString( new IngredientUserDTO( i2, new User() ) ) ) )
+                .andExpect( status().isForbidden() );
+
+        Assertions.assertEquals( 1, ingredientService.count(), "There should only one ingredient in the CoffeeMaker" );
+
+        mvc.perform( post( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON ).param( "amount", "10" )
+                .content( TestUtils.asJsonString( new IngredientUserDTO( i2, customer ) ) ) )
+                .andExpect( status().isForbidden() );
 
         Assertions.assertEquals( 1, ingredientService.count(), "There should only one ingredient in the CoffeeMaker" );
     }
@@ -141,16 +182,18 @@ public class APIIngredientTest {
 
         final Ingredient i1 = new Ingredient( "Vanilla" );
 
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "10" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i1 ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i1, manager ) ) ) )
                 .andExpect( status().isOk() );
 
         Assertions.assertEquals( 1, ingredientService.count() );
         assertNotNull( ingredientService.findByName( "Vanilla" ) );
 
         final Ingredient i2 = new Ingredient( "Chocolate" );
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "10" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i2 ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i2, manager ) ) ) )
                 .andExpect( status().isOk() );
 
         assertNotNull( ingredientService.findByName( "Chocolate" ) );
@@ -167,34 +210,52 @@ public class APIIngredientTest {
         Assertions.assertEquals( 0, ingredientService.count(), "There should be no Ingredients in the CoffeeMaker" );
 
         final Ingredient i1 = new Ingredient( "Vanilla" );
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "200" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i1 ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "200" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i1, manager ) ) ) )
                 .andExpect( status().isOk() );
 
         Assertions.assertEquals( 1, ingredientService.count(),
                 "There should only be one ingredient in the CoffeeMaker" );
 
-        mvc.perform( delete( "/api/v1/ingredients/Vanilla" ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/ingredients/Vanilla" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( customer ) ) ).andExpect( status().isForbidden() );
+        Assertions.assertEquals( 1, ingredientService.count(), "There should be no ingredients in the CoffeeMaker" );
+
+        mvc.perform( delete( "/api/v1/ingredients/Vanilla" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
+        Assertions.assertEquals( 1, ingredientService.count(), "There should be no ingredients in the CoffeeMaker" );
+
+        mvc.perform( delete( "/api/v1/ingredients/notathing" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( manager ) ) ).andExpect( status().isNotFound() );
+        Assertions.assertEquals( 1, ingredientService.count(), "There should be no ingredients in the CoffeeMaker" );
+
+        mvc.perform( delete( "/api/v1/ingredients/Vanilla" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( manager ) ) ).andExpect( status().isOk() );
 
         // Testing adding and deleting 2 ingredients
 
         Assertions.assertEquals( 0, ingredientService.count(), "There should be no ingredients in the CoffeeMaker" );
 
         final Ingredient i2 = new Ingredient( "Sugar" );
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "200" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i2 ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "200" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i2, manager ) ) ) )
                 .andExpect( status().isOk() );
 
         final Ingredient i3 = new Ingredient( "Caramel" );
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "10" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i3 ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i3, manager ) ) ) )
                 .andExpect( status().isOk() );
 
         Assertions.assertEquals( 2, ingredientService.count(),
                 "There should only be two ingredients in the CoffeeMaker" );
 
-        mvc.perform( delete( "/api/v1/ingredients/Sugar" ) ).andExpect( status().isOk() );
-        mvc.perform( delete( "/api/v1/ingredients/Caramel" ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/ingredients/Sugar" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( manager ) ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/ingredients/Caramel" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( manager ) ) ).andExpect( status().isOk() );
 
         Assertions.assertEquals( 0, ingredientService.count(), "There should be no recipes in the CoffeeMaker" );
 
@@ -209,12 +270,14 @@ public class APIIngredientTest {
         final Ingredient i1 = new Ingredient( "Vanilla" );
         final Ingredient i2 = new Ingredient( "Chocolate" );
 
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "200" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i1 ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "200" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i1, manager ) ) ) )
                 .andExpect( status().isOk() );
 
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "200" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i2 ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "200" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i2, manager ) ) ) )
                 .andExpect( status().isOk() );
 
         Assertions.assertEquals( 2, ingredientService.count(),
@@ -232,7 +295,8 @@ public class APIIngredientTest {
 
         // Deleting an ingredient should delete it system wide which means it
         // will be deleted from any recipes that have it.
-        mvc.perform( delete( "/api/v1/ingredients/Vanilla" ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/ingredients/Vanilla" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( manager ) ) ).andExpect( status().isOk() );
 
         // Testing adding and deleting 2 ingredients
         Assertions.assertEquals( 1, ingredientService.count(), "There should be one ingredient in the CoffeeMaker" );
@@ -254,15 +318,18 @@ public class APIIngredientTest {
         Assertions.assertEquals( 0, ingredientService.count(), "There should be no Ingredients in the CoffeeMaker" );
 
         final Ingredient i1 = new Ingredient( "Vanilla" );
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "200" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i1 ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "200" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i1, manager ) ) ) )
                 .andExpect( status().isOk() );
 
         Assertions.assertEquals( 1, ingredientService.count(),
                 "There should only be one ingredient in the CoffeeMaker" );
 
-        final String response = mvc.perform( get( "/api/v1/ingredients" ) ).andExpect( status().isOk() ).andReturn()
-                .getResponse().getContentAsString();
+        final String response = mvc
+                .perform( get( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
         final Type listType = new TypeToken<ArrayList<Ingredient>>() {
         }.getType();
@@ -271,6 +338,12 @@ public class APIIngredientTest {
 
         assertEquals( 1, ingredients.size() );
         assertEquals( i1, ingredients.get( 0 ) );
+
+        mvc.perform( get( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( customer ) ) ).andExpect( status().isForbidden() );
+
+        mvc.perform( get( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
 
     }
 
@@ -281,16 +354,18 @@ public class APIIngredientTest {
         Assertions.assertEquals( 0, ingredientService.count(), "There should be no Ingredients in the CoffeeMaker" );
 
         final Ingredient i1 = new Ingredient( "Vanilla" );
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "200" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i1 ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "200" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i1, manager ) ) ) )
                 .andExpect( status().isOk() );
 
         Assertions.assertEquals( 1, ingredientService.count(),
                 "There should only be one ingredient in the CoffeeMaker" );
 
         final Ingredient i2 = new Ingredient( "Vanilla" );
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "200" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i2 ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "200" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i2, manager ) ) ) )
                 .andExpect( status().is4xxClientError() );
 
         Assertions.assertEquals( 1, ingredientService.count(),
@@ -306,8 +381,9 @@ public class APIIngredientTest {
         Assertions.assertEquals( 0, ingredientService.count(), "There should be no Ingredients in the CoffeeMaker" );
 
         Ingredient i1 = new Ingredient( "Vanilla" );
-        mvc.perform( post( "/api/v1/ingredients" ).queryParam( "amount", "200" )
-                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( i1 ) ) )
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "200" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i1, manager ) ) ) )
                 .andExpect( status().isOk() );
 
         Assertions.assertEquals( 1, ingredientService.count(),
@@ -317,7 +393,16 @@ public class APIIngredientTest {
         final Ingredient i2 = new Ingredient( "Caramel" );
 
         mvc.perform( put( "/api/v1/ingredients/Vanilla" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( i2 ) ) ).andExpect( status().isOk() );
+                .content( TestUtils.asJsonString( new IngredientUserDTO( i2, customer ) ) ) )
+                .andExpect( status().isForbidden() );
+
+        mvc.perform( put( "/api/v1/ingredients/Vanilla" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new IngredientUserDTO( i2, new User() ) ) ) )
+                .andExpect( status().isForbidden() );
+
+        mvc.perform( put( "/api/v1/ingredients/Vanilla" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new IngredientUserDTO( i2, manager ) ) ) )
+                .andExpect( status().isOk() );
 
         Assertions.assertEquals( 1, ingredientService.count(),
                 "There should only be one ingredient in the CoffeeMaker" );
@@ -326,7 +411,8 @@ public class APIIngredientTest {
         assertEquals( i1, ingredientService.findByName( "Caramel" ) );
 
         mvc.perform( put( "/api/v1/ingredients/FakeIngredient" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( i2 ) ) ).andExpect( status().is4xxClientError() );
+                .content( TestUtils.asJsonString( new IngredientUserDTO( i2, manager ) ) ) )
+                .andExpect( status().is4xxClientError() );
 
     }
 
