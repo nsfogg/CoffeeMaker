@@ -8,8 +8,8 @@ import javax.validation.constraints.Min;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import edu.ncsu.csc.CoffeeMaker.utils.RecipeDeserializer;
-import edu.ncsu.csc.CoffeeMaker.utils.RecipeSerializer;
+import edu.ncsu.csc.CoffeeMaker.utils.UserDeserializer;
+import edu.ncsu.csc.CoffeeMaker.utils.UserSerializer;
 
 /**
  * Recipe for the coffee maker. Recipe is tied to the database using Hibernate
@@ -19,11 +19,11 @@ import edu.ncsu.csc.CoffeeMaker.utils.RecipeSerializer;
  * @author Kai Presler-Marshall
  */
 @Entity
-@JsonDeserialize ( using = RecipeDeserializer.class )
-@JsonSerialize ( using = RecipeSerializer.class )
+@JsonDeserialize ( using = UserDeserializer.class )
+@JsonSerialize ( using = UserSerializer.class )
 public class User extends DomainObject {
 
-    /** Recipe id */
+    /** User id */
     @Id
     @GeneratedValue
     private Long    id = 0L;
@@ -82,6 +82,13 @@ public class User extends DomainObject {
         setPermissions( permissions );
     }
 
+    public User ( final String userName, final String password, final int perms ) {
+        this();
+        setUserName( userName );
+        setPassword( hashPassword( password ) );
+        setPermissions( perms );
+    }
+
     /**
      * Get the ID of the user
      *
@@ -105,21 +112,21 @@ public class User extends DomainObject {
     /**
      * @return the userName of the user
      */
-    private String getUserName () {
+    public String getUserName () {
         return userName;
     }
 
     /**
      * @return the permissions of the user
      */
-    private Integer getPermissions () {
+    public Integer getPermissions () {
         return permissions;
     }
 
     /**
      * @return the hashed password of the user
      */
-    private int getPassword () {
+    public int getPassword () {
         return password;
     }
 
@@ -127,7 +134,7 @@ public class User extends DomainObject {
      * @param userName
      *            the userName to set
      */
-    private void setUserName ( final String userName ) {
+    public void setUserName ( final String userName ) {
         this.userName = userName;
     }
 
@@ -135,7 +142,7 @@ public class User extends DomainObject {
      * @param permissions
      *            the permissions to set
      */
-    private void setPermissions ( final Integer permissions ) {
+    public void setPermissions ( final Integer permissions ) {
         this.permissions = permissions;
     }
 
@@ -143,7 +150,7 @@ public class User extends DomainObject {
      * @param password
      *            the password to set
      */
-    private void setPassword ( final int password ) {
+    public void setPassword ( final int password ) {
         this.password = password;
     }
 
@@ -151,7 +158,7 @@ public class User extends DomainObject {
      * @param password
      *            the password to set
      */
-    public int hashPassword ( final String password ) {
+    public static int hashPassword ( final String password ) {
         return password.hashCode();
     }
 
