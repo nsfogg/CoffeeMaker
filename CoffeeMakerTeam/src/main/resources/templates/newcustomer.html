@@ -132,40 +132,145 @@
 		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
 		crossorigin="anonymous"></script>
 		
-	<div class="panel">
+		<script>
+
+		/*<![CDATA[*/
+		var app = angular.module('myApp', []);
+		app.controller('customerCtrl', function ($scope, $http) {
+
+			/* Define the Customer Model */
+			$scope.customer = {
+
+				"userName": "",
+				"password": "",
+				"permission":0,
+				"user": null
+
+			};
+
+			$scope.message = "";
+			
+			function hasAllFields() {
+				//Check if any field for Customer model has been left empty
+				if ($scope.customer.userName != "" && $scope.customer.password != "") {
+					return true;
+				}
+
+				return false;
+			};
+			
+			$scope.submitCustomer = function () {
+
+				if (hasAllFields()) {
+
+					let body = {};
+
+					body.name = $scope.customer.userName;
+					body.password = $scope.customer.password;
+					body.permission = $scope.customer.permission;
+					body.authUser = $scope.customer.user;
+
+
+					//API Call
+					//POST customer user
+					$http.post("/api/v1/users/", body).then(function (successResponse) {
+						
+						$scope.reset();
+
+						// Save the message in scope and display it in html
+						$scope.message = successResponse.data.message;
+
+					}, function (errorResponse) {
+
+						// Save the message in scope and display it in html
+						$scope.message = errorResponse.data.message;
+					});
+
+					// Cool animation for the message changing
+					animateMessage();
+
+				}
+
+
+
+			};
+
+
+			/**
+			 * Resets the form
+			 */
+			$scope.reset = function () {
+				// Reset the recipe
+				$scope.customer = {
+
+					"userName": "",
+					"password": "",
+					"permission":0,
+					"user": null
+					
+				};
+				
+				$scope.message = "";
+
+
+			}
+
+			// Userfunction existed here
+
+			// Animate the message changing.
+			function animateMessage() {
+
+				// Refrenced this: https://stackoverflow.com/a/58353279
+				const element = document.getElementById('message')
+
+				element.classList.remove('messageAnimation'); // reset animation
+				void element.offsetWidth; // trigger reflow
+				element.classList.add('messageAnimation'); // start animation
+			};
+
+
+		});
+
+	</script>
+		
+	<div class="panel" ng-app="myApp" ng-controller="customerCtrl">
 		
 		<h1 class="ms-0 header-box">New Customer Account</h1>
 		
 		<form>
 			
 			<div style="display:grid;">
-				<label class="body-text mt-4" for="username"><h4>Username</h4></label>
+				<label class="form-label body-text mt-4" for="userName"><h4>Username</h4></label>
+				
 				<input type="text" class="input-button mt-1" placeholder="Username"
-					aria-describedby="username" required>
+					aria-describedby="username" ng-model="customer.userName" id="userName" required>
 			</div>
-			
-		</form>
-		
-		<form>
 			
 			<div style="display:grid;">
-				<label class="body-text mt-4" for="password"><h4>Password</h4></label>
-				<input type="text" class="input-button mt-1" placeholder="Password"
-					aria-describedby="password" required>
+				<label class="form-label body-text mt-4" for="password"><h4>Password</h4></label>
+				<input type="password" class="input-button mt-1" placeholder="Password"
+					aria-describedby="password" ng-model="customer.password" id="password" required>
 			</div>
 			
-		</form>
-		
-		<div class="row w-100 ms-3 mt-5">
+			<div class="row w-100 ms-3 mt-5">
 			<div class="col p-0 mt-0">
-				<a href="login.html"><button type="submit" class="btn btn-primary btn-sm float-left bottom-button ms-3">Home</button></a>
 				
-				<button type="submit" class="btn btn-primary btn-sm float-end bottom-button ms-3" ng-click="submitRecipe()">Submit</button>
+				
+				<button type="submit" class="btn btn-primary btn-sm float-end bottom-button ms-3" ng-click="submitCustomer()">Submit</button>
 
 				<button type="button" class="btn btn-secondary btn-sm float-end bottom-button ms-3" ng-click="reset()">Reset</button>
 			</div>
 
 		</div>
+			
+		</form>
+		
+		<a href="login"><button class="btn btn-primary btn-sm float-left bottom-button ms-3">Home</button></a>
+		
+		<div class="col m-3 w-75">
+            <label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
+        </div>
+		
 		
 	</div>
 	

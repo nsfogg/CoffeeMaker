@@ -24,7 +24,7 @@ public class MappingController {
      */
     @GetMapping ( { "/index", "/" } )
     public String index ( final Model model ) {
-        return "index";
+        return "login";
     }
 
     /**
