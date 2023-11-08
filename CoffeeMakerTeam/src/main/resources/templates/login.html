@@ -159,7 +159,7 @@
 
 				return false;
 			};
-			
+
 			$scope.moveToCreateCustomer = function () {
 				window.location.href = 'newcustomer.html';
 			}
@@ -214,12 +214,10 @@
 			 */
 			$scope.reset = function () {
 				// Reset the recipe
-				$scope.customer = {
+				$scope.user = {
 
 					"userName": "",
 					"password": "",
-					"permission": 0,
-					"user": null
 
 				};
 
@@ -259,9 +257,9 @@
 			<div class="row w-100 ms-3 mt-5">
 				<div class="col p-0 mt-0">
 
-					<a href="recipe.html"><button type="submit" 
-					class="btn btn-primary btn-sm float-left bottom-button bottom-button1 ms-3"
-					ng-click="moveToCreateCustomer()">Create Account</button></a>
+					<a href="recipe.html"><button type="submit"
+							class="btn btn-primary btn-sm float-left bottom-button bottom-button1 ms-3"
+							ng-click="moveToCreateCustomer()">Create Account</button></a>
 
 					<button type="submit" class="btn btn-primary btn-sm float-end bottom-button ms-3"
 						ng-click="submitUser()">Submit</button>
