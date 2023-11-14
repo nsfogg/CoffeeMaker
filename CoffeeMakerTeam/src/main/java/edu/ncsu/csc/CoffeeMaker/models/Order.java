@@ -1,21 +1,11 @@
 package edu.ncsu.csc.CoffeeMaker.models;
 
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import edu.ncsu.csc.CoffeeMaker.utils.UserDeserializer;
-import edu.ncsu.csc.CoffeeMaker.utils.UserSerializer;
 
 /**
  * Will contain the logic for a customers order
  */
-@Entity
-@JsonDeserialize ( using = UserDeserializer.class )
-@JsonSerialize ( using = UserSerializer.class )
 public class Order extends DomainObject {
 
     /** Order id */
@@ -44,9 +34,8 @@ public class Order extends DomainObject {
         this();
         setCustomerId( customer );
         setRecipe( recipe );
-
-        isComplete = false;
-        isPickedUp = false;
+        setComplete( false );
+        setPickedUp( false );
     }
 
     public void completeOrder () {
@@ -83,6 +72,50 @@ public class Order extends DomainObject {
 
     public void setRecipe ( final Recipe recipe ) {
         this.recipe = recipe;
+    }
+
+    /**
+     * @return the isComplete
+     */
+    public boolean isComplete () {
+        return isComplete;
+    }
+
+    /**
+     * @param isComplete
+     *            the isComplete to set
+     */
+    public void setComplete ( final boolean isComplete ) {
+        this.isComplete = isComplete;
+    }
+
+    /**
+     * @return the isPickedUp
+     */
+    public boolean isPickedUp () {
+        return isPickedUp;
+    }
+
+    /**
+     * @param isPickedUp
+     *            the isPickedUp to set
+     */
+    public void setPickedUp ( final boolean isPickedUp ) {
+        this.isPickedUp = isPickedUp;
+    }
+
+    /**
+     * @return the customerId
+     */
+    public Long getCustomerId () {
+        return customerId;
+    }
+
+    /**
+     * @return the recipe
+     */
+    public Recipe getRecipe () {
+        return recipe;
     }
 
 }
