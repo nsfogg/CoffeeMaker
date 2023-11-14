@@ -1,5 +1,7 @@
 package edu.ncsu.csc.CoffeeMaker.services;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +42,7 @@ public class OrderService extends Service<Order, Long> {
      *            Name of the recipe to find
      * @return found recipe, null if none
      */
-    public Order findByUser ( final long id ) {
+    public List<Order> findByUser ( final long id ) {
         return orderRepository.findByUser( id );
     }
 

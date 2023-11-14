@@ -1,6 +1,8 @@
 
 package edu.ncsu.csc.CoffeeMaker.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import edu.ncsu.csc.CoffeeMaker.models.Order;
@@ -19,6 +21,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      *            Name of the ingredient
      * @return Found ingredient, null if none.
      */
-    Order findByUser ( Long id );
+    List<Order> findByUser ( Long id );
 
 }
