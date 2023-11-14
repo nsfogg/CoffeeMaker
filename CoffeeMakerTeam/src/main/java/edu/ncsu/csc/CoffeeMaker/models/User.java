@@ -2,9 +2,11 @@ package edu.ncsu.csc.CoffeeMaker.models;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -28,17 +30,17 @@ public class User extends DomainObject {
     /** User id */
     @Id
     @GeneratedValue
-    private Long    id = 0L;
+    private Long        id = 0L;
 
     /** user name */
-    private String  userName;
+    private String      userName;
 
     /** user permissions */
     @Min ( 0 )
-    private Integer permissions;
+    private Integer     permissions;
 
     /** hashed password for user */
-    private int     password;
+    private int         password;
 
     // /**
     // * The ingredients of this recipe and their corresponding amounts.
@@ -51,7 +53,8 @@ public class User extends DomainObject {
     // = "user_id" ) )
     // @MapKeyJoinColumn ( name = "order_id" )
     // @Column ( name = "orders" )
-    // private List<Order> orders;
+    @OneToMany ( mappedBy = "user", cascade = CascadeType.ALL )
+    private List<Order> orders;
 
     /**
      * Default Constructor for User used for guest orders
@@ -199,7 +202,8 @@ public class User extends DomainObject {
      */
     public Order order ( final Recipe recipe ) {
         final Order ord = new Order( this, recipe );
-        // orders.add( ord );
+        orders.add( ord );
+
         return ord;
     }
 

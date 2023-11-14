@@ -131,8 +131,10 @@ public class APIOrderController extends APIController {
             if ( inventory.useIngredients( toPurchase ) ) {
                 inventoryService.save( inventory );
                 change = amtPaid - toPurchase.getPrice();
-
-                orderService.save( user.order( toPurchase ) );
+                user.order( toPurchase );
+                userService.save( user );// Should save the order bc of
+                                         // cascading save
+                // orderService.save( );
                 return change;
             }
             else {
