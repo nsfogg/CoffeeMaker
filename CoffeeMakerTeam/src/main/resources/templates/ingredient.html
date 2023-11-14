@@ -41,7 +41,8 @@
 
 					let body = {};
 
-					body.name = $scope.ingredient.name;
+					body.ingredient = $scope.ingredient.name;
+					body.user = JSON.parse(sessionStorage.getItem("currentUser"));
 					
 					let config = {
 						

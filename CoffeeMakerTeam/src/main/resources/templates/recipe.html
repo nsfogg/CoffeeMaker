@@ -25,6 +25,8 @@
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
 		app.controller('recipeCtrl', function ($scope, $http, $timeout) {
+			
+			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
 
 			/* Define the Recipe model */
 			$scope.recipe = {
@@ -38,7 +40,13 @@
 			 * Gets the ingredients from the ingredients endpoint
 			 */
 			$scope.getIngredients = function () {
-				$http.get("/api/v1/ingredients/").then(function (successResponse) {
+				
+				let body = {};
+				
+				body.user = JSON.parse(sessionStorage.getItem("currentUser"));
+				console.log(body)
+				
+				$http.get("/api/v1/ingredients/", body).then(function (successResponse) {
 					$scope.ingredientsList = successResponse.data;
 
 				}, function (errorResponse) {
@@ -57,9 +65,11 @@
 					// body will hold our response body
 					let body = {};
 
-					body.name = $scope.recipe.name;
-					body.price = $scope.recipe.price;
-					body.ingredients = []
+					body.user = JSON.parse(sessionStorage.getItem("currentUser"));
+					
+					$scope.bodyRecipe.name = $scope.recipe.name;
+					$scope.bodyRecipe.price = $scope.recipe.price;
+					$scope.bodyRecipe.ingredients = []
 
 					$scope.recipe.ingredients.forEach((ingredient) => {
 						let currIngredient = {}; // Make a new ingredient to add to the final recipe
@@ -72,9 +82,11 @@
 						currIngredient[angular.toJson(copied)] = ingredient.amount;
 
 						// Add the ingredient we made to our recipe
-						body.ingredients.push(currIngredient);
+						$scope.bodyRecipe.ingredients.push(currIngredient);
 
 					});
+					
+					body.recipe = $scope.bodyRecipe;
 
 					$http.post("/api/v1/recipes/", body).then(function (successResponse) {
 
