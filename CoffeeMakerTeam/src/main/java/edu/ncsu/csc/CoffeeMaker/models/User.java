@@ -200,10 +200,10 @@ public class User extends DomainObject {
      *
      * @param recipe
      *            the recipe for the order
-     * @return null if order does not exist, else the order Objecgt
+     * @return null if order does not exist, else the order Object
      */
     public Order order ( final Recipe recipe ) {
-        return null;
+        return new Order( this.id, recipe );
     }
 
     /**
