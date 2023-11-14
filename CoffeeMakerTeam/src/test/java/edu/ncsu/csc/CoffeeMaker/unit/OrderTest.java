@@ -30,7 +30,7 @@ public class OrderTest {
         r.setPrice( 10 );
 
         final User user = new User();
-        final Order order = new Order( user, r );
+        final Order order = new Order( user.getId(), r );
 
         Assertions.assertEquals( user, order.getUser() );
         Assertions.assertEquals( r, order.getRecipe() );
@@ -46,7 +46,7 @@ public class OrderTest {
         r.setPrice( 10 );
 
         final User user = new User();
-        final Order order = new Order( user, r );
+        final Order order = new Order( user.getId(), r );
 
         order.completeOrder();
         Assertions.assertEquals( true, order.isComplete() );

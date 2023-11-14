@@ -1,5 +1,6 @@
 package edu.ncsu.csc.CoffeeMaker.models;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,9 +20,10 @@ public class Order extends DomainObject {
     @GeneratedValue
     private Long    id = 0L;
 
-    @ManyToOne
-    @JoinColumn ( name = "user_id" )
-    private User    user;
+    // @ManyToOne
+    // @JoinColumn ( name = "user_id" )
+    @Column ( name = "user_id" )
+    private Long    user;
 
     private boolean isComplete;
 
@@ -33,14 +35,14 @@ public class Order extends DomainObject {
 
     public Order () {
         super();
-        setUser( null );
+        setUser( 0L );
         setRecipe( null );
 
         isComplete = false;
         isPickedUp = false;
     }
 
-    public Order ( final User customer, final Recipe recipe ) {
+    public Order ( final Long customer, final Recipe recipe ) {
         this();
         setUser( customer );
         setRecipe( recipe );
@@ -76,7 +78,7 @@ public class Order extends DomainObject {
         this.id = id;
     }
 
-    public void setUser ( final User user ) {
+    public void setUser ( final Long user ) {
         this.user = user;
     }
 
@@ -117,7 +119,7 @@ public class Order extends DomainObject {
     /**
      * @return the customerId
      */
-    public User getUser () {
+    public Long getUser () {
         return user;
     }
 

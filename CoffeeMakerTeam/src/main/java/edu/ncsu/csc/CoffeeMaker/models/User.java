@@ -1,13 +1,8 @@
 package edu.ncsu.csc.CoffeeMaker.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -31,17 +26,17 @@ public class User extends DomainObject {
     /** User id */
     @Id
     @GeneratedValue
-    private Long        id     = 0L;
+    private Long    id = 0L;
 
     /** user name */
-    private String      userName;
+    private String  userName;
 
     /** user permissions */
     @Min ( 0 )
-    private Integer     permissions;
+    private Integer permissions;
 
     /** hashed password for user */
-    private int         password;
+    private int     password;
 
     // /**
     // * The ingredients of this recipe and their corresponding amounts.
@@ -54,8 +49,9 @@ public class User extends DomainObject {
     // = "user_id" ) )
     // @MapKeyJoinColumn ( name = "order_id" )
     // @Column ( name = "orders" )
-    @OneToMany ( mappedBy = "user", cascade = CascadeType.ALL )
-    private List<Order> orders = new ArrayList<>();
+    // @OneToMany ( mappedBy = "user", cascade = CascadeType.ALL, fetch =
+    // FetchType.EAGER )
+    // private final List<Order> orders = new ArrayList<>();
 
     /**
      * Default Constructor for User used for guest orders
@@ -63,7 +59,7 @@ public class User extends DomainObject {
      */
     public User () {
         super();
-        orders = new ArrayList<Order>();
+        // orders = new ArrayList<Order>();
         setPermissions( 0 );
         setUserName( "annon" );
         setPassword( 0 );
@@ -207,8 +203,8 @@ public class User extends DomainObject {
      * @return null if order does not exist, else the order Object
      */
     public Order order ( final Recipe recipe ) {
-        final Order ord = new Order( this, recipe );
-        orders.add( ord );
+        final Order ord = new Order( this.id, recipe );
+        // orders.add( ord );
 
         return ord;
     }
@@ -238,11 +234,6 @@ public class User extends DomainObject {
      */
     public boolean isCustomer () {
         return getPermissions() == 0;
-    }
-
-    public List<Order> getOrders () {
-        // return this.orders;
-        return null;
     }
 
 }

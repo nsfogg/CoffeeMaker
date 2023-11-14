@@ -1,5 +1,6 @@
 package edu.ncsu.csc.CoffeeMaker.api;
 
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -115,6 +116,14 @@ public class APIOrderTest {
         recipe.addIngredient( ingredients.get( 2 ), 1 );
 
         recipeService.save( recipe );
+
+        final Recipe recipe2 = new Recipe( "milk", 50 );
+
+        recipe2.addIngredient( ingredients.get( 0 ), 1 );
+        recipe2.addIngredient( ingredients.get( 1 ), 1 );
+        recipe2.addIngredient( ingredients.get( 2 ), 1 );
+
+        recipeService.save( recipe2 );
     }
 
     @Test
@@ -128,11 +137,16 @@ public class APIOrderTest {
         assertEquals( "Latte", ( (Order) orderService.findAll().toArray()[0] ).getRecipe().getName() );
         assertEquals( false, ( (Order) orderService.findAll().toArray()[0] ).isComplete() );
         assertEquals( false, ( (Order) orderService.findAll().toArray()[0] ).isPickedUp() );
-        assertEquals( customer.getId(), ( (Order) orderService.findAll().toArray()[0] ).getUser().getId() );
+        assertEquals( customer.getId(), ( (Order) orderService.findAll().toArray()[0] ).getUser() );
 
-        mvc.perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( customer ) ) ).andExpect( status().isOk() )
+        mvc.perform( post( String.format( "/api/v1/orders/%s", "milk" ) ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new PaidUserDTO( 60, customer2 ) ) ) ).andExpect( status().isOk() )
                 .andExpect( jsonPath( "$.message" ).value( 10 ) );
+
+        fail( mvc
+                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( customer2 ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString() );
 
     }
 

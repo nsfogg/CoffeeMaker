@@ -137,8 +137,10 @@ public class APIOrderController extends APIController {
                 // orderService.save( user.order( toPurchase ) );
 
                 final User dbUser = userService.findByName( user.getUserName() );
-                dbUser.order( toPurchase );
-                userService.save( dbUser );
+                // dbUser.order( toPurchase );
+                // userService.save( dbUser );
+
+                orderService.save( dbUser.order( toPurchase ) );
                 return change;
             }
             else {
@@ -168,7 +170,7 @@ public class APIOrderController extends APIController {
         final User checkUser = userService.findByName( user.getUserName() );
 
         if ( checkUser.isCustomer() ) {
-            return new ResponseEntity( checkUser.getOrders(), HttpStatus.OK );
+            return new ResponseEntity( orderService.findByUser( checkUser.getId() ), HttpStatus.OK );
         }
         return new ResponseEntity( orderService.findAll(), HttpStatus.OK );
 
@@ -200,8 +202,7 @@ public class APIOrderController extends APIController {
         order.completeOrder();
         orderService.save( order );
         // This message may be modifed to match what we want
-        return new ResponseEntity( order.getRecipe() + "for" + order.getUser().getUserName() + "is complete",
-                HttpStatus.OK );
+        return new ResponseEntity( order.getRecipe() + "for" + order.getUser() + "is complete", HttpStatus.OK );
     }
 
     /**
@@ -232,8 +233,7 @@ public class APIOrderController extends APIController {
         order.pickUpOrder();
         orderService.save( order );
         // This message may be modifed to match what we want
-        return new ResponseEntity( order.getRecipe() + "for" + order.getUser().getUserName() + "is picked up",
-                HttpStatus.OK );
+        return new ResponseEntity( order.getRecipe() + "for" + order.getUser() + "is picked up", HttpStatus.OK );
     }
 
 }
