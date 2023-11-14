@@ -45,11 +45,13 @@ public class User extends DomainObject {
     // https://www.baeldung.com/hibernate-persisting-maps
     // */
     // @ElementCollection ( fetch = FetchType.EAGER )
-    // @CollectionTable ( name = "recipe_ingredients", joinColumns = @JoinColumn
-    // ( name = "recipe_id" ) )
-    // @MapKeyJoinColumn ( name = "ingredient_id" )
+    // @CollectionTable ( name = "user_orders", joinColumns = @JoinColumn ( name
+    // = "user_id" ) )
+    // @MapKeyJoinColumn ( name = "order_id" )
     // @Column ( name = "orders" )
-    // private List orders;
+    // @OneToMany ( mappedBy = "user", cascade = CascadeType.ALL, fetch =
+    // FetchType.EAGER )
+    // private final List<Order> orders = new ArrayList<>();
 
     /**
      * Default Constructor for User used for guest orders
@@ -57,6 +59,7 @@ public class User extends DomainObject {
      */
     public User () {
         super();
+        // orders = new ArrayList<Order>();
         setPermissions( 0 );
         setUserName( "annon" );
         setPassword( 0 );
@@ -81,6 +84,8 @@ public class User extends DomainObject {
         setId( id );
         setPassword( hashPassword( password ) );
         setPermissions( permissions );
+
+        // orders = new ArrayList<Order>();
     }
 
     /**
@@ -98,6 +103,8 @@ public class User extends DomainObject {
         setUserName( userName );
         setPassword( hashPassword( password ) );
         setPermissions( perms );
+
+        // orders = new ArrayList<Order>();
     }
 
     /**
@@ -193,10 +200,13 @@ public class User extends DomainObject {
      *
      * @param recipe
      *            the recipe for the order
-     * @return null if order does not exist, else the order Objecgt
+     * @return null if order does not exist, else the order Object
      */
     public Order order ( final Recipe recipe ) {
-        return null;
+        final Order ord = new Order( this.id, recipe );
+        // orders.add( ord );
+
+        return ord;
     }
 
     /**
