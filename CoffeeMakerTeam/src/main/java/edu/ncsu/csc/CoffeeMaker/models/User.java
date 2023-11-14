@@ -12,9 +12,9 @@ import edu.ncsu.csc.CoffeeMaker.utils.UserDeserializer;
 import edu.ncsu.csc.CoffeeMaker.utils.UserSerializer;
 
 /**
- * Recipe for the coffee maker. Recipe is tied to the database using Hibernate
- * libraries. See RecipeRepository and RecipeService for the other two pieces
- * used for database support.
+ * User for the coffee maker. User is tied to the database using Hibernate
+ * libraries. See UserRepository and UserService for the other two pieces used
+ * for database support.
  *
  * @author Kai Presler-Marshall
  */
@@ -78,7 +78,7 @@ public class User extends DomainObject {
      * @param perms
      *            the permissions of the user
      */
-    public User ( final String userName, final Long id, final String password, final int perms ) {
+    public User ( final String userName, final Long id, final String password, final int permissions ) {
         this();
         setUserName( userName );
         setId( id );
