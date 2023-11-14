@@ -203,7 +203,9 @@ public class User extends DomainObject {
      * @return null if order does not exist, else the order Object
      */
     public Order order ( final Recipe recipe ) {
-        return new Order( this.id, recipe );
+        final Order ord = new Order( this.id, recipe );
+        orders.add( ord );
+        return ord;
     }
 
     /**

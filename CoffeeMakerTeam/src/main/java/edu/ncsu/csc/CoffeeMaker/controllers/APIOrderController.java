@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.IdUserDTO;
 import edu.ncsu.csc.CoffeeMaker.controllers.DTO.PaidUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
+import edu.ncsu.csc.CoffeeMaker.models.Order;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
@@ -143,15 +145,12 @@ public class APIOrderController extends APIController {
     }
 
     /**
-     * REST API method to make coffee by completing a POST request with the ID
-     * of the recipe as the path variable and the amount that has been paid as
-     * the body of the response
+     * REST API method get a user's orders by completing a POST request with the
+     * user as the body
      *
-     * @param name
-     *            recipe name
-     * @param body
+     * @param user
      *            User information
-     * @return The change the customer is due if successful
+     * @return the User's order. Or all orders if a barista or manager
      */
     @PostMapping ( BASE_PATH + "/order/status" )
     public ResponseEntity getOrders ( @RequestBody final User user ) {
@@ -167,6 +166,64 @@ public class APIOrderController extends APIController {
         }
         return new ResponseEntity( orderService.findAll(), HttpStatus.OK );
 
+    }
+
+    /**
+     * REST API method to complete a order with a POST request
+     *
+     * @param name
+     *            recipe name
+     * @param body
+     *            User information and the id of the order to complete
+     * @return A message saying the order has been completed
+     */
+    @PostMapping ( BASE_PATH + "/order/order" )
+    public ResponseEntity completeOrder ( @RequestBody final IdUserDTO body ) {
+
+        final int id = body.id;
+        final User user = body.authUser;
+
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        /////// Will the user inventory update?
+        // final User checkUser = userService.findByName( user.getUserName() );
+
+        final Order order = orderService.findById( (long) id );
+        order.completeOrder();
+        // This message may be modifed to match what we want
+        return new ResponseEntity( order.getRecipe() + "for" + order.getCustomerId() + "is complete", HttpStatus.OK );
+    }
+
+    /**
+     * REST API method to make coffee by completing a POST request with the ID
+     * of the recipe as the path variable and the amount that has been paid as
+     * the body of the response
+     *
+     * @param name
+     *            recipe name
+     * @param body
+     *            User information
+     * @return The change the customer is due if successful
+     */
+    @PostMapping ( BASE_PATH + "/order/pickup" )
+    public ResponseEntity pickUpOrder ( @RequestBody final IdUserDTO body ) {
+
+        final int id = body.id;
+        final User user = body.authUser;
+
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+            return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        /////// Will the user inventory update?
+        // final User checkUser = userService.findByName( user.getUserName() );
+
+        final Order order = orderService.findById( (long) id );
+        order.pickUpOrder();
+        // This message may be modifed to match what we want
+        return new ResponseEntity( order.getRecipe() + "for" + order.getCustomerId() + "is picked up", HttpStatus.OK );
     }
 
 }
