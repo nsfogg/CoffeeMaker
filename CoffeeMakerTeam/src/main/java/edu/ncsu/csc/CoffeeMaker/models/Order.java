@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -29,9 +28,9 @@ public class Order extends DomainObject {
 
     private boolean isPickedUp;
 
-    @ManyToOne
+    // @ManyToOne
     @JoinColumn ( name = "recipe_id" )
-    private Recipe  recipe;
+    private String  recipe;
 
     public Order () {
         super();
@@ -83,7 +82,7 @@ public class Order extends DomainObject {
     }
 
     public void setRecipe ( final Recipe recipe ) {
-        this.recipe = recipe;
+        this.recipe = recipe == null ? null : recipe.getName();
     }
 
     /**
@@ -126,7 +125,7 @@ public class Order extends DomainObject {
     /**
      * @return the recipe
      */
-    public Recipe getRecipe () {
+    public String getRecipe () {
         return recipe;
     }
 

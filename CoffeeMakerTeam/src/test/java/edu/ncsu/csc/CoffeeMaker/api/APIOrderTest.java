@@ -1,6 +1,6 @@
 package edu.ncsu.csc.CoffeeMaker.api;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,6 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import edu.ncsu.csc.CoffeeMaker.common.TestUtils;
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.IdUserDTO;
 import edu.ncsu.csc.CoffeeMaker.controllers.DTO.PaidUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
@@ -134,7 +135,7 @@ public class APIOrderTest {
         mvc.perform( post( String.format( "/api/v1/orders/%s", name ) ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new PaidUserDTO( 60, customer ) ) ) ).andExpect( status().isOk() )
                 .andExpect( jsonPath( "$.message" ).value( 10 ) );
-        assertEquals( "Latte", ( (Order) orderService.findAll().toArray()[0] ).getRecipe().getName() );
+        assertEquals( "Latte", ( (Order) orderService.findAll().toArray()[0] ).getRecipe() );
         assertEquals( false, ( (Order) orderService.findAll().toArray()[0] ).isComplete() );
         assertEquals( false, ( (Order) orderService.findAll().toArray()[0] ).isPickedUp() );
         assertEquals( customer.getId(), ( (Order) orderService.findAll().toArray()[0] ).getUser() );
@@ -143,10 +144,88 @@ public class APIOrderTest {
                 .content( TestUtils.asJsonString( new PaidUserDTO( 60, customer2 ) ) ) ).andExpect( status().isOk() )
                 .andExpect( jsonPath( "$.message" ).value( 10 ) );
 
-        fail( mvc
+        assertEquals( "milk", ( (Order) orderService.findAll().toArray()[1] ).getRecipe() );
+        assertEquals( false, ( (Order) orderService.findAll().toArray()[1] ).isComplete() );
+        assertEquals( false, ( (Order) orderService.findAll().toArray()[1] ).isPickedUp() );
+        assertEquals( customer2.getId(), ( (Order) orderService.findAll().toArray()[1] ).getUser() );
+
+        assertTrue( mvc
+                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( customer ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString().contains( name ) );
+        assertTrue( mvc
+                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( customer ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString()
+                .contains( customer.getId().toString() ) );
+
+        assertTrue( mvc
                 .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
                         .content( TestUtils.asJsonString( customer2 ) ) )
-                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString() );
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString().contains( "milk" ) );
+        assertTrue( mvc
+                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( customer2 ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString()
+                .contains( customer2.getId().toString() ) );
+
+        assertTrue( mvc
+                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( barista ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString().contains( name ) );
+        assertTrue( mvc
+                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( barista ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString()
+                .contains( customer.getId().toString() ) );
+
+        assertTrue( mvc
+                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( barista ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString().contains( "milk" ) );
+        assertTrue( mvc
+                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( barista ) ) )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString()
+                .contains( customer2.getId().toString() ) );
+
+        mvc.perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( new User( "test", "test", 0 ) ) ) )
+                .andExpect( status().isForbidden() );
+
+        mvc.perform( post( String.format( "/api/v1/order/order" ) ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString(
+                        new IdUserDTO( ( (Order) orderService.findAll().toArray()[0] ).getId(), customer ) ) ) )
+                .andExpect( status().isForbidden() );
+        mvc.perform( post( String.format( "/api/v1/order/order" ) ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString(
+                        new IdUserDTO( ( (Order) orderService.findAll().toArray()[0] ).getId(), manager ) ) ) )
+                .andExpect( status().isForbidden() );
+
+        mvc.perform( post( String.format( "/api/v1/order/order" ) ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString(
+                        new IdUserDTO( ( (Order) orderService.findAll().toArray()[0] ).getId(), barista ) ) ) )
+                .andExpect( status().isOk() );
+        assertTrue( orderService.findAll().get( 0 ).isComplete() );
+
+        mvc.perform( post( String.format( "/api/v1/order/pickup" ) ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString(
+                        new IdUserDTO( ( (Order) orderService.findAll().toArray()[0] ).getId(), manager ) ) ) )
+                .andExpect( status().isForbidden() );
+        mvc.perform( post( String.format( "/api/v1/order/pickup" ) ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString(
+                        new IdUserDTO( ( (Order) orderService.findAll().toArray()[0] ).getId(), barista ) ) ) )
+                .andExpect( status().isForbidden() );
+        mvc.perform( post( String.format( "/api/v1/order/pickup" ) ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString(
+                        new IdUserDTO( ( (Order) orderService.findAll().toArray()[0] ).getId(), customer2 ) ) ) )
+                .andExpect( status().isForbidden() );
+
+        mvc.perform( post( String.format( "/api/v1/order/pickup" ) ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString(
+                        new IdUserDTO( ( (Order) orderService.findAll().toArray()[0] ).getId(), customer ) ) ) )
+                .andExpect( status().isOk() );
+        assertTrue( orderService.findAll().get( 0 ).isPickedUp() );
 
     }
 

@@ -15,7 +15,7 @@ public class OrderTest {
     public void testOrder () {
         final Order order = new Order();
 
-        Assertions.assertEquals( null, order.getUser() );
+        Assertions.assertEquals( 0, order.getUser() );
         Assertions.assertEquals( null, order.getRecipe() );
         Assertions.assertEquals( false, order.isComplete() );
         Assertions.assertEquals( false, order.isPickedUp() );
@@ -32,8 +32,8 @@ public class OrderTest {
         final User user = new User();
         final Order order = new Order( user.getId(), r );
 
-        Assertions.assertEquals( user, order.getUser() );
-        Assertions.assertEquals( r, order.getRecipe() );
+        Assertions.assertEquals( user.getId(), order.getUser() );
+        Assertions.assertEquals( r.getName(), order.getRecipe() );
         Assertions.assertEquals( false, order.isComplete() );
         Assertions.assertEquals( false, order.isPickedUp() );
     }

@@ -10,7 +10,7 @@ public class IdUserDTO {
     /**
      * The paid amount
      */
-    public int  id;
+    public Long id;
     /**
      * The current user
      */
@@ -24,7 +24,7 @@ public class IdUserDTO {
      * @param user
      *            the current user
      */
-    public IdUserDTO ( final int id, final User user ) {
+    public IdUserDTO ( final Long id, final User user ) {
         this.id = id;
         this.authUser = user;
     }

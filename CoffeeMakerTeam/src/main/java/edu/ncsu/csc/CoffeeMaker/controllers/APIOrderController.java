@@ -188,17 +188,17 @@ public class APIOrderController extends APIController {
     @PostMapping ( BASE_PATH + "/order/order" )
     public ResponseEntity completeOrder ( @RequestBody final IdUserDTO body ) {
 
-        final int id = body.id;
+        final Long id = body.id;
         final User user = body.authUser;
 
-        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) || !user.isBarista() ) {
             return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
         }
         /////// Will the user inventory update?
         // final User checkUser = userService.findByName( user.getUserName() );
 
-        final Order order = orderService.findById( (long) id );
+        final Order order = orderService.findById( id );
         order.completeOrder();
         orderService.save( order );
         // This message may be modifed to match what we want
@@ -219,17 +219,23 @@ public class APIOrderController extends APIController {
     @PostMapping ( BASE_PATH + "/order/pickup" )
     public ResponseEntity pickUpOrder ( @RequestBody final IdUserDTO body ) {
 
-        final int id = body.id;
-        final User user = body.authUser;
+        final Long id = body.id;
+        final User user = userService.findByName( body.authUser.getUserName() );
 
-        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+        if ( !control.authenticate( user.getUserName(), user.getPassword() ) || !user.isCustomer() ) {
             return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
         }
         /////// Will the user inventory update?
         // final User checkUser = userService.findByName( user.getUserName() );
 
-        final Order order = orderService.findById( (long) id );
+        final Order order = orderService.findById( id );
+
+        if ( order.getUser() != user.getId() ) {
+            return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
+                    HttpStatus.FORBIDDEN );
+        }
+
         order.pickUpOrder();
         orderService.save( order );
         // This message may be modifed to match what we want
