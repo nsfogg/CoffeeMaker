@@ -1,5 +1,6 @@
 package edu.ncsu.csc.CoffeeMaker.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -30,7 +31,7 @@ public class User extends DomainObject {
     /** User id */
     @Id
     @GeneratedValue
-    private Long        id = 0L;
+    private Long        id     = 0L;
 
     /** user name */
     private String      userName;
@@ -54,7 +55,7 @@ public class User extends DomainObject {
     // @MapKeyJoinColumn ( name = "order_id" )
     // @Column ( name = "orders" )
     @OneToMany ( mappedBy = "user", cascade = CascadeType.ALL )
-    private List<Order> orders;
+    private List<Order> orders = new ArrayList<>();
 
     /**
      * Default Constructor for User used for guest orders
@@ -62,6 +63,7 @@ public class User extends DomainObject {
      */
     public User () {
         super();
+        orders = new ArrayList<Order>();
         setPermissions( 0 );
         setUserName( "annon" );
         setPassword( 0 );
@@ -86,6 +88,8 @@ public class User extends DomainObject {
         setId( id );
         setPassword( hashPassword( password ) );
         setPermissions( permissions );
+
+        // orders = new ArrayList<Order>();
     }
 
     /**
@@ -103,6 +107,8 @@ public class User extends DomainObject {
         setUserName( userName );
         setPassword( hashPassword( password ) );
         setPermissions( perms );
+
+        // orders = new ArrayList<Order>();
     }
 
     /**

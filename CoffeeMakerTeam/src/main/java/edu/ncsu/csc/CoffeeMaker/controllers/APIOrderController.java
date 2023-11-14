@@ -131,10 +131,14 @@ public class APIOrderController extends APIController {
             if ( inventory.useIngredients( toPurchase ) ) {
                 inventoryService.save( inventory );
                 change = amtPaid - toPurchase.getPrice();
-                user.order( toPurchase );
-                userService.save( user );// Should save the order bc of
-                                         // cascading save
-                // orderService.save( );
+                // user.order( toPurchase );
+                // userService.save( user );// Should save the order bc of
+                // cascading save
+                // orderService.save( user.order( toPurchase ) );
+
+                final User dbUser = userService.findByName( user.getUserName() );
+                dbUser.order( toPurchase );
+                userService.save( dbUser );
                 return change;
             }
             else {
@@ -194,6 +198,7 @@ public class APIOrderController extends APIController {
 
         final Order order = orderService.findById( (long) id );
         order.completeOrder();
+        orderService.save( order );
         // This message may be modifed to match what we want
         return new ResponseEntity( order.getRecipe() + "for" + order.getUser().getUserName() + "is complete",
                 HttpStatus.OK );
@@ -225,6 +230,7 @@ public class APIOrderController extends APIController {
 
         final Order order = orderService.findById( (long) id );
         order.pickUpOrder();
+        orderService.save( order );
         // This message may be modifed to match what we want
         return new ResponseEntity( order.getRecipe() + "for" + order.getUser().getUserName() + "is picked up",
                 HttpStatus.OK );

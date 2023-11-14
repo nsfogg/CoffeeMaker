@@ -128,4 +128,10 @@ public class Order extends DomainObject {
         return recipe;
     }
 
+    @Override
+    public String toString () {
+        return "Order [id=" + id + ", user=" + user + ", isComplete=" + isComplete + ", isPickedUp=" + isPickedUp
+                + ", recipe=" + recipe + "]";
+    }
+
 }
