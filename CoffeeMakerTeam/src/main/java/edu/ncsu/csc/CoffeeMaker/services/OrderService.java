@@ -40,8 +40,8 @@ public class OrderService extends Service<Order, Long> {
      *            Name of the recipe to find
      * @return found recipe, null if none
      */
-    public Order findByCustomer ( final long id ) {
-        return orderRepository.findByCustomer( id );
+    public Order findByUser ( final long id ) {
+        return orderRepository.findByUser( id );
     }
 
 }

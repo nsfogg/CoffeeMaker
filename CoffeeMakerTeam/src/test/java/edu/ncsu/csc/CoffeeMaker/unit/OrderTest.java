@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.ncsu.csc.CoffeeMaker.models.Order;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
+import edu.ncsu.csc.CoffeeMaker.models.User;
 
 public class OrderTest {
 
@@ -14,7 +15,7 @@ public class OrderTest {
     public void testOrder () {
         final Order order = new Order();
 
-        Assertions.assertEquals( 0L, order.getCustomerId() );
+        Assertions.assertEquals( null, order.getUser() );
         Assertions.assertEquals( null, order.getRecipe() );
         Assertions.assertEquals( false, order.isComplete() );
         Assertions.assertEquals( false, order.isPickedUp() );
@@ -28,9 +29,10 @@ public class OrderTest {
         r.setName( "test" );
         r.setPrice( 10 );
 
-        final Order order = new Order( 7L, r );
+        final User user = new User();
+        final Order order = new Order( user, r );
 
-        Assertions.assertEquals( 7L, order.getCustomerId() );
+        Assertions.assertEquals( user, order.getUser() );
         Assertions.assertEquals( r, order.getRecipe() );
         Assertions.assertEquals( false, order.isComplete() );
         Assertions.assertEquals( false, order.isPickedUp() );
@@ -43,7 +45,8 @@ public class OrderTest {
         r.setName( "test" );
         r.setPrice( 10 );
 
-        final Order order = new Order( 7L, r );
+        final User user = new User();
+        final Order order = new Order( user, r );
 
         order.completeOrder();
         Assertions.assertEquals( true, order.isComplete() );

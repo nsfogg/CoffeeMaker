@@ -193,7 +193,8 @@ public class APIOrderController extends APIController {
         final Order order = orderService.findById( (long) id );
         order.completeOrder();
         // This message may be modifed to match what we want
-        return new ResponseEntity( order.getRecipe() + "for" + order.getCustomerId() + "is complete", HttpStatus.OK );
+        return new ResponseEntity( order.getRecipe() + "for" + order.getUser().getUserName() + "is complete",
+                HttpStatus.OK );
     }
 
     /**
@@ -223,7 +224,8 @@ public class APIOrderController extends APIController {
         final Order order = orderService.findById( (long) id );
         order.pickUpOrder();
         // This message may be modifed to match what we want
-        return new ResponseEntity( order.getRecipe() + "for" + order.getCustomerId() + "is picked up", HttpStatus.OK );
+        return new ResponseEntity( order.getRecipe() + "for" + order.getUser().getUserName() + "is picked up",
+                HttpStatus.OK );
     }
 
 }

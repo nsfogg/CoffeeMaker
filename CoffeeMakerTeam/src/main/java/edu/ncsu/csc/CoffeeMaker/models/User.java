@@ -2,15 +2,9 @@ package edu.ncsu.csc.CoffeeMaker.models;
 
 import java.util.List;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyJoinColumn;
 import javax.validation.constraints.Min;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -34,17 +28,17 @@ public class User extends DomainObject {
     /** User id */
     @Id
     @GeneratedValue
-    private Long        id = 0L;
+    private Long    id = 0L;
 
     /** user name */
-    private String      userName;
+    private String  userName;
 
     /** user permissions */
     @Min ( 0 )
-    private Integer     permissions;
+    private Integer permissions;
 
     /** hashed password for user */
-    private int         password;
+    private int     password;
 
     // /**
     // * The ingredients of this recipe and their corresponding amounts.
@@ -52,11 +46,12 @@ public class User extends DomainObject {
     // * Resources referenced:
     // https://www.baeldung.com/hibernate-persisting-maps
     // */
-    @ElementCollection ( fetch = FetchType.EAGER )
-    @CollectionTable ( name = "user_orders", joinColumns = @JoinColumn ( name = "user_id" ) )
-    @MapKeyJoinColumn ( name = "order_id" )
-    @Column ( name = "orders" )
-    private List<Order> orders;
+    // @ElementCollection ( fetch = FetchType.EAGER )
+    // @CollectionTable ( name = "user_orders", joinColumns = @JoinColumn ( name
+    // = "user_id" ) )
+    // @MapKeyJoinColumn ( name = "order_id" )
+    // @Column ( name = "orders" )
+    // private List<Order> orders;
 
     /**
      * Default Constructor for User used for guest orders
@@ -203,8 +198,8 @@ public class User extends DomainObject {
      * @return null if order does not exist, else the order Object
      */
     public Order order ( final Recipe recipe ) {
-        final Order ord = new Order( this.id, recipe );
-        orders.add( ord );
+        final Order ord = new Order( this, recipe );
+        // orders.add( ord );
         return ord;
     }
 
@@ -236,7 +231,8 @@ public class User extends DomainObject {
     }
 
     public List<Order> getOrders () {
-        return this.orders;
+        // return this.orders;
+        return null;
     }
 
 }

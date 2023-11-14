@@ -1,11 +1,17 @@
 package edu.ncsu.csc.CoffeeMaker.models;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * Will contain the logic for a customers order
  */
+@Entity
+@Table ( name = "`Order`" )
 public class Order extends DomainObject {
 
     /** Order id */
@@ -13,26 +19,30 @@ public class Order extends DomainObject {
     @GeneratedValue
     private Long    id = 0L;
 
-    private Long    customerId;
+    @ManyToOne
+    @JoinColumn ( name = "user_id" )
+    private User    user;
 
     private boolean isComplete;
 
     private boolean isPickedUp;
 
+    @ManyToOne
+    @JoinColumn ( name = "recipe_id" )
     private Recipe  recipe;
 
     public Order () {
         super();
-        setCustomerId( 0L );
+        setUser( null );
         setRecipe( null );
 
         isComplete = false;
         isPickedUp = false;
     }
 
-    public Order ( final Long customer, final Recipe recipe ) {
+    public Order ( final User customer, final Recipe recipe ) {
         this();
-        setCustomerId( customer );
+        setUser( customer );
         setRecipe( recipe );
         setComplete( false );
         setPickedUp( false );
@@ -66,8 +76,8 @@ public class Order extends DomainObject {
         this.id = id;
     }
 
-    public void setCustomerId ( final Long customerId ) {
-        this.customerId = customerId;
+    public void setUser ( final User user ) {
+        this.user = user;
     }
 
     public void setRecipe ( final Recipe recipe ) {
@@ -107,8 +117,8 @@ public class Order extends DomainObject {
     /**
      * @return the customerId
      */
-    public Long getCustomerId () {
-        return customerId;
+    public User getUser () {
+        return user;
     }
 
     /**

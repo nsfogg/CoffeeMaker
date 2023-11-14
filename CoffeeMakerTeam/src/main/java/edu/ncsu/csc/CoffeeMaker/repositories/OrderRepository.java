@@ -19,6 +19,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      *            Name of the ingredient
      * @return Found ingredient, null if none.
      */
-    Order findByCustomer ( Long id );
+    Order findByUser ( Long id );
 
 }
