@@ -185,4 +185,17 @@ public class MappingController {
         return "newstaff";
     }
 
+    /**
+     * On a GET request to /orderstatus, the NewStaffController will return
+     * /src/main/resources/templates/orderstatus.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/orderstatus", "/orderstatus.html" } )
+    public String makeOrderStatusForm ( final Model model ) {
+        return "orderstatus";
+    }
+
 }

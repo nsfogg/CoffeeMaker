@@ -25,6 +25,8 @@
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
 		app.controller('recipeCtrl', function ($scope, $http, $timeout) {
+			
+			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
 
 			/* Define the Recipe model */
 			$scope.recipe = {
@@ -38,11 +40,14 @@
 			 * Gets the ingredients from the ingredients endpoint
 			 */
 			$scope.getIngredients = function () {
-				$http.get("/api/v1/ingredients/").then(function (successResponse) {
+				
+				$http.get("/api/v1/ingredients/" + "?userName=" + $scope.user.userName + "&password=" + $scope.user.password).then(function (successResponse) {
+
 					$scope.ingredientsList = successResponse.data;
+					
 
 				}, function (errorResponse) {
-
+					console.log(errorResponse.data.message);
 					// Save the message in scope and display it in html
 					$scope.message = errorResponse.data.message;
 				});
@@ -56,10 +61,13 @@
 				if (hasAllFields()) {
 					// body will hold our response body
 					let body = {};
+					let recipe = {};
 
-					body.name = $scope.recipe.name;
-					body.price = $scope.recipe.price;
-					body.ingredients = []
+					body.authUser = JSON.parse(sessionStorage.getItem("currentUser"));
+					
+					recipe.name = $scope.recipe.name;
+					recipe.price = $scope.recipe.price;
+					recipe.ingredients = []
 
 					$scope.recipe.ingredients.forEach((ingredient) => {
 						let currIngredient = {}; // Make a new ingredient to add to the final recipe
@@ -72,9 +80,11 @@
 						currIngredient[angular.toJson(copied)] = ingredient.amount;
 
 						// Add the ingredient we made to our recipe
-						body.ingredients.push(currIngredient);
+						recipe.ingredients.push(currIngredient);
 
 					});
+					
+					body.newRecipe = recipe;
 
 					$http.post("/api/v1/recipes/", body).then(function (successResponse) {
 
@@ -317,7 +327,7 @@
 				</div>
 
 				<div class="col p-0">
-					<a href="/index" class="btn btn-secondary btn-sm float-end">Back to Home</a>
+					<a href="/managerindex" class="btn btn-secondary btn-sm float-end">Home</a>
 				</div>
 			</div>
 
