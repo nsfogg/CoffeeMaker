@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.controllers.DTO.RecipeUserDTO;
@@ -62,9 +63,10 @@ public class APIRecipeController extends APIController {
      *            the current user
      * @return JSON representation of all recipies
      */
-    @PutMapping ( BASE_PATH + "/recipes" )
-    public List<Recipe> getRecipes ( @RequestBody final User user ) {
-        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+    @GetMapping ( BASE_PATH + "/recipes/" )
+    public List<Recipe> getRecipes ( @RequestParam ( name = "userName", required = true ) final String userName,
+            @RequestParam ( name = "password", required = true ) final Integer password ) {
+        if ( !control.authenticate( userName, password ) ) {
             return null;
         }
 
@@ -83,9 +85,11 @@ public class APIRecipeController extends APIController {
      *            the current user
      * @return response to the request
      */
-    @GetMapping ( BASE_PATH + "/recipes/{name}" )
-    public ResponseEntity getRecipe ( @PathVariable ( "name" ) final String name, @RequestBody final User user ) {
-        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+    @GetMapping ( BASE_PATH + "/recipes/{name}/" )
+    public ResponseEntity getRecipe ( @PathVariable ( "name" ) final String name,
+            @RequestParam ( name = "userName", required = true ) final String userName,
+            @RequestParam ( name = "password", required = true ) final Integer password ) {
+        if ( !control.authenticate( userName, password ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
         }

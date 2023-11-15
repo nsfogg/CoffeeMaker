@@ -3,9 +3,11 @@ package edu.ncsu.csc.CoffeeMaker.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.controllers.DTO.IdUserDTO;
@@ -160,14 +162,15 @@ public class APIOrderController extends APIController {
      *            User information
      * @return the User's order. Or all orders if a barista or manager
      */
-    @PostMapping ( BASE_PATH + "/order/status" )
-    public ResponseEntity getOrders ( @RequestBody final User user ) {
+    @GetMapping ( BASE_PATH + "/order/status" )
+    public ResponseEntity getOrders ( @RequestParam ( name = "userName", required = true ) final String userName,
+            @RequestParam ( name = "password", required = true ) final Integer password ) {
 
-        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+        if ( !control.authenticate( userName, password ) ) {
             return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
         }
-        final User checkUser = userService.findByName( user.getUserName() );
+        final User checkUser = userService.findByName( userName );
 
         if ( checkUser.isCustomer() ) {
             return new ResponseEntity( orderService.findByUser( checkUser.getId() ), HttpStatus.OK );

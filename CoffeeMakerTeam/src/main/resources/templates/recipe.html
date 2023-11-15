@@ -41,7 +41,7 @@
 			 */
 			$scope.getIngredients = function () {
 				
-				$http.put("/api/v1/ingredients/", $scope.user).then(function (successResponse) {
+				$http.get("/api/v1/ingredients/" + "?userName=" + $scope.user.userName + "&password=" + $scope.user.password).then(function (successResponse) {
 
 					$scope.ingredientsList = successResponse.data;
 					

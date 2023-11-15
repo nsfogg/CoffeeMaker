@@ -17,7 +17,7 @@
 			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
 			
 			function updateRecipes() {
-				$http.put("/api/v1/recipes", $scope.user).then(function (response) {
+				$http.get("/api/v1/recipes/" + "?userName=" + $scope.user.userName + "&password=" + $scope.user.password).then(function (response) {
 	  				$scope.recipes = response.data;
 	  			});
 			}

@@ -45,8 +45,8 @@
 			font-size: 20px;
 			font-weight: bold;
 			padding:1%;
-			width: 20%;
-			text-align: left;
+			width: 100%;
+			text-align: center;
 			border: none;
 			border-radius: 10px;
 			margin-top: 2%;
@@ -59,7 +59,27 @@
 			background-color: #5E371D;
 		}
 		
-		.order-button {
+		.orderindex-button {
+			background-color: #896145;
+			color: white;
+			font-family: Arial;
+			font-size: 20px;
+			padding:5%;
+			width: 120%;
+			text-align: center;
+			border: none;
+			border-radius: 5px;
+			margin-top: 2%;
+			text-decoration: none;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+		
+		.orderindex-button:hover {
+			background-color: #5E371D;
+		}
+		
+		.order-label {
 			background-color: #6F4E37;
 			color: white;
 			font-size: 20px;
@@ -71,17 +91,13 @@
 			border-radius: 10px;
 			margin-top: 2%;
 			text-decoration: none;
-			cursor: pointer;
 			transition: background-color 0.3s;
-		}
-		
-		.order-button:hover {
-			background-color: #5E371D;
 		}
 		
 		table {
 			width: 100%;
 			margin-top:1%;
+			border-spacing: 25px;
 		}
 		
 		.heading {
@@ -109,13 +125,10 @@
 		var app = angular.module('myApp', []);
 		app.controller('orderStatusCtrl', function ($scope, $http) {
 			
-			$scope.customer = JSON.parse(sessionStorage.getItem("currentUser"));
-			
-			$scope.order = {
+			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
+			$scope.ordersList = {
 				
-				"user": $scope.customer,
-				"isComplete": false,
-				"isPickedUp": false,
+				"orders": [],
 				
 			};
 			
@@ -124,16 +137,57 @@
 			*/ 
 			$scope.getOrders = function () {
 				
-				$http.post("/api/v1/order/status", $scope.customer).then(function (successResponse) {
+				$http.get("/api/v1/order/status" + "?userName=" + $scope.user.userName + "&password=" + $scope.user.password).then(function (successResponse) {
 					
-					$scope.orderList = successResponse.data;
+					$scope.ordersList.orders = successResponse.data;
+					$scope.addStatus();
 					
-				})
+					console.log($scope.ordersList.orders);
+					
+				}, function(errorResponse) {
+					
+					$scope.message = errorResponse.data.message;
+					
+				});
+				
+			}
+			
+			
+			$scope.addStatus = function () {
+				
+				for (order of $scope.ordersList.orders) {
+					
+					if(order.complete){
+						order.status = "Completed";
+					} else {
+						order.status = "In Progress";
+					}
+					
+				}
+			}
+			
+			$scope.pickup = function (order) {
+				
+				let body = {};
+				
+				body.id = order.id
+				body.authUser = $scope.customer;
+				
+				$http.post("/api/v1/order/pickup", body).then(function (successResponse) {
+					
+					$scope.getOrders();
+					
+					$scope.message = successResponse.data.message;
+					
+				}, function (errorResponse) {
+
+					// Save the message in scope and display it in html
+					$scope.message = errorResponse.data.message;
+				});
 				
 			}
 			
 			$scope.getOrders();
-			console.log($scope.orderList);
 			
 		});
 		
@@ -145,7 +199,7 @@
 			<h1 align="center">Order Status</h1>
 		</div>
 		
-		<div class="heading">
+		<div class="heading" >
 			
 			<h3>Order Name</h3>
 			<h3 style="padding-left: 7%;">Status</h3>
@@ -153,23 +207,20 @@
 			
 		</div> 
 		
-		<table id="orderTable">
+		<table id="orderTable" class="order-label">
 			
 			<tbody>
 				
-				<tr ng-repeat="order in orderList">
+				<tr ng-repeat="order in ordersList.orders">
 					
-					<td scope="row">{{order.name}}</td>
-					<td scope="row">{{order.status}}</td>
-					<td scope="row"><button class"index-button"> Pickup </button></td>
+					<td style="float:left; font-family:Arial;">{{order.recipe}}</td>
+					<td style="width: 28%; font-family:Arial;">{{order.status}}</td>
+					<td style="float:right; font-family:Arial;"><button ng-style="!order.complete && {'visibility': 'hidden'}" class="orderindex-button {{order.status}}" ng-click="pickup(order)"> Pickup </button></td>
 					
 				</tr>
 				
 			</tbody>
-			
-			<tr>
-				<td><button class="order-button" onclick="window.location.href='makecoffee'"> Order Coffee </button></td>
-			</tr>
+	
 		</table>
 		
 		<table>
@@ -177,6 +228,8 @@
 				<td style="text-align: right;"><button onclick="window.location.href='customerindex'" class="index-button" style="text-align: center; width: 10%"> Home </button></td>
 			</tr>
 		</table>
+		
+		<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
 
 	</div>
 

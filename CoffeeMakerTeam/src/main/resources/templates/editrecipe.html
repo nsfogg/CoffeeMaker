@@ -34,7 +34,7 @@
 			 * Gets the recipes from the recipes endpoint
 			 */
 			$scope.getRecipes = async function () {
-				$http.put("/api/v1/recipes/", $scope.user).then(function (successResponse) {
+				$http.get("/api/v1/recipes/" + "?userName=" + $scope.user.userName + "&password=" + $scope.user.password).then(function (successResponse) {
 					$scope.recipeList = successResponse.data;
 
 					$timeout(function () {
@@ -54,7 +54,7 @@
 			 * Gets the ingredients from the ingredients endpoint
 			 */
 			$scope.getIngredients = async function () {
-				await $http.put("/api/v1/ingredients/", $scope.user).then(function (successResponse) {
+				await $http.get("/api/v1/ingredients/" + "?userName=" + $scope.user.userName + "&password=" + $scope.user.password).then(function (successResponse) {
 					$scope.ingredientsList = successResponse.data;
 
 					/* Get the recipe list immediately */
@@ -139,12 +139,11 @@
 				if (hasAllFields()) {
 					// body will hold our response body
 					let body = {};
+					let recipe = {};
 
-					console.log(body);
-
-					body.name = $scope.selectedRecipe.name;
-					body.price = $scope.selectedRecipe.price;
-					body.ingredients = []
+					recipe.name = $scope.selectedRecipe.name;
+					recipe.price = $scope.selectedRecipe.price;
+					recipe.ingredients = []
 
 					$scope.selectedRecipe.ingredients.forEach((ingredient) => {
 						let currIngredient = {}; // Make a new ingredient to add to the final recipe
@@ -157,11 +156,14 @@
 						currIngredient[angular.toJson(copied)] = ingredient.amount;
 
 						// Add the ingredient we made to our recipe
-						body.ingredients.push(currIngredient);
+						recipe.ingredients.push(currIngredient);
 
 					});
+					
+					body.newRecipe = recipe;
+					body.authUser = $scope.user;
 
-					await $http.put("/api/v1/recipes/" + $scope.selectedRecipeName, body).then(function (successResponse) {
+					await $http.put("/api/v1/recipes/" + recipe.name, body).then(function (successResponse) {
 
 						// Save the message in scope and display it in html
 						$scope.message = successResponse.data.message;

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -89,7 +90,9 @@ public class APITest {
 
         // Ensure the inventory is initially empty
         final String response = mvc
-                .perform( post( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", manager.getUserName() )
+                        .param( "password", Integer.toString( manager.getPassword() ) )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
@@ -118,7 +121,9 @@ public class APITest {
         assertTrue( responseInventory.getInventory().containsValue( 10 ) );
 
         String recipe = mvc
-                .perform( put( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( "/api/v1/recipes/" ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", manager.getUserName() )
+                        .param( "password", Integer.toString( manager.getPassword() ) )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
@@ -135,7 +140,9 @@ public class APITest {
         }
 
         recipe = mvc
-                .perform( put( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( "/api/v1/recipes/" ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", manager.getUserName() )
+                        .param( "password", Integer.toString( manager.getPassword() ) )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
@@ -147,7 +154,9 @@ public class APITest {
 
         // Ensure the inventory is initially empty
         final String response1 = mvc
-                .perform( post( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", manager.getUserName() )
+                        .param( "password", Integer.toString( manager.getPassword() ) )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 

@@ -3,9 +3,10 @@ package edu.ncsu.csc.CoffeeMaker.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.controllers.DTO.InventoryUserDTO;
@@ -58,13 +59,14 @@ public class APIInventoryController extends APIController {
      *            the current user
      * @return response to the request
      */
-    @PostMapping ( BASE_PATH + "/inventory" )
-    public ResponseEntity getInventory ( @RequestBody final User user ) {
-        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+    @GetMapping ( BASE_PATH + "/inventory" )
+    public ResponseEntity getInventory ( @RequestParam ( name = "userName", required = true ) final String userName,
+            @RequestParam ( name = "password", required = true ) final Integer password ) {
+        if ( !control.authenticate( userName, password ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
         }
-        final User checkUser = userService.findByName( user.getUserName() );
+        final User checkUser = userService.findByName( userName );
 
         if ( !checkUser.isManager() ) {
             return new ResponseEntity( errorResponse( "Cannot view the inventory" ), HttpStatus.BAD_REQUEST );
