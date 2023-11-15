@@ -206,7 +206,8 @@ public class APIOrderTest {
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString()
                 .contains( customer2.getId().toString() ) );
 
-        mvc.perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+        mvc.perform( get( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                .param( "userName", "test" ).param( "password", "test" )
                 .content( TestUtils.asJsonString( new User( "test", "test", 0 ) ) ) )
                 .andExpect( status().isForbidden() );
 
