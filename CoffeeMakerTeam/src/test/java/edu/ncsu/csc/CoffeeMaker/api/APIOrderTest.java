@@ -2,6 +2,7 @@ package edu.ncsu.csc.CoffeeMaker.api;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -150,41 +151,57 @@ public class APIOrderTest {
         assertEquals( customer2.getId(), ( (Order) orderService.findAll().toArray()[1] ).getUser() );
 
         assertTrue( mvc
-                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", customer.getUserName() )
+                        .param( "password", Integer.toString( customer.getPassword() ) )
                         .content( TestUtils.asJsonString( customer ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString().contains( name ) );
         assertTrue( mvc
-                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", customer.getUserName() )
+                        .param( "password", Integer.toString( customer.getPassword() ) )
                         .content( TestUtils.asJsonString( customer ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString()
                 .contains( customer.getId().toString() ) );
 
         assertTrue( mvc
-                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", customer2.getUserName() )
+                        .param( "password", Integer.toString( customer2.getPassword() ) )
                         .content( TestUtils.asJsonString( customer2 ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString().contains( "milk" ) );
         assertTrue( mvc
-                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", customer2.getUserName() )
+                        .param( "password", Integer.toString( customer2.getPassword() ) )
                         .content( TestUtils.asJsonString( customer2 ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString()
                 .contains( customer2.getId().toString() ) );
 
         assertTrue( mvc
-                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", barista.getUserName() )
+                        .param( "password", Integer.toString( barista.getPassword() ) )
                         .content( TestUtils.asJsonString( barista ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString().contains( name ) );
         assertTrue( mvc
-                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", barista.getUserName() )
+                        .param( "password", Integer.toString( barista.getPassword() ) )
                         .content( TestUtils.asJsonString( barista ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString()
                 .contains( customer.getId().toString() ) );
 
         assertTrue( mvc
-                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", barista.getUserName() )
+                        .param( "password", Integer.toString( barista.getPassword() ) )
                         .content( TestUtils.asJsonString( barista ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString().contains( "milk" ) );
         assertTrue( mvc
-                .perform( post( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", barista.getUserName() )
+                        .param( "password", Integer.toString( barista.getPassword() ) )
                         .content( TestUtils.asJsonString( barista ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString()
                 .contains( customer2.getId().toString() ) );
