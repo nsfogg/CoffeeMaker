@@ -198,4 +198,17 @@ public class MappingController {
         return "orderstatus";
     }
 
+    /**
+     * On a GET request to /fulfillorder, the NewCustomerController will return
+     * /src/main/resources/templates/fulfillorder.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/fulfillorder", "/fulfillorder.html" } )
+    public String fulfillOrderForm ( final Model model ) {
+        return "fulfillorder";
+    }
+
 }
