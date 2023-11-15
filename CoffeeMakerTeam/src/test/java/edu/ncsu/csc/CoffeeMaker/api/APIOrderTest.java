@@ -131,6 +131,9 @@ public class APIOrderTest {
     @Test
     @Transactional
     public void testOrderBeverage1 () throws Exception {
+
+        final User unsavedUser = new User( "unknown", "password", 0 );
+
         final String name = "Latte";
 
         mvc.perform( post( String.format( "/api/v1/orders/%s", name ) ).contentType( MediaType.APPLICATION_JSON )
@@ -207,9 +210,9 @@ public class APIOrderTest {
                 .contains( customer2.getId().toString() ) );
 
         mvc.perform( get( String.format( "/api/v1/order/status" ) ).contentType( MediaType.APPLICATION_JSON )
-                .param( "userName", "test" ).param( "password", "test" )
-                .content( TestUtils.asJsonString( new User( "test", "test", 0 ) ) ) )
-                .andExpect( status().isForbidden() );
+                .param( "userName", unsavedUser.getUserName() )
+                .param( "password", Integer.toString( unsavedUser.getPassword() ) )
+                .content( TestUtils.asJsonString( unsavedUser ) ) ).andExpect( status().isForbidden() );
 
         mvc.perform( post( String.format( "/api/v1/order/order" ) ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString(
