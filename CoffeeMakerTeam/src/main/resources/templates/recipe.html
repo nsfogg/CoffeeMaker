@@ -41,16 +41,13 @@
 			 */
 			$scope.getIngredients = function () {
 				
-				let body = {};
-				
-				body.user = JSON.parse(sessionStorage.getItem("currentUser"));
-				console.log(body)
-				
-				$http.get("/api/v1/ingredients/", body).then(function (successResponse) {
+				$http.put("/api/v1/ingredients/", $scope.user).then(function (successResponse) {
+
 					$scope.ingredientsList = successResponse.data;
+					
 
 				}, function (errorResponse) {
-
+					console.log(errorResponse.data.message);
 					// Save the message in scope and display it in html
 					$scope.message = errorResponse.data.message;
 				});
@@ -64,12 +61,13 @@
 				if (hasAllFields()) {
 					// body will hold our response body
 					let body = {};
+					let recipe = {};
 
-					body.user = JSON.parse(sessionStorage.getItem("currentUser"));
+					body.authUser = JSON.parse(sessionStorage.getItem("currentUser"));
 					
-					$scope.bodyRecipe.name = $scope.recipe.name;
-					$scope.bodyRecipe.price = $scope.recipe.price;
-					$scope.bodyRecipe.ingredients = []
+					recipe.name = $scope.recipe.name;
+					recipe.price = $scope.recipe.price;
+					recipe.ingredients = []
 
 					$scope.recipe.ingredients.forEach((ingredient) => {
 						let currIngredient = {}; // Make a new ingredient to add to the final recipe
@@ -82,11 +80,11 @@
 						currIngredient[angular.toJson(copied)] = ingredient.amount;
 
 						// Add the ingredient we made to our recipe
-						$scope.bodyRecipe.ingredients.push(currIngredient);
+						recipe.ingredients.push(currIngredient);
 
 					});
 					
-					body.recipe = $scope.bodyRecipe;
+					body.newRecipe = recipe;
 
 					$http.post("/api/v1/recipes/", body).then(function (successResponse) {
 
@@ -329,7 +327,7 @@
 				</div>
 
 				<div class="col p-0">
-					<a href="/index" class="btn btn-secondary btn-sm float-end">Back to Home</a>
+					<a href="/managerindex" class="btn btn-secondary btn-sm float-end">Home</a>
 				</div>
 			</div>
 

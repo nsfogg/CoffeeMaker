@@ -14,16 +14,25 @@
 
 		var app = angular.module('myApp', []);
 		app.controller('recipesCtrl', function($scope, $http, $q) {
-			$http.get("/api/v1/recipes").then(function(response) {
+			
+			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
+			
+			$http.put("/api/v1/recipes", $scope.user).then(function(response) {
 				$scope.recipes = response.data;
 			});
 
 			$scope.make = function() {
-				var amtPaid = $scope.amtPaid;
+				var paid = $scope.amtPaid;
 				var name = $scope.name;
 				$scope.submissionFailure = false;
 				$scope.submissionSuccess = false;
-				$http.post("/api/v1/makecoffee/" + name, amtPaid).then(
+				
+				let body = {};
+				
+				body.paid = paid;
+				body.authUser = $scope.user;
+				
+				$http.post("/api/v1/makecoffee/" + name, body).then(
 						function(response) {
 							$scope.change = response.data.message;
 							$scope.submissionSuccess = true;
@@ -59,7 +68,7 @@
 
 			<div ng-show="submissionFailure">An error occurred: {{error}}</div>
 
-			<br /> <a href="/index">Home</a>
+			<br /> <a href="/customerindex">Home</a>
 		</div>
 
 	</div>

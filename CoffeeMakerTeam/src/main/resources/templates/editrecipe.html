@@ -28,11 +28,13 @@
 		var app = angular.module('myApp', []);
 		app.controller('editRecipeCtrl', function ($scope, $http, $timeout) {
 
+			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
+
 			/**
 			 * Gets the recipes from the recipes endpoint
 			 */
 			$scope.getRecipes = async function () {
-				$http.get("/api/v1/recipes/").then(function (successResponse) {
+				$http.put("/api/v1/recipes/", $scope.user).then(function (successResponse) {
 					$scope.recipeList = successResponse.data;
 
 					$timeout(function () {
@@ -52,7 +54,7 @@
 			 * Gets the ingredients from the ingredients endpoint
 			 */
 			$scope.getIngredients = async function () {
-				await $http.get("/api/v1/ingredients/").then(function (successResponse) {
+				await $http.put("/api/v1/ingredients/", $scope.user).then(function (successResponse) {
 					$scope.ingredientsList = successResponse.data;
 
 					/* Get the recipe list immediately */
@@ -397,7 +399,7 @@
 				</div>
 
 				<div class="col p-0">
-					<a href="/index" class="btn btn-secondary btn-sm float-end">Back to Home</a>
+					<a href="/managerindex" class="btn btn-secondary btn-sm float-end">Home</a>
 				</div>
 
 			</div>

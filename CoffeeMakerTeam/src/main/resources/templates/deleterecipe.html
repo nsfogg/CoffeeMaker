@@ -14,14 +14,16 @@
 		var app = angular.module('myApp', []);
 		app.controller('recipesCtrl', function($scope, $http) {
 			
+			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
+			
 			function updateRecipes() {
-				$http.get("/api/v1/recipes").then(function (response) {
+				$http.put("/api/v1/recipes", $scope.user).then(function (response) {
 	  				$scope.recipes = response.data;
 	  			});
 			}
 			
 			function deleteRecipe(recipe) {
-		        $http.delete("/api/v1/recipes/" + recipe)
+		        $http.delete("/api/v1/recipes/" + recipe, $scope.user)
 		            .then(
 		            function (response) {
 		            		console.log(response);
@@ -91,7 +93,7 @@
 
 
 		</div>
-		<a href="/index">Home</a>
+		<a href="/managerindex">Home</a>
 	</div>
 
 

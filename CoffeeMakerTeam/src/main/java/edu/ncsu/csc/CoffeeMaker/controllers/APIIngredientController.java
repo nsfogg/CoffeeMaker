@@ -78,7 +78,7 @@ public class APIIngredientController extends APIController {
      *            the current user
      * @return response to the request
      */
-    @GetMapping ( BASE_PATH + "/ingredients" )
+    @PutMapping ( BASE_PATH + "/ingredients" )
     public ResponseEntity getIngredients ( @RequestBody final User user ) {
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),

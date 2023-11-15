@@ -327,7 +327,7 @@ public class APIIngredientTest {
                 "There should only be one ingredient in the CoffeeMaker" );
 
         final String response = mvc
-                .perform( get( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( put( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
@@ -339,10 +339,10 @@ public class APIIngredientTest {
         assertEquals( 1, ingredients.size() );
         assertEquals( i1, ingredients.get( 0 ) );
 
-        mvc.perform( get( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
+        mvc.perform( put( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( customer ) ) ).andExpect( status().isForbidden() );
 
-        mvc.perform( get( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
+        mvc.perform( put( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
 
     }

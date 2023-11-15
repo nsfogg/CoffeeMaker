@@ -3,7 +3,7 @@ package edu.ncsu.csc.CoffeeMaker.api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -82,7 +82,7 @@ public class APIInventoryTest {
 
         // Ensure the inventory is initially empty
         String response = mvc
-                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( post( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
@@ -105,14 +105,14 @@ public class APIInventoryTest {
 
         // Check the changes are reflected in the response from GET
         response = mvc
-                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( post( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
-        mvc.perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+        mvc.perform( post( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( customer ) ) ).andExpect( status().isBadRequest() );
 
-        mvc.perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+        mvc.perform( post( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
 
         assertEquals( 1, responseInventory.getInventory().size() );
@@ -127,7 +127,7 @@ public class APIInventoryTest {
 
         // Ensure the inventory is initially empty
         String response = mvc
-                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( post( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
@@ -150,7 +150,7 @@ public class APIInventoryTest {
 
         // Check the changes are reflected in the response from GET
         response = mvc
-                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( post( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
@@ -186,7 +186,7 @@ public class APIInventoryTest {
 
         // Check the changes are reflected in the response from GET
         response = mvc
-                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( post( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
@@ -208,7 +208,7 @@ public class APIInventoryTest {
 
         // Ensure the inventory is initially empty
         final String response = mvc
-                .perform( get( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( post( "/api/v1/inventory" ).contentType( MediaType.APPLICATION_JSON )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 

@@ -34,6 +34,8 @@
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
 		app.controller('inventoryCtrl', function ($scope, $http) {
+			
+			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
 
 			$scope.inventory = {
 
@@ -46,7 +48,7 @@
 			 * Gets the inventory from the inventory endpoint
 			 */
 			$scope.getInventory = function () {
-				$http.get("/api/v1/inventory/").then(function (successResponse) {
+				$http.post("/api/v1/inventory/", $scope.user).then(function (successResponse) {
 					$scope.inventoryObject = successResponse.data;
 
 					$scope.parseInventory();
@@ -85,9 +87,12 @@
 
 
 				let body = {};
+				let inv = {};
+				
+				body.authUser = $scope.user;
 
-				body.id = $scope.inventory.id;
-				body.inventory = [];
+				inv.id = $scope.inventory.id;
+				inv.inventory = [];
 
 				for (var i = 0; i < $scope.inventory.ingredients.length; i++) {
 
@@ -102,10 +107,11 @@
 
 					current[angular.toJson(copy)] = ingr.addAmount == undefined ? 0 : ingr.addAmount;
 
-					body.inventory.push(current);
+					inv.inventory.push(current);
 
 				}
-
+				
+				body.inventory = inv;
 
 				$http.put("/api/v1/inventory/", body).then(function (successResponse) {
 					$scope.inventoryObject = successResponse.data;
@@ -250,7 +256,7 @@
 			</div>
 
 			<div class="col p-0 me-5">
-				<a href="/index" class="btn btn-secondary btn-sm float-end">Back to Home</a>
+				<a href="/managerindex" class="btn btn-secondary btn-sm float-end">Home</a>
 			</div>
 		</div>
 

@@ -62,7 +62,7 @@ public class APIRecipeController extends APIController {
      *            the current user
      * @return JSON representation of all recipies
      */
-    @GetMapping ( BASE_PATH + "/recipes" )
+    @PutMapping ( BASE_PATH + "/recipes" )
     public List<Recipe> getRecipes ( @RequestBody final User user ) {
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return null;

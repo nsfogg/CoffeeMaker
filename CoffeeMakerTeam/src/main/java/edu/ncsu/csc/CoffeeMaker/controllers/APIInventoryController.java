@@ -3,7 +3,7 @@ package edu.ncsu.csc.CoffeeMaker.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,7 +58,7 @@ public class APIInventoryController extends APIController {
      *            the current user
      * @return response to the request
      */
-    @GetMapping ( BASE_PATH + "/inventory" )
+    @PostMapping ( BASE_PATH + "/inventory" )
     public ResponseEntity getInventory ( @RequestBody final User user ) {
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
