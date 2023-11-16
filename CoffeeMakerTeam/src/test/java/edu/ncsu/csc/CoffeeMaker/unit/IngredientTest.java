@@ -24,6 +24,9 @@ import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 
+/**
+ * Test for ingredients
+ */
 @ExtendWith ( SpringExtension.class )
 @EnableAutoConfiguration
 @SpringBootTest ( classes = TestConfig.class )
@@ -34,12 +37,30 @@ public class IngredientTest {
 
     @Autowired
     private IngredientService ingredientService;
+    /**
+     * chocolate ingredient
+     */
     Ingredient                chocolate;
+    /**
+     * vanilla ingredient
+     */
     Ingredient                vanilla;
+    /**
+     * coffee ingredient
+     */
     Ingredient                coffee;
+    /**
+     * milk ingredient
+     */
     Ingredient                milk;
+    /**
+     * id for choclate ingredinet
+     */
     Long                      chocolateId;
 
+    /**
+     * Setup method for tests
+     */
     @BeforeEach
     public void setup () {
         recipeService.deleteAll();
@@ -70,6 +91,9 @@ public class IngredientTest {
 
     }
 
+    /**
+     * Test getting ingredients
+     */
     @Test
     @Transactional
     public void testGetIngredientFields () {
@@ -78,6 +102,9 @@ public class IngredientTest {
 
     }
 
+    /**
+     * test changing ingredients
+     */
     @Test
     @Transactional
     public void testSetIngredientFields () {
@@ -100,6 +127,9 @@ public class IngredientTest {
 
     }
 
+    /**
+     * Test for equal ingredients
+     */
     @Test
     @Transactional
     public void testIngredientEquals () {
@@ -110,6 +140,10 @@ public class IngredientTest {
         Assertions.assertTrue( vanilla.equals( vanilla ) );
 
     }
+
+    /*
+     * Test for converting ingredinet to string
+     */
 
     @Test
     @Transactional

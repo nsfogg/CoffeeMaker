@@ -31,30 +31,48 @@ import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ * Testing for API recipe
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith ( SpringExtension.class )
 public class APIRecipeTest {
 
     /**
-     * MockMvc uses Spring's testing framework to handle requests to the REST
-     * API
+     * context for web application
      */
-    private MockMvc               mvc;
-
     @Autowired
     private WebApplicationContext context;
 
+    /**
+     * MockMvc for testing http requests
+     */
+    @Autowired
+    private MockMvc               mvc;
+
+    /**
+     * RecipeService for interacting with recipe database
+     */
     @Autowired
     private RecipeService         service;
-
+    /**
+     * UserService for interacting with user database
+     */
     @Autowired
     private UserService           userService;
 
+    /** tests user for customer */
     final User                    customer = new User( "customer", "password", 0 );
 
+    /**
+     * Test user for barista
+     */
     final User                    barista  = new User( "barista", "password", 1 );
 
+    /**
+     * test user for manager
+     */
     final User                    manager  = new User( "manager", "password", 2 );
 
     /**

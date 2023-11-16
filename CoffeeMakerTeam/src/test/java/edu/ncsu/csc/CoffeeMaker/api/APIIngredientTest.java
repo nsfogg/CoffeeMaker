@@ -48,30 +48,52 @@ public class APIIngredientTest {
     // ingredients from everywhere
 
     /**
-     * MockMvc uses Spring's testing framework to handle requests to the REST
-     * API
+     * context for web application
      */
-    private MockMvc               mvc;
-
     @Autowired
     private WebApplicationContext context;
 
+    /**
+     * MockMvc for testing http requests
+     */
     @Autowired
-    private IngredientService     ingredientService;
+    private MockMvc               mvc;
 
-    @Autowired
-    private InventoryService      inventoryService;
-
+    /**
+     * RecipeService for interacting with recipe database
+     */
     @Autowired
     private RecipeService         rService;
 
+    /**
+     * InventoryService for interacting with inventory database
+     */
+    @Autowired
+    private InventoryService      inventoryService;
+
+    /**
+     * IngredientService for interacting with ingredient database
+     */
+    @Autowired
+    private IngredientService     ingredientService;
+
+    /**
+     * UserService for interacting with user database
+     */
     @Autowired
     private UserService           userService;
 
+    /** tests user for customer */
     final User                    customer = new User( "customer", "password", 0 );
 
+    /**
+     * Test user for barista
+     */
     final User                    barista  = new User( "barista", "password", 1 );
 
+    /**
+     * test user for manager
+     */
     final User                    manager  = new User( "manager", "password", 2 );
 
     /**

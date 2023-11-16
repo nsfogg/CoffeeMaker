@@ -32,33 +32,55 @@ import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ * Tests for api inventory
+ */
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
 @AutoConfigureMockMvc
 public class APIInventoryTest {
 
     /**
-     * MockMvc uses Spring's testing framework to handle requests to the REST
-     * API
+     * context for web application
      */
-    private MockMvc               mvc;
-
     @Autowired
     private WebApplicationContext context;
 
+    /**
+     * MockMvc for testing http requests
+     */
+    @Autowired
+    private MockMvc               mvc;
+
+    /**
+     * InventoryService for interacting with inventory database
+     */
     @Autowired
     private InventoryService      inventoryService;
 
+    /**
+     * IngredientService for interacting with ingredient database
+     */
     @Autowired
     private IngredientService     ingredientService;
 
+    /**
+     * UserService for interacting with user database
+     */
     @Autowired
     private UserService           userService;
 
+    /** tests user for customer */
     final User                    customer = new User( "customer", "password", 0 );
 
+    /**
+     * Test user for barista
+     */
     final User                    barista  = new User( "barista", "password", 1 );
 
+    /**
+     * test user for manager
+     */
     final User                    manager  = new User( "manager", "password", 2 );
 
     /**

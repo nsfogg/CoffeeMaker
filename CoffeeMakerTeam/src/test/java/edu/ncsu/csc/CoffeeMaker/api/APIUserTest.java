@@ -26,6 +26,9 @@ import edu.ncsu.csc.CoffeeMaker.controllers.DTO.NamePasswordPermissionUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ * Tests for user API
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith ( SpringExtension.class )
@@ -37,12 +40,21 @@ public class APIUserTest {
      */
     private MockMvc               mvc;
 
+    /**
+     * web application context
+     */
     @Autowired
     private WebApplicationContext context;
 
+    /**
+     * UserService for interacting with user database
+     */
     @Autowired
     private UserService           service;
 
+    /**
+     * user object for testing
+     */
     User                          u = null;
 
     /**

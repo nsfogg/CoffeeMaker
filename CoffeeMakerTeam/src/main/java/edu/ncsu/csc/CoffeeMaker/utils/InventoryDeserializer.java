@@ -47,7 +47,7 @@ public class InventoryDeserializer extends StdDeserializer<Inventory> implements
      * @param vc
      *            helper class for Inventory Deserializer
      */
-    public InventoryDeserializer ( final Class< ? > vc ) {
+    public InventoryDeserializer ( final Class<?> vc ) {
         super( vc );
     }
 

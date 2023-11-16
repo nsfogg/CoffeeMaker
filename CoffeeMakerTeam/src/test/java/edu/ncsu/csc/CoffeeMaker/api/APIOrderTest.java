@@ -37,35 +37,67 @@ import edu.ncsu.csc.CoffeeMaker.services.OrderService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ * Test for order APIs
+ */
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
 @AutoConfigureMockMvc
 public class APIOrderTest {
 
+    /**
+     * MockMvc for testing http requests
+     */
     @Autowired
     private MockMvc           mvc;
 
+    /**
+     * RecipeService for interacting with recipe database
+     */
     @Autowired
     private RecipeService     recipeService;
 
+    /**
+     * InventoryService for interacting with inventory database
+     */
     @Autowired
     private InventoryService  inventoryService;
 
+    /**
+     * IngredientService for interacting with ingredient database
+     */
     @Autowired
     private IngredientService ingredientService;
 
-    @Autowired
-    private UserService       userService;
-
+    /**
+     * OrderService for interacting with ingredient database
+     */
     @Autowired
     private OrderService      orderService;
 
-    User                      customer  = new User( "customer", "password", 0 );
-    User                      customer2 = new User( "customer2", "password", 0 );
+    /**
+     * UserService for interacting with user database
+     */
+    @Autowired
+    private UserService       userService;
 
+    /** tests user for customer */
+    User                      customer  = new User( "customer", "password", 0 );
+
+    /**
+     * Test user for barista
+     */
     User                      barista   = new User( "barista", "password", 1 );
 
+    /**
+     * test user for manager
+     */
     User                      manager   = new User( "manager", "password", 2 );
+
+    /**
+     * test user for cusomer2
+     */
+    User                      customer2 = new User( "customer2", "password", 0 );
 
     /**
      * Sets up the tests.
