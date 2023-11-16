@@ -124,9 +124,13 @@
 
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
-		app.controller('orderStatusCtrl', function ($scope, $http) {
+		app.controller('fufillOrderCtrl', function ($scope, $http) {
 
 			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
+
+			/**
+			* Order list to hold all incomplete orders for barista
+			*/
 			$scope.ordersList = {
 
 				"orders": [],
@@ -143,14 +147,17 @@
 					$scope.ordersList.orders = successResponse.data;
 
 					// Filter orders where order.complete is false
-					$scope.ordersList.pickedUpOrders = $scope.ordersList.orders.filter(function (order) {
-						return order.pickedUp === false;
+					$scope.ordersList.completedOrders = $scope.ordersList.orders.filter(function (order) {
+						return order.complete === false;
 					});
+
+					// Log the completed orders
+					console.log($scope.ordersList.completedOrders);
+
 
 					$scope.addStatus();
 
 					console.log($scope.ordersList.orders);
-					console.log($scope.ordersList.pickedUpOrders);
 
 				}, function (errorResponse) {
 
@@ -165,6 +172,8 @@
 
 				for (order of $scope.ordersList.orders) {
 
+					order.userName
+
 					if (order.complete) {
 						order.status = "Completed";
 					} else {
@@ -174,22 +183,27 @@
 				}
 			}
 
-			$scope.pickup = function (order) {
+			$scope.fulfill = function (order) {
 
 				let body = {};
 
 				body.id = order.id
 				body.authUser = $scope.user;
 
-				$http.post("/api/v1/order/pickup", body).then(function (successResponse) {
+				$http.post("/api/v1/order/order", body).then(function (successResponse) {
 
 					$scope.getOrders();
 
+					// Reload the page
+					location.reload();
+
+					// Return success message once order is fulfilled
 					$scope.message = successResponse.data.message;
+					
 
 				}, function (errorResponse) {
 
-					// Save the message in scope and display it in html
+					// Save the error message in scope and display it in html
 					$scope.message = errorResponse.data.message;
 				});
 
@@ -201,17 +215,17 @@
 
 	</script>
 
-	<div class="panel" ng-app="myApp" ng-controller="orderStatusCtrl">
+	<div class="panel" ng-app="myApp" ng-controller="fufillOrderCtrl">
 
 		<div class="header-box">
-			<h1 align="center">Order Status</h1>
+			<h1 align="center"> Fulfill Orders </h1>
 		</div>
 
 		<div class="heading">
 
-			<h3>Order Name</h3>
-			<h3 style="padding-left: 7%;">Status</h3>
-			<h3>Customer Pickup</h3>
+			<h3>Customer Name</h3>
+			<h3 style="padding-left: 7%;">Beverage Ordered</h3>
+			<h3>Fulfill Order</h3>
 
 		</div>
 
@@ -219,13 +233,13 @@
 
 			<tbody>
 
-				<tr ng-repeat="order in ordersList.pickedUpOrders">
+				<tr ng-repeat="order in ordersList.completedOrders">
 
-					<td style="float:left; font-family:Arial;">{{order.recipe}}</td>
-					<td style="width: 28%; font-family:Arial;">{{order.status}}</td>
-					<td style="float:right; font-family:Arial;"><button
-							ng-style="!order.complete && {'visibility': 'hidden'}"
-							class="orderindex-button {{order.status}}" ng-click="pickup(order)" onclick="window.location.href='orderstatus'"> Pickup </button></td>
+
+					<td style="float:left; font-family:Arial;">{{order.user}}</td>
+					<td style="width: 28%; font-family:Arial;">{{order.recipe}}</td>
+					<td style="float:right; font-family:Arial;"><button class="orderindex-button"
+							ng-click="fulfill(order)"onclick="window.location.href='fulfillorder'"> Fulfill </button></td>
 
 				</tr>
 
@@ -235,7 +249,7 @@
 
 		<table>
 			<tr>
-				<td style="text-align: right;"><button onclick="window.location.href='customerindex'"
+				<td style="text-align: right;"><button onclick="window.location.href='baristaindex'"
 						class="index-button" style="text-align: center; width: 10%"> Home </button></td>
 			</tr>
 		</table>

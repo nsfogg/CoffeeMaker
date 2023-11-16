@@ -192,7 +192,7 @@ public class APIOrderController extends APIController {
     public ResponseEntity completeOrder ( @RequestBody final IdUserDTO body ) {
 
         final Long id = body.id;
-        final User user = body.authUser;
+        final User user = userService.findByName( body.authUser.getUserName() );
 
         if ( !control.authenticate( user.getUserName(), user.getPassword() ) || !user.isBarista() ) {
             return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
