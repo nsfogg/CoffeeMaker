@@ -89,6 +89,30 @@ public class APIUserController extends APIController {
     }
 
     /**
+     * Gets a user's username given their id
+     *
+     * @param id
+     *            id for the user
+     * @return ResponseEntity indicating success if user successfully logged in
+     *         or failure otherwise
+     */
+    @GetMapping ( BASE_PATH + "/users/{id}" )
+    public ResponseEntity getUsernameById ( @PathVariable final Long id ) {
+
+        if ( service.findById( id ) == null ) {
+            return new ResponseEntity( errorResponse( "User not found" ), HttpStatus.NOT_FOUND );
+        }
+
+        final User user = service.findById( id );
+
+        if ( user != null ) {
+            return new ResponseEntity( successResponse( user.getUserName() ), HttpStatus.OK );
+        }
+
+        return new ResponseEntity( errorResponse( "User not found" ), HttpStatus.NOT_FOUND );
+    }
+
+    /**
      * Helper method for authenticating a user whose password is already hashed
      *
      * @param userName
