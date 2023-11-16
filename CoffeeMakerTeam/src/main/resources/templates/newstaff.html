@@ -148,7 +148,6 @@
 
 			};
 
-			console.log($scope.staff.user);
 			$scope.message = "";
 
 			function hasAllFields() {
@@ -160,8 +159,8 @@
 				return false;
 			};
 			
-			$scope.moveToLogin = function () {
-				window.location.href = 'login.html';
+			$scope.moveToManagerIndex = function () {
+				window.location.href = 'managerindex';
 			}
 
 			$scope.submitStaff = function () {
@@ -281,13 +280,13 @@
 			<div class="row w-100 ms-3 mt-5">
 				<div class="col p-0 mt-0">
 
-					<button class="btn btn-primary btn-sm float-left bottom-button ms-3" 
-						ng-click="moveToLogin()">Home</button>
+					<button type="button" class="float-left bottom-button ms-3" 
+						ng-click="moveToManagerIndex()">Home</button>
 
-					<button type="submit" class="btn btn-primary btn-sm float-end bottom-button ms-3"
+					<button type="button" class="float-end bottom-button ms-3"
 						ng-click="submitStaff()">Submit</button>
 
-					<button type="button" class="btn btn-secondary btn-sm float-end bottom-button ms-3"
+					<button type="button" class="float-end bottom-button ms-3"
 						ng-click="reset()">Reset</button>
 				</div>
 

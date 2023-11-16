@@ -161,17 +161,17 @@
 			};
 
 			$scope.moveToCreateCustomer = function () {
-				window.location.href = 'newcustomer.html';
+				window.location.href = 'newcustomer';
 			}
 
 			$scope.checkUserPermission = function () {
 				//Check user permission to lead to correct index page
 				if ($scope.user.permissions == 0) {
-					window.location.href = 'customerindex.html';
+					window.location.href = 'customerindex';
 				} else if ($scope.user.permissions == 1) {
-					window.location.href = 'baristaindex.html';
+					window.location.href = 'baristaindex';
 				} else if ($scope.user.permissions == 2) {
-					window.location.href = 'managerindex.html';
+					window.location.href = 'managerindex';
 				}
 			};
 
@@ -258,13 +258,13 @@
 				<div class="col p-0 mt-0">
 
 					<a href="recipe.html"><button type="submit"
-							class="btn btn-primary btn-sm float-left bottom-button bottom-button1 ms-3"
+							class="float-left bottom-button bottom-button1 ms-3"
 							ng-click="moveToCreateCustomer()">Create Account</button></a>
 
-					<button type="submit" class="btn btn-primary btn-sm float-end bottom-button ms-3"
+					<button type="submit" class="float-end bottom-button ms-3"
 						ng-click="submitUser()">Submit</button>
 
-					<button type="button" class="btn btn-secondary btn-sm float-end bottom-button ms-3"
+					<button type="button" class="float-end bottom-button ms-3"
 						ng-click="reset()">Reset</button>
 				</div>
 

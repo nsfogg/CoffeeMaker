@@ -79,12 +79,13 @@ public class APIIngredientController extends APIController {
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/ingredients" )
-    public ResponseEntity getIngredients ( @RequestBody final User user ) {
-        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+    public ResponseEntity getIngredients ( @RequestParam ( name = "userName", required = true ) final String userName,
+            @RequestParam ( name = "password", required = true ) final Integer password ) {
+        if ( !control.authenticate( userName, password ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
         }
-        final User checkUser = userService.findByName( user.getUserName() );
+        final User checkUser = userService.findByName( userName );
 
         if ( checkUser.isCustomer() || checkUser.isBarista() ) {
             return new ResponseEntity( errorResponse( "Cannot view the current lsit of ingredients" ),

@@ -328,6 +328,8 @@ public class APIIngredientTest {
 
         final String response = mvc
                 .perform( get( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", manager.getUserName() )
+                        .param( "password", Integer.toString( manager.getPassword() ) )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 
@@ -340,10 +342,9 @@ public class APIIngredientTest {
         assertEquals( i1, ingredients.get( 0 ) );
 
         mvc.perform( get( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
+                .param( "userName", customer.getUserName() )
+                .param( "password", Integer.toString( customer.getPassword() ) )
                 .content( TestUtils.asJsonString( customer ) ) ).andExpect( status().isForbidden() );
-
-        mvc.perform( get( "/api/v1/ingredients" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
 
     }
 

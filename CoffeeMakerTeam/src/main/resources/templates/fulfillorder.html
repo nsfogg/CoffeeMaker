@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>CoffeeMaker</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+</head>
+
+<body>
+	<style>
+		body {
+			background-color: #4b3120;
+
+		}
+
+		.panel {
+			background-color: #DAC3A2;
+			width: 90%;
+			margin: auto;
+			margin-top: 3%;
+			margin-bottom: 3%;
+			height: 90%;
+			z-index: -1;
+			padding: 3%;
+			border-radius: 10px;
+		}
+
+		h1 {
+			color: #FFFFFF;
+			font-family: Arial;
+			font-weight: bold;
+			font-size: 28px;
+		}
+
+		.header-box {
+			background-color: #4b3120;
+			padding-left: 2%;
+			padding-top: 0.1%;
+			padding-bottom: 0.1%;
+			text-align: left;
+			border-radius: 10px;
+		}
+
+		.index-button {
+			background-color: #896145;
+			color: white;
+			font-size: 20px;
+			font-weight: bold;
+			padding: 1%;
+			width: 100%;
+			text-align: center;
+			border: none;
+			border-radius: 10px;
+			margin-top: 2%;
+			text-decoration: none;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+
+		.index-button:hover {
+			background-color: #5E371D;
+		}
+
+		.orderindex-button {
+			background-color: #896145;
+			color: white;
+			font-family: Arial;
+			font-size: 20px;
+			padding: 5%;
+			width: 120%;
+			text-align: center;
+			border: none;
+			border-radius: 5px;
+			margin-top: 2%;
+			text-decoration: none;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+
+		.orderindex-button:hover {
+			background-color: #5E371D;
+		}
+
+		.order-label {
+			background-color: #6F4E37;
+			color: white;
+			font-size: 20px;
+			font-weight: bold;
+			padding: 1%;
+			width: 100%;
+			text-align: left;
+			border: none;
+			border-radius: 10px;
+			margin-top: 2%;
+			text-decoration: none;
+			transition: background-color 0.3s;
+		}
+
+		table {
+			width: 100%;
+			margin-top: 1%;
+			border-spacing: 25px;
+		}
+
+		.heading {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			width: 100%;
+			font-size: 20px;
+			font-weight: bold;
+			margin-bottom: -2.5%;
+			font-family: Arial;
+		}
+	</style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+		crossorigin="anonymous"></script>
+
+	<script>
+
+		/*<![CDATA[*/
+		var app = angular.module('myApp', []);
+		app.controller('fufillOrderCtrl', function ($scope, $http) {
+
+			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
+
+			/**
+			* Order list to hold all incomplete orders for barista
+			*/
+			$scope.ordersList = {
+
+				"orders": [],
+
+			};
+
+			/**
+			* Gets the orders from the user orders
+			*/
+			$scope.getOrders = function () {
+
+				$http.get("/api/v1/order/status" + "?userName=" + $scope.user.userName + "&password=" + $scope.user.password).then(function (successResponse) {
+
+					$scope.ordersList.orders = successResponse.data;
+
+					// Filter orders where order.complete is false
+					$scope.ordersList.completedOrders = $scope.ordersList.orders.filter(function (order) {
+						return order.complete === false;
+					});
+
+					// Log the completed orders
+					console.log($scope.ordersList.completedOrders);
+
+
+					$scope.addStatus();
+
+					console.log($scope.ordersList.orders);
+
+				}, function (errorResponse) {
+
+					$scope.message = errorResponse.data.message;
+
+				});
+
+			}
+
+
+			$scope.addStatus = function () {
+
+				for (order of $scope.ordersList.orders) {
+
+					order.userName
+
+					if (order.complete) {
+						order.status = "Completed";
+					} else {
+						order.status = "In Progress";
+					}
+
+				}
+			}
+
+			$scope.fulfill = function (order) {
+
+				let body = {};
+
+				body.id = order.id
+				body.authUser = $scope.user;
+
+				$http.post("/api/v1/order/order", body).then(function (successResponse) {
+
+					$scope.getOrders();
+
+					// Reload the page
+					location.reload();
+
+					// Return success message once order is fulfilled
+					$scope.message = successResponse.data.message;
+					
+
+				}, function (errorResponse) {
+
+					// Save the error message in scope and display it in html
+					$scope.message = errorResponse.data.message;
+				});
+
+			}
+
+			$scope.getOrders();
+
+		});
+
+	</script>
+
+	<div class="panel" ng-app="myApp" ng-controller="fufillOrderCtrl">
+
+		<div class="header-box">
+			<h1 align="center"> Fulfill Orders </h1>
+		</div>
+
+		<div class="heading">
+
+			<h3>Customer Name</h3>
+			<h3 style="padding-left: 7%;">Beverage Ordered</h3>
+			<h3>Fulfill Order</h3>
+
+		</div>
+
+		<table id="orderTable" class="order-label">
+
+			<tbody>
+
+				<tr ng-repeat="order in ordersList.completedOrders">
+
+
+					<td style="float:left; font-family:Arial;">{{order.user}}</td>
+					<td style="width: 28%; font-family:Arial;">{{order.recipe}}</td>
+					<td style="float:right; font-family:Arial;"><button class="orderindex-button"
+							ng-click="fulfill(order)"onclick="window.location.href='fulfillorder'"> Fulfill </button></td>
+
+				</tr>
+
+			</tbody>
+
+		</table>
+
+		<table>
+			<tr>
+				<td style="text-align: right;"><button onclick="window.location.href='baristaindex'"
+						class="index-button" style="text-align: center; width: 10%"> Home </button></td>
+			</tr>
+		</table>
+
+		<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
+
+	</div>
+
+</body>
+
+</html>
