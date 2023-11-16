@@ -119,14 +119,20 @@ public class APIRecipeTest {
         final Gson gson = new Gson();
         final Recipe r = createRecipe( "Pumpkin Spice Latte", 1, 2, 3, 4, 5 );
 
+        final User unsavedUser = new User( "unknowm", "password", 0 );
+
         mvc.perform( post( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new RecipeUserDTO( r, manager ) ) ) ).andExpect( status().isOk() );
 
-        mvc.perform( get( "/api/v1/recipes/Pumpkin Spice Latte" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
+        mvc.perform( get( "/api/v1/recipes/Pumpkin Spice Latte/" ).contentType( MediaType.APPLICATION_JSON )
+                .param( "userName", unsavedUser.getUserName() )
+                .param( "password", Integer.toString( unsavedUser.getPassword() ) )
+                .content( TestUtils.asJsonString( unsavedUser ) ) ).andExpect( status().isForbidden() );
 
         String response = mvc
-                .perform( get( "/api/v1/recipes/Pumpkin Spice Latte" ).contentType( MediaType.APPLICATION_JSON )
+                .perform( get( "/api/v1/recipes/Pumpkin Spice Latte/" ).contentType( MediaType.APPLICATION_JSON )
+                        .param( "userName", manager.getUserName() )
+                        .param( "password", Integer.toString( manager.getPassword() ) )
                         .content( TestUtils.asJsonString( manager ) ) )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
 

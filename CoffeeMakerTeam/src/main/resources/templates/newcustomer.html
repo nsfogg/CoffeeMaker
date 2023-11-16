@@ -160,7 +160,7 @@
 			};
 			
 			$scope.moveToLogin = function () {
-				window.location.href = 'login.html';
+				window.location.href = 'login';
 			}
 			
 			$scope.submitCustomer = function () {
@@ -259,12 +259,12 @@
 		<div class="row w-100 ms-3 mt-5">
 			<div class="col p-0 mt-0">
 				
-				<button class="btn btn-primary btn-sm float-left bottom-button ms-3" 
+				<button class="float-left bottom-button ms-3" 
 					ng-click="moveToLogin()">Home</button>
 				
-				<button type="submit" class="btn btn-primary btn-sm float-end bottom-button ms-3" ng-click="submitCustomer()">Submit</button>
+				<button type="submit" class="float-end bottom-button ms-3" ng-click="submitCustomer()">Submit</button>
 
-				<button type="button" class="btn btn-secondary btn-sm float-end bottom-button ms-3" ng-click="reset()">Reset</button>
+				<button type="button" class="float-end bottom-button ms-3" ng-click="reset()">Reset</button>
 			</div>
 
 		</div>
