@@ -129,6 +129,12 @@ public class APICoffeeTest {
         recipeService.save( recipe );
     }
 
+    /**
+     * Will test creating an order and purchasing it
+     *
+     * @throws Exception
+     *             if either the amount or recipe is invalid
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage1 () throws Exception {
@@ -140,6 +146,12 @@ public class APICoffeeTest {
 
     }
 
+    /**
+     * Will test creating an order and purchasing it
+     *
+     * @throws Exception
+     *             if the correct amount cannot be paid
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage2 () throws Exception {
@@ -154,6 +166,12 @@ public class APICoffeeTest {
 
     }
 
+    /**
+     * Will test creating an order and purchasing it
+     *
+     * @throws Exception
+     *             if the recipe is not found
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage3 () throws Exception {
@@ -168,6 +186,12 @@ public class APICoffeeTest {
 
     }
 
+    /**
+     * Will test creating an order and purchasing it
+     *
+     * @throws Exception
+     *             if there is not enough ingredients in the inventory
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage4 () throws Exception {
@@ -194,6 +218,12 @@ public class APICoffeeTest {
                 .andExpect( jsonPath( "$.message" ).value( "Not enough inventory" ) );
     }
 
+    /**
+     * Will test creating an order and purchasing it
+     *
+     * @throws Exception
+     *             if a barista or manager attempts to order a beverage
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage5 () throws Exception {
@@ -207,6 +237,12 @@ public class APICoffeeTest {
 
     }
 
+    /**
+     * Will test creating an order and purchasing it
+     *
+     * @throws Exception
+     *             if a barista or manager attempts to order a beverage
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage6 () throws Exception {
@@ -220,6 +256,12 @@ public class APICoffeeTest {
 
     }
 
+    /**
+     * Will test creating an order and purchasing it
+     *
+     * @throws Exception
+     *             if a barista or manager attempts to order a beverage
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage7 () throws Exception {

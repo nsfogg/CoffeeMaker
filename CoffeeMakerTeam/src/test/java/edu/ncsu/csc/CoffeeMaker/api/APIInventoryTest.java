@@ -98,6 +98,12 @@ public class APIInventoryTest {
         userService.save( manager );
     }
 
+    /**
+     * Will test getting the current inventory
+     *
+     * @throws Exception
+     *             if the inventory is empty
+     */
     @Test
     @Transactional
     public void testGetInventory () throws Exception {
@@ -153,6 +159,13 @@ public class APIInventoryTest {
 
     }
 
+    /**
+     * Will test updating the inventory
+     *
+     * @throws Exception
+     *             if there is an error with the ingredient added or amount to
+     *             change
+     */
     @Test
     @Transactional
     public void testUpdateInventory () throws Exception {
@@ -240,6 +253,12 @@ public class APIInventoryTest {
 
     }
 
+    /**
+     * Will test adding an invalid ingredient as a manager
+     *
+     * @throws Exception
+     *             if an invalid ingredient is added
+     */
     @Test
     @Transactional
     public void testThrowsExceptionInventory () throws Exception {

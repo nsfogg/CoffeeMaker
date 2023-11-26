@@ -32,9 +32,15 @@ import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 @SpringBootTest ( classes = TestConfig.class )
 public class IngredientTest {
 
+    /**
+     * RecipeService for interacting with recipe database
+     */
     @Autowired
     private RecipeService     recipeService;
 
+    /**
+     * IngredientService for interacting with ingredient database
+     */
     @Autowired
     private IngredientService ingredientService;
     /**
@@ -130,6 +136,7 @@ public class IngredientTest {
     /**
      * Test for equal ingredients
      */
+    @SuppressWarnings ( "unlikely-arg-type" )
     @Test
     @Transactional
     public void testIngredientEquals () {
@@ -141,15 +148,14 @@ public class IngredientTest {
 
     }
 
-    /*
-     * Test for converting ingredinet to string
+    /**
+     * Tests the toString method for ingredients
      */
-
     @Test
     @Transactional
     public void testIngredientToString () {
-        // TODO: Make this better!
         assertNotNull( chocolate.toString() );
+        // Assertions.assertEquals( "Chocolate", chocolate.toString() );
     }
 
 }

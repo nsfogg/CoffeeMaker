@@ -69,6 +69,12 @@ public class APIUserTest {
         service.save( u );
     }
 
+    /**
+     * Will create a post request for making a new user
+     *
+     * @throws Exception
+     *             if unable to create a new user
+     */
     @Test
     @Transactional
     public void makeUser () throws Exception {
@@ -164,6 +170,13 @@ public class APIUserTest {
     //
     // }
 
+    /**
+     * Will test a previously created user log in credentials and functionality
+     *
+     * @throws Exception
+     *             if the incorrect permission of user is found or incorrect
+     *             user name or password is entered
+     */
     @Test
     @Transactional
     public void testLoginUser () throws Exception {
@@ -181,6 +194,12 @@ public class APIUserTest {
 
     }
 
+    /**
+     * Will test deleting a user
+     *
+     * @throws Exception
+     *             if the current user is unable to be deleted or is not found
+     */
     @Test
     @Transactional
     public void testDeleteUser () throws Exception {

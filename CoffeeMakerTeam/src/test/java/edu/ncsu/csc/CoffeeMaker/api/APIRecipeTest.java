@@ -90,6 +90,13 @@ public class APIRecipeTest {
         userService.save( manager );
     }
 
+    /**
+     * Will ensure the recipe has all of the correct fields
+     *
+     * @throws Exception
+     *             if the current recipe has an invalid name, amount, or
+     *             ingredients
+     */
     @Test
     @Transactional
     public void ensureRecipe () throws Exception {
@@ -113,6 +120,13 @@ public class APIRecipeTest {
 
     }
 
+    /**
+     * Will test creating a recipe through API end points
+     *
+     * @throws Exception
+     *             if the current recipe has an invalid name, amount, or
+     *             ingredients
+     */
     @Test
     @Transactional
     public void testRecipeAPI () throws Exception {
@@ -131,6 +145,13 @@ public class APIRecipeTest {
 
     }
 
+    /**
+     * Will test getting a recipe by name
+     *
+     * @throws Exception
+     *             if the current recipe has an invalid name, amount, or
+     *             ingredients
+     */
     @Test
     @Transactional
     public void testGetRecipeByNameAPI () throws Exception {
@@ -166,6 +187,12 @@ public class APIRecipeTest {
 
     }
 
+    /**
+     * Will test adding a recipe with a duplicate name
+     *
+     * @throws Exception
+     *             if a duplicate recipe is attempted to be added
+     */
     @Test
     @Transactional
     public void testAddRecipe2 () throws Exception {
@@ -186,6 +213,12 @@ public class APIRecipeTest {
         Assertions.assertEquals( 1, service.findAll().size(), "There should only one recipe in the CoffeeMaker" );
     }
 
+    /**
+     * Ensures no more than 3 recipes at a time are in the system
+     *
+     * @throws Exception
+     *             if more than 3 recipes are added
+     */
     @Test
     @Transactional
     public void testAddRecipe15 () throws Exception {
@@ -213,6 +246,12 @@ public class APIRecipeTest {
         Assertions.assertEquals( 3, service.count(), "Creating a fourth recipe should not get saved" );
     }
 
+    /**
+     * Will test deleting a recipe
+     *
+     * @throws Exception
+     *             if there are no recipes in the system
+     */
     @Test
     @Transactional
     public void testDeleteRecipe1 () throws Exception {
@@ -260,6 +299,12 @@ public class APIRecipeTest {
 
     }
 
+    /**
+     * Will test deleting the same recipe by concurrent users
+     *
+     * @throws Exception
+     *             if multiple users are able to delete the same recipe
+     */
     @Test
     @Transactional
     public void testConcurrentUsers () throws Exception {
@@ -281,6 +326,13 @@ public class APIRecipeTest {
                 .content( TestUtils.asJsonString( manager ) ) ).andExpect( status().is4xxClientError() );
     }
 
+    /**
+     * Will test editing a recipe
+     *
+     * @throws Exception
+     *             if the current recipe has an invalid name, amount, or
+     *             ingredients
+     */
     @Test
     @Transactional
     public void testEditRecipe () throws Exception {

@@ -14,6 +14,9 @@ import edu.ncsu.csc.CoffeeMaker.TestConfig;
 import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ * Will test the User class, methods, and expected exceptions
+ */
 @ExtendWith ( SpringExtension.class )
 @EnableAutoConfiguration
 @SpringBootTest ( classes = TestConfig.class )
@@ -24,14 +27,23 @@ public class UserTest {
     // @Autowired
     // private IngredientService ingredientService;
     //
+    /**
+     * UserService to interact with the User database
+     */
     @Autowired
     private UserService userService;
 
+    /**
+     * Will set up all tests
+     */
     @BeforeEach
     public void setup () {
         userService.deleteAll();
     }
 
+    /**
+     * Will test creating a customer user
+     */
     @Test
     @Transactional
     public void testCreateUserCustomer () {
@@ -50,6 +62,9 @@ public class UserTest {
         // include order after implemented
     }
 
+    /**
+     * Will test creating a barista user
+     */
     @Test
     @Transactional
     public void testCreateUserBarista () {
@@ -70,6 +85,9 @@ public class UserTest {
         // include order after implemented
     }
 
+    /**
+     * Will test creating a manager user
+     */
     @Test
     @Transactional
     public void testCreateUserManager () {
@@ -90,6 +108,9 @@ public class UserTest {
         // include order after implemented
     }
 
+    /**
+     * Will test creating a new user
+     */
     @Test
     @Transactional
     public void testCreateUser () {

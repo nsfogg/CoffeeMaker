@@ -39,6 +39,9 @@ import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ * Will test the API methods for created, editing, and deleting a recipe
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith ( SpringExtension.class )
@@ -113,6 +116,12 @@ public class APIIngredientTest {
         userService.save( manager );
     }
 
+    /**
+     * Will test adding a new ingredient
+     *
+     * @throws Exception
+     *             if the ingredient is already in the inventory
+     */
     @Test
     @Transactional
     public void testIngredientAPI () throws Exception {
@@ -126,6 +135,12 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * Will test getting an ingredient that is already in the inventory
+     *
+     * @throws Exception
+     *             if the ingredient does not exist
+     */
     @Test
     @Transactional
     public void testGetIngredientByNameAPI () throws Exception {
@@ -162,6 +177,12 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * Will test adding an ingredient that is already in the system
+     *
+     * @throws Exception
+     *             if a duplicate ingredient is added
+     */
     @Test
     @Transactional
     public void testAddIngredientDuplicate () throws Exception {
@@ -196,6 +217,12 @@ public class APIIngredientTest {
         Assertions.assertEquals( 1, ingredientService.count(), "There should only one ingredient in the CoffeeMaker" );
     }
 
+    /**
+     * Will test adding multiple ingredient
+     *
+     * @throws Exception
+     *             if a duplicate ingredient is added
+     */
     @Test
     @Transactional
     public void testAddMultipleIngredient () throws Exception {
@@ -222,6 +249,12 @@ public class APIIngredientTest {
         Assertions.assertEquals( 2, ingredientService.count() );
     }
 
+    /**
+     * Will test deleting an ingredient
+     *
+     * @throws Exception
+     *             if the ingredient has already been delete
+     */
     @Test
     @Transactional
     public void testDeleteIngredient () throws Exception {
@@ -283,6 +316,12 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * Will test deleting an ingredient that is in a recipe
+     *
+     * @throws Exception
+     *             if the ingredient cannot be deleted from the current recipe
+     */
     @Test
     @Transactional
     public void testDeleteIngredientWithRecipe () throws Exception {
@@ -333,6 +372,12 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * Will test getting an ingredient
+     *
+     * @throws Exception
+     *             if the ingredient is not in the inventory
+     */
     @Test
     @Transactional
     public void testGetIngredients () throws Exception {
@@ -370,6 +415,12 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * will testing creating an ingredient with a duplicate name
+     *
+     * @throws Exception
+     *             if an ingredient with the same name is added
+     */
     @Test
     @Transactional
     public void testCreateSameNameIngredient () throws Exception {
@@ -396,6 +447,12 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * Will test updating the amount of an ingredient in the inventory
+     *
+     * @throws Exception
+     *             if the amount added ec=exceeds the limit of the inventory
+     */
     @Test
     @Transactional
     public void testUpdateIngredient () throws Exception {

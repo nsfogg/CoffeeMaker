@@ -109,6 +109,14 @@ public class APITest {
         userService.save( manager );
     }
 
+    /**
+     * Ensures that the recipe has the correct fields, inventory starts empty,
+     * and ingredients are added correctly
+     *
+     * @throws Exception
+     *             if any of the recipe requirements, user, or inventory is
+     *             incorrect after performing API calls
+     */
     @Test
     @Transactional
     public void ensureRecipe () throws Exception {
