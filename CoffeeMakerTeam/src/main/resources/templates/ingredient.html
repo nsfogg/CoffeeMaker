@@ -25,6 +25,7 @@
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
 		app.controller('ingredientCtrl', function ($scope, $http) {
+			console.log(JSON.parse(sessionStorage.getItem("currentUser")));
 
 			/* Define the Ingredient Model */
 			$scope.ingredient = {
@@ -42,7 +43,7 @@
 					let body = {};
 
 					body.ingredient = $scope.ingredient.name;
-					body.user = JSON.parse(sessionStorage.getItem("currentUser"));
+					body.authUser = JSON.parse(sessionStorage.getItem("currentUser"));
 					
 					let config = {
 						

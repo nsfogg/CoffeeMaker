@@ -29,4 +29,41 @@ public class RecipeUserDTO {
         this.newRecipe = r;
         this.authUser = u;
     }
+
+    /**
+     *
+     */
+    public RecipeUserDTO () {
+        super();
+    }
+
+    /**
+     * @return the newRecipe
+     */
+    public Recipe getNewRecipe () {
+        return newRecipe;
+    }
+
+    /**
+     * @param newRecipe
+     *            the newRecipe to set
+     */
+    public void setNewRecipe ( final Recipe newRecipe ) {
+        this.newRecipe = newRecipe;
+    }
+
+    /**
+     * @return the authUser
+     */
+    public User getAuthUser () {
+        return authUser;
+    }
+
+    /**
+     * @param authUser
+     *            the authUser to set
+     */
+    public void setAuthUser ( final User authUser ) {
+        this.authUser = authUser;
+    }
 }
