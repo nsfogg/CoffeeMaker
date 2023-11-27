@@ -211,4 +211,17 @@ public class MappingController {
         return "fulfillorder";
     }
 
+    /**
+     * On a GET request to /orderhistory, the NewCustomerController will return
+     * /src/main/resources/templates/orderhistory.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/orderhistory", "/orderhistory.html" } )
+    public String orderHistoryForm ( final Model model ) {
+        return "orderhistory";
+    }
+
 }

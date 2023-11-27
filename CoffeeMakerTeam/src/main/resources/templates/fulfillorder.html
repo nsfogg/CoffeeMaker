@@ -150,17 +150,6 @@
 					$scope.ordersList.completedOrders = $scope.ordersList.orders.filter(function (order) {
 						return order.complete === false;
 					});
-					
-					for(order of $scope.ordersList.completedOrders){
-						
-						
-						
-					}
-
-					// Log the completed orders
-					console.log($scope.ordersList.completedOrders);
-
-					console.log($scope.ordersList.orders);
 
 				}, function (errorResponse) {
 
@@ -176,19 +165,19 @@
 
 				body.id = order.id
 				body.authUser = $scope.user;
-				
+
 				$http.post("/api/v1/order/order", body).then(function (successResponse) {
 
 					// Return success message once order is fulfilled
 					$scope.message = successResponse.data.message;
-					
+
 
 				}, function (errorResponse) {
 
 					// Save the error message in scope and display it in html
 					$scope.message = errorResponse.data.message;
 				});
-				
+
 				$scope.ordersList.completedOrders.splice($scope.ordersList.completedOrders.indexOf(order), 1);
 
 			}
@@ -231,12 +220,18 @@
 
 		</table>
 
-		<table>
-			<tr>
-				<td style="text-align: right;"><button onclick="window.location.href='baristaindex'"
-						class="index-button" style="text-align: center; width: 10%"> Home </button></td>
-			</tr>
-		</table>
+		<div class="container mt-3">
+			<div class="row">
+				<div class="col-md-6 offset-md-3 text-left">
+
+					<button onclick="window.location.href='baristaindex'" class="index-button" style="width: 10%">
+						Home
+					</button>
+				</div>
+			</div>
+		</div>
+		
+		<br/>
 
 		<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
 

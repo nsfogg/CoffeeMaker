@@ -126,6 +126,10 @@
 	.bottom-button1 {
 		width: 200px;
 	}
+
+	::placeholder {
+		color: #BBBBBB;
+	}
 </style>
 
 <body>
@@ -257,15 +261,12 @@
 			<div class="row w-100 ms-3 mt-5">
 				<div class="col p-0 mt-0">
 
-					<a href="recipe.html"><button type="submit"
-							class="float-left bottom-button bottom-button1 ms-3"
+					<a href="recipe.html"><button type="submit" class="float-left bottom-button bottom-button1 ms-3"
 							ng-click="moveToCreateCustomer()">Create Account</button></a>
 
-					<button type="submit" class="float-end bottom-button ms-3"
-						ng-click="submitUser()">Submit</button>
+					<button type="submit" class="float-end bottom-button ms-3" ng-click="submitUser()">Submit</button>
 
-					<button type="button" class="float-end bottom-button ms-3"
-						ng-click="reset()">Reset</button>
+					<button type="button" class="float-end bottom-button ms-3" ng-click="reset()">Reset</button>
 				</div>
 
 			</div>

@@ -44,13 +44,13 @@
 
 					body.ingredient = $scope.ingredient.name;
 					body.authUser = JSON.parse(sessionStorage.getItem("currentUser"));
-					
+
 					let config = {
-						
+
 						"params": {
 							"amount": $scope.amount
 						}
-						
+
 					}
 
 
@@ -122,12 +122,125 @@
 		});
 
 	</script>
-	
+
 	<style>
+		body {
+			background-color: #4b3120;
+
+		}
+
+		.panel {
+			background-color: #DAC3A2;
+			width: 90%;
+			margin: auto;
+			margin-top: 3%;
+			margin-bottom: 3%;
+			height: 50%;
+			z-index: -1;
+			padding: 3%;
+			border-radius: 10px;
+		}
+
+		h1 {
+			color: #FFFFFF;
+			font-family: Arial;
+			font-weight: bold;
+			font-size: 28px;
+		}
+
+		.header-box {
+			background-color: #4b3120;
+			padding-left: 2%;
+			padding-top: 1%;
+			padding-bottom: 1%;
+			text-align: center;
+			border-radius: 10px;
+		}
+
+		.index-button {
+			background-color: #896145;
+			color: white;
+			font-size: 20px;
+			padding: 1%;
+			width: 20%;
+			text-align: left;
+			border: none;
+			border-radius: 10px;
+			margin-top: 2%;
+			text-decoration: none;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+
+		.index-button:hover {
+			background-color: #5E371D;
+		}
+
+		.input-button {
+			background-color: #896145;
+			color: white;
+			font-size: 20px;
+			padding: 1%;
+			width: 68%;
+			text-align: left;
+			border: none;
+			border-radius: 10px;
+			margin-top: 2%;
+			margin-bottom: 2%;
+			margin-left: 31%;
+			text-decoration: none;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+
+		.input-button:hover {
+			background-color: #5E371D;
+		}
+
+		.bottom-button {
+			background-color: #896145;
+			color: white;
+			font-size: 20px;
+			padding: 0%;
+			width: 13%;
+			height: 35px;
+			text-align: center;
+			border: none;
+			border-radius: 10px;
+			margin: 1%;
+			text-decoration: none;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+		
+		.bottom-button:hover {
+			background-color: #5E371D;
+		}
+
+		.body-box {
+			background-color: #6F4E37;
+			color: white;
+		}
+
+		table {
+			width: 100%;
+			margin-top: 1%;
+		}
+
+		.body-text {
+			text-align: left;
+			padding-left: 31%;
+			padding-right: 1%;
+		}
+
 		.messageAnimation {
 			animation-name: jump-shaking;
 			animation-duration: 0.83s;
 			animation-timing-function: ease-in-out;
+		}
+		
+		::placeholder {
+			color: #BBBBBB;
 		}
 
 		@keyframes inAndOut {
@@ -181,42 +294,58 @@
 			}
 		}
 	</style>
-	
-	<div class="ms-3 mt-3" ng-app="myApp" ng-controller="ingredientCtrl">
-		<h1 class="ms-3">Add Ingredient</h1>
+
+	<div class="panel" ng-app="myApp" ng-controller="ingredientCtrl">
+
+		<!-- Header -->
+		<h1 class="header-box">Add Ingredient</h1>
+
+		<br />
+
 
 		<form>
-			<div class="ms-3 mb-1 w-75">
-				<label for="ingredient-name" class="form-label">Name</label>
-				<input ng-model="ingredient.name" type="text" class="form-control" placeholder="Ingredient Name"
-					id="ingredient-name" aria-describedby="ingredientName" required>
-
-			</div>
-			<div class="ms-3 mb-3 w-75">
-				<label for="ingredient-quantity" class="form-label">Quantity</label>
-				<input type="number" class="form-control" ng-model="amount" placeholder="0" id="ingredient-quantity" required min="0">
-			</div>
-
-			
-			<div class="row w-75 ms-3">
-				<div class="col p-0">
-					<button type="submit" class="btn btn-primary btn-sm" ng-click="submitIngredient()">Submit</button>
-
-					<button type="button" class="btn btn-secondary btn-sm" ng-click="reset()">Reset</button>
-				</div>
-
-				<div class="col p-0">
-					<a href="/managerindex" class="btn btn-secondary btn-sm float-end">Home</a>
-				</div>
-			</div>
-			
+			<table>
+				<tr>
+					<td>
+						<label for="ingredient-name" class="form-label">
+							<h4> Name </h4>
+						</label>
+					</td>
+					<td>
+						<input ng-model="ingredient.name" type="text" class="input-button" placeholder="Ingredient Name"
+							id="ingredient-name" aria-describedby="ingredientName" required>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label for="ingredient-quantity" class="form-label">
+							<h4> Quantity </h4>
+						</label>
+					</td>
+					<td>
+						<input type="number" class="input-button" ng-model="amount" placeholder="0"
+							id="ingredient-quantity" required min="0">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button onclick="window.location.href='managerindex'" class="index-button"
+							style="text-align: center; width: 30%"> Home </button>
+					</td>
+					<td>
+						<button type="button" class="bottom-button float-end"
+							ng-click="submitIngredient()">Submit</button>
+						<button type="button" class="bottom-button float-end" ng-click="reset()">Reset</button>
+					</td>
+				</tr>
+			</table>
 		</form>
-	
+
 
 		<div class="col m-3 w-75">
 			<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
 		</div>
-	
+
 	</div>
 
 </body>
