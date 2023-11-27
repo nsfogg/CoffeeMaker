@@ -10,7 +10,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 
 <body>
-	<script th:inline="javascript">
+	<script>
 		/*<![CDATA[*/
 
 		var app = angular.module('myApp', []);
@@ -142,77 +142,49 @@
 		.bottom-button:hover {
 			background-color: #5E371D;
 		}
-
-		.body-box {
-			background-color: #6F4E37;
-			color: white;
-		}
-
-		.body-text {
-			text-align: left;
-			padding-left: 31%;
-			padding-right: 1%;
-		}
-
-	
 	</style>
 
-	<div layout:fragment="content" class="panel" ng-app="myApp" ng-controller="recipesCtrl">
+	<div class="panel" ng-app="myApp" ng-controller="recipesCtrl">
 
 		<!-- Header -->
 		<h1 class="header-box">Coffee Recipes</h1>
 
-			<ul class="list-unstyled" align="center">
-				<li ng-repeat="recipe in recipes">
-					<label style="font-size: 20px;">
-						<input type="radio" ng-model="$parent.name" name="name" value="{{recipe.name}}"
-							required="true" />
-						{{recipe.name}}
-					</label>
-				</li>
-			</ul>
+		<ul class="list-unstyled" align="center">
+			<li ng-repeat="recipe in recipes">
+				<label style="font-size: 20px;">
+					<input type="radio" ng-model="$parent.name" name="name" value="{{recipe.name}}" required="true" />
+					{{recipe.name}}
+				</label>
+			</li>
+		</ul>
 
-		
+
 		<table>
-				<tr>
-					<td>
+			<tr>
+				<td>
 
-					</td>
-					<td>
-						<label for="amtPaid" style="font-size: 18px; display: flex; justify-content: flex-end;">Enter payment</label>
-						<input type="text" ng-model="amtPaid" name="amtPaid" required="true" />
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<button onclick="window.location.href='customerindex'" class="index-button"
-							style="text-align: center;"> Home </button>
-					</td>
-					<td class="right">
-						<input type="button" ng-click="make()" value="Make Coffee" class="bottom-button float-end" />
-					</td>
-				</tr>
-			</table>
-			
-			<table class="width: 100%" style="border-color: white; background-color: white;">
-				<tr>
-					<td class="text-align: left;">
-						<button onclick="window.location.href='customerindex'" class="index-button"> Home </button>
-					</td>
-					<td class="text-align: right;">
-						<input type="button" ng-click="make()" value="Make Coffee" class="bottom-button float-end" />
-					</td>
-				</tr>
-			</table>
+				</td>
+				<td>
+					<label for="amtPaid" style="font-size: 18px; display: flex; justify-content: flex-end;">Enter
+						payment</label>
+					<input type="text" ng-model="amtPaid" name="amtPaid" required="true" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button onclick="window.location.href='customerindex'" class="index-button"
+						style="text-align: center;"> Home </button>
+				</td>
+				<td class="right">
+					<input type="button" ng-click="make()" value="Make Coffee" class="bottom-button float-end" />
+				</td>
+			</tr>
+		</table>
 
-			<div ng-show="submissionSuccess" class="success">Coffee was
-				made. Your change is {{change}}.</div>
+		<div ng-show="submissionSuccess" class="success">Coffee was
+			made. Your change is {{change}}.</div>
 
-			<div ng-show="submissionFailure">An error occurred: {{error}}</div>
-
-			<br /> <a href="/customerindex">Home</a>
-		
-		
+		<div ng-show="submissionFailure">An error occurred: {{error}}</div>
 
 	</div>
 
