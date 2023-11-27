@@ -159,7 +159,7 @@
 						recipe.ingredients.push(currIngredient);
 
 					});
-					
+
 					body.newRecipe = recipe;
 					body.authUser = $scope.user;
 
@@ -173,9 +173,9 @@
 						// Save the message in scope and display it in html
 						$scope.message = errorResponse.data.message;
 					});
-					
+
 					$scope.getRecipes();
-					
+
 					// Reset the form if successful.
 					$scope.reset();
 
@@ -263,6 +263,118 @@
 	</script>
 
 	<style>
+		body {
+			background-color: #4b3120;
+
+		}
+
+		.panel {
+			background-color: #DAC3A2;
+			width: 90%;
+			margin: auto;
+			margin-top: 3%;
+			margin-bottom: 3%;
+			height: 50%;
+			z-index: -1;
+			padding: 3%;
+			border-radius: 10px;
+		}
+
+		h1 {
+			color: #FFFFFF;
+			font-family: Arial;
+			font-weight: bold;
+			font-size: 28px;
+		}
+
+		.header-box {
+			background-color: #4b3120;
+			padding-left: 2%;
+			padding-top: 1%;
+			padding-bottom: 1%;
+			text-align: center;
+			border-radius: 10px;
+		}
+
+		.index-button {
+			background-color: #896145;
+			color: white;
+			font-size: 20px;
+			padding: 1%;
+			width: 25%;
+			text-align: left;
+			border: none;
+			border-radius: 10px;
+			margin-top: 2%;
+			text-decoration: none;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+
+		.index-button:hover {
+			background-color: #5E371D;
+		}
+
+		.input-button {
+			background-color: #896145;
+			color: white;
+			font-size: 20px;
+			padding: 1%;
+			width: 100%;
+			text-align: left;
+			border: none;
+			border-radius: 10px;
+			margin-top: 2%;
+
+			text-decoration: none;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+
+		.input-button:hover {
+			background-color: #5E371D;
+		}
+
+		.bottom-button {
+			background-color: #896145;
+			color: white;
+			font-size: 20px;
+			padding: 0%;
+			width: 30%;
+			height: 80%;
+			text-align: center;
+			border: none;
+			border-radius: 10px;
+			margin: 1%;
+			text-decoration: none;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+
+		.bottom-button:hover {
+			background-color: #5E371D;
+		}
+
+		.body-box {
+			background-color: #6F4E37;
+			color: white;
+		}
+
+		table {
+			width: 100%;
+			margin-top: 1%;
+		}
+
+		.body-text {
+			text-align: left;
+			padding-left: 31%;
+			padding-right: 1%;
+		}
+
+		::placeholder {
+			color: #BBBBBB;
+		}
+
 		.scroll-table {
 			max-height: 40vh;
 			overflow: auto;
@@ -327,89 +439,124 @@
 		}
 	</style>
 
+	<div class="panel" ng-app="myApp" ng-controller="editRecipeCtrl">
 
-	<h1 class="ms-3">Edit Recipe</h1>
-	<div class="d-flex" ng-app="myApp" ng-controller="editRecipeCtrl">
-		<ul class="container-lg ms-3 me-1">
-			<li ng-repeat="recipe in recipeList" ng-click="reset(); selectRecipe(recipe)"
-				class="list-group-item d-flex pt-2 pb-5 fs-3 text-nowrap" id="{{recipe.name}}">
-				{{recipe.name}}
-			</li>
-		</ul>
+		<!-- Header -->
+		<h1 class="header-box">Edit Recipe</h1>
 
 
+		<table style="margin-left: 10%;">
 
-		<form class="w-100">
-			<div class="ms-3 mb-1 w-75">
-				<label for="recipe-name" class="form-label">Name </label>
-				<input type="text" class="form-control" placeholder="Recipe Name" ng-model="selectedRecipe.name"
-					aria-describedby="recipeName" required>
-			</div>
+			<tbody>
 
-			<label for="recipe-price" class="form-label ms-3 mb-2 w-75">Price</label>
-			<div class="input-group mb-3 ms-3 w-75 ">
-				<input type="number" class="form-control" placeholder="0" aria-label="recipe price"
-					aria-describedby="recipe price2" ng-model="selectedRecipe.price" required min="0">
-				<span class="input-group-text" id="inputGroup-sizing-sm">¢</span>
+				<tr>
 
-			</div>
+					<td>
+						<ul class="container-lg ms-3 me-1">
+							<li ng-repeat="recipe in recipeList" ng-click="reset(); selectRecipe(recipe)"
+								class="list-group-item d-flex pt-2 pb-3 fs-3 text-nowrap" id="{{recipe.name}}">
+								<span style="font-size: 30px;">{{recipe.name}}</span>
+							</li>
+						</ul>
+					</td>
+					<td>
+						<form class="w-100">
+							<br />
+							<br />
+							<div class="ms-3 mb-1 w-75">
+								<label for="recipe-name" class="form-label mb-0">
+									<h4> Name </h4>
+								</label>
+								<input type="text" class="input-button" placeholder="Recipe Name"
+									ng-model="selectedRecipe.name" aria-describedby="recipeName" required>
+
+								<br />
+								<br />
+
+								<label for="recipe-price" class="form-label mb-0">
+									<h4> Price </h4>
+								</label>
+
+								<input type="number" class="input-button" placeholder="0" aria-label="recipe price"
+									aria-describedby="recipe price2" ng-model="selectedRecipe.price" required min="0">
+							</div>
+
+							<br />
+
+							<div class="dropdown ms-3 mb-1 w-100">
+								<button class="btn btn-secondary btn-sm dropdown-toggle index-button text-truncate"
+									type="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<span id="selected-option" class="text-truncate">Add Ingredient</span>
+
+								</button>
+
+								<ul class="dropdown-menu">
+									<li ng-repeat="ingredient in dropIngredients"
+										ng-click="moveIngredientToRecipe(ingredient)"><a
+											class="dropdown-item">{{ingredient.name}}</a></li>
+
+								</ul>
+							</div>
+
+							<table class="table m-3 w-75 table-striped" id="ingredientTable">
+								<!--Head Begins Here-->
+								<!--  <caption>Ingredients</caption> -->
+								<thead>
+									<tr>
+										<!-- colspan makes the header span all three columns -->
+										<th scope="col" style="text-align: center" colspan="3">
+											<h5>Ingredients </h5>
+										</th>
+									</tr>
+								</thead>
+								<!--Body Begins Here-->
+								<tbody>
+									<!--Row One-->
+									<tr ng-repeat="ingredient in selectedRecipe.ingredients">
+										<td scope="row">{{ingredient.name}}</td>
+										<td class="d-flex">
+											<input type="number" class="form-control" ng-model="ingredient.amount"
+												placeholder="0" aria-label="recipe price"
+												aria-describedby="recipe price2" required min="0">
+											<button type="button" class="btn btn-danger btn-sm ms-2"
+												ng-click="moveIngredientToDropdown(ingredient)">X</button>
+										</td>
+									</tr>
+
+								</tbody>
+							</table>
+							<!--End of Table-->
+
+							<div class="row w-75 ms-3">
+								<div class="col p-0">
+									<button onclick="window.location.href='managerindex'" class="index-button"
+										style="text-align: center; width: 30%"> Home </button>
+								</div>
+
+								<div class="col p-0">
+									<button type="button" class="bottom-button float-end"
+										ng-click="submitRecipe()">Submit</button>
+									<button type="button" class="bottom-button float-end"
+										ng-click="reset()">Reset</button>
+								</div>
+
+							</div>
+
+							<div class="ms-3">
+								<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
+							</div>
+						</form>
+					</td>
+
+				</tr>
+
+			</tbody>
+
+		</table>
 
 
-			<div class="dropdown ms-3 mb-1 w-75">
-				<button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
-					aria-expanded="false">
-					Add Ingredient
-				</button>
-				<ul class="dropdown-menu">
-					<li ng-repeat="ingredient in dropIngredients" ng-click="moveIngredientToRecipe(ingredient)"><a
-							class="dropdown-item">{{ingredient.name}}</a></li>
 
-				</ul>
-			</div>
 
-			<table class="table m-3 w-75 table-striped w-auto" id="ingredientTable">
-				<!--Head Begins Here-->
-				<!--  <caption>Ingredients</caption> -->
-				<thead>
-					<tr>
-						<!-- colspan makes the header span all three columns -->
-						<th scope="col" style="text-align: center" colspan="3">Ingredients </th>
-					</tr>
-				</thead>
-				<!--Body Begins Here-->
-				<tbody>
-					<!--Row One-->
-					<tr ng-repeat="ingredient in selectedRecipe.ingredients">
-						<td scope="row">{{ingredient.name}}</td>
-						<td class="d-flex">
-							<input type="number" class="form-control" ng-model="ingredient.amount" placeholder="0"
-								aria-label="recipe price" aria-describedby="recipe price2" required min="0">
-							<button type="button" class="btn btn-danger btn-sm ms-2"
-								ng-click="moveIngredientToDropdown(ingredient)">X</button>
-						</td>
-					</tr>
-
-				</tbody>
-			</table>
-			<!--End of Table-->
-
-			<div class="row w-75 ms-3">
-				<div class="col p-0">
-					<button type="submit" class="btn btn-primary btn-sm" ng-click="submitRecipe()">Submit</button>
-
-					<button type="button" class="btn btn-secondary btn-sm" ng-click="reset()">Reset</button>
-				</div>
-
-				<div class="col p-0">
-					<a href="/managerindex" class="btn btn-secondary btn-sm float-end">Home</a>
-				</div>
-
-			</div>
-
-			<div class="ms-3">
-				<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
-			</div>
-		</form>
 
 
 
