@@ -24,8 +24,8 @@
 			}
 
 			function deleteRecipe(recipe) {
-				console.log(recipe);
 				$http.delete("/api/v1/recipes/" + "?name=" + recipe + "&userName=" + $scope.user.userName + "&password=" + $scope.user.password)
+
 					.then(
 						function (response) {
 							console.log(response);
