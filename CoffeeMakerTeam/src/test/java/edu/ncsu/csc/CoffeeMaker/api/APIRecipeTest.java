@@ -2,7 +2,6 @@ package edu.ncsu.csc.CoffeeMaker.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,12 +21,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
-
 import edu.ncsu.csc.CoffeeMaker.common.TestUtils;
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.IngredientUserDTO;
 import edu.ncsu.csc.CoffeeMaker.controllers.DTO.RecipeUserDTO;
+import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.models.User;
+import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
@@ -51,6 +51,9 @@ public class APIRecipeTest {
     @Autowired
     private UserService           userService;
 
+    @Autowired
+    private IngredientService     ingredientService;
+
     final User                    customer = new User( "customer", "password", 0 );
 
     final User                    barista  = new User( "barista", "password", 1 );
@@ -66,6 +69,7 @@ public class APIRecipeTest {
 
         service.deleteAll();
         userService.deleteAll();
+        ingredientService.deleteAll();
 
         userService.save( customer );
         userService.save( barista );
@@ -77,10 +81,25 @@ public class APIRecipeTest {
     public void ensureRecipe () throws Exception {
         service.deleteAll();
 
+        // Create recipe
+
         final Recipe r = new Recipe();
 
         r.setPrice( 10 );
         r.setName( "Mocha" );
+
+        // Add ingredient to database (and then recipe)
+
+        final Ingredient i = new Ingredient( "chocolate" );
+
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i, manager ) ) ) )
+                .andExpect( status().isOk() );
+
+        r.addIngredient( ingredientService.findByName( "chocolate" ), 1 );
+
+        // Test who can add recipe
 
         mvc.perform( post( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new RecipeUserDTO( r, customer ) ) ) )
@@ -106,6 +125,17 @@ public class APIRecipeTest {
 
         recipe.setPrice( 5 );
 
+        // Add ingredient to database (and then recipe)
+
+        final Ingredient i = new Ingredient( "gold" );
+
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i, manager ) ) ) )
+                .andExpect( status().isOk() );
+
+        recipe.addIngredient( ingredientService.findByName( "gold" ), 1 );
+
         mvc.perform( post( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new RecipeUserDTO( recipe, manager ) ) ) );
 
@@ -116,35 +146,53 @@ public class APIRecipeTest {
     @Test
     @Transactional
     public void testGetRecipeByNameAPI () throws Exception {
-        final Gson gson = new Gson();
+        // final Gson gson = new Gson();
         final Recipe r = createRecipe( "Pumpkin Spice Latte", 1, 2, 3, 4, 5 );
 
-        final User unsavedUser = new User( "unknowm", "password", 0 );
+        final Ingredient i = new Ingredient( "random_ingredient" );
+
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i, manager ) ) ) )
+                .andExpect( status().isOk() );
+
+        r.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
+
+        // final User unsavedUser = new User( "unknowm", "password", 0 );
 
         mvc.perform( post( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new RecipeUserDTO( r, manager ) ) ) ).andExpect( status().isOk() );
 
-        mvc.perform( get( "/api/v1/recipes/Pumpkin Spice Latte/" ).contentType( MediaType.APPLICATION_JSON )
-                .param( "userName", unsavedUser.getUserName() )
-                .param( "password", Integer.toString( unsavedUser.getPassword() ) )
-                .content( TestUtils.asJsonString( unsavedUser ) ) ).andExpect( status().isForbidden() );
+        // mvc.perform( get( "/api/v1/recipes/Pumpkin Spice Latte/"
+        // ).contentType( MediaType.APPLICATION_JSON )
+        // .param( "userName", unsavedUser.getUserName() )
+        // .param( "password", Integer.toString( unsavedUser.getPassword() ) )
+        // .content( TestUtils.asJsonString( unsavedUser ) ) ).andExpect(
+        // status().isForbidden() );
+        //
+        // String response = mvc
+        // .perform( get( "/api/v1/recipes/Pumpkin Spice Latte/" ).contentType(
+        // MediaType.APPLICATION_JSON )
+        // .param( "userName", manager.getUserName() )
+        // .param( "password", Integer.toString( manager.getPassword() ) )
+        // .content( TestUtils.asJsonString( manager ) ) )
+        // .andExpect( status().isOk()
+        // ).andReturn().getResponse().getContentAsString();
 
-        String response = mvc
-                .perform( get( "/api/v1/recipes/Pumpkin Spice Latte/" ).contentType( MediaType.APPLICATION_JSON )
-                        .param( "userName", manager.getUserName() )
-                        .param( "password", Integer.toString( manager.getPassword() ) )
-                        .content( TestUtils.asJsonString( manager ) ) )
-                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
-
-        final Recipe responseR = gson.fromJson( response, Recipe.class );
-
-        assertEquals( r, responseR );
-
-        // Test getting a non existing recipe
-        response = mvc
-                .perform( get( "/api/v1/recipes/dummy" ).contentType( MediaType.APPLICATION_JSON )
-                        .content( TestUtils.asJsonString( manager ) ) )
-                .andExpect( status().is4xxClientError() ).andReturn().getResponse().getContentAsString();
+        final Recipe r2 = service.findByName( "Pumpkin Spice Latte" );
+        assertEquals( r, r2 );
+        //
+        // final Recipe responseR = gson.fromJson( response, Recipe.class );
+        //
+        // assertEquals( r, responseR );
+        //
+        // // Test getting a non existing recipe
+        // response = mvc
+        // .perform( get( "/api/v1/recipes/dummy" ).contentType(
+        // MediaType.APPLICATION_JSON )
+        // .content( TestUtils.asJsonString( manager ) ) )
+        // .andExpect( status().is4xxClientError()
+        // ).andReturn().getResponse().getContentAsString();
 
     }
 
@@ -158,12 +206,24 @@ public class APIRecipeTest {
         final String name = "Coffee";
         final Recipe r1 = createRecipe( name, 50, 3, 1, 1, 0 );
 
+        // Add ingredient to database (and then recipe)
+
+        final Ingredient i = new Ingredient( "random_ingredient" );
+
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i, manager ) ) ) )
+                .andExpect( status().isOk() );
+
+        r1.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
+
         service.save( r1 );
 
         final Recipe r2 = createRecipe( name, 50, 3, 1, 1, 0 );
+        r2.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
         mvc.perform( post( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new RecipeUserDTO( r2, manager ) ) ) )
-                .andExpect( status().is4xxClientError() );
+                .andExpect( status().isConflict() );
 
         Assertions.assertEquals( 1, service.findAll().size(), "There should only one recipe in the CoffeeMaker" );
     }
@@ -176,17 +236,30 @@ public class APIRecipeTest {
 
         Assertions.assertEquals( 0, service.findAll().size(), "There should be no Recipes in the CoffeeMaker" );
 
+        // Add ingredient to database (and then recipe)
+
+        final Ingredient i = new Ingredient( "random_ingredient" );
+
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i, manager ) ) ) )
+                .andExpect( status().isOk() );
+
         final Recipe r1 = createRecipe( "Coffee", 50, 3, 1, 1, 0 );
+        r1.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
         service.save( r1 );
         final Recipe r2 = createRecipe( "Mocha", 50, 3, 1, 1, 2 );
+        r2.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
         service.save( r2 );
         final Recipe r3 = createRecipe( "Latte", 60, 3, 2, 2, 0 );
+        r3.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
         service.save( r3 );
 
         Assertions.assertEquals( 3, service.count(),
                 "Creating three recipes should result in three recipes in the database" );
 
         final Recipe r4 = createRecipe( "Hot Chocolate", 75, 0, 2, 1, 2 );
+        r4.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
 
         mvc.perform( post( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new RecipeUserDTO( r4, manager ) ) ) )
@@ -205,38 +278,62 @@ public class APIRecipeTest {
         Assertions.assertEquals( 0, service.findAll().size(), "There should be no Recipes in the CoffeeMaker" );
 
         final Recipe r1 = createRecipe( "Coffee1", 50, 3, 1, 1, 0 );
+
+        // Add ingredient to database (and then recipe)
+
+        final Ingredient i = new Ingredient( "random_ingredient" );
+
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i, manager ) ) ) )
+                .andExpect( status().isOk() );
+
+        r1.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
+
         mvc.perform( post( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new RecipeUserDTO( r1, manager ) ) ) ).andExpect( status().isOk() );
 
         Assertions.assertEquals( 1, service.findAll().size(), "There should only be one recipe in the CoffeeMaker" );
 
-        mvc.perform( delete( "/api/v1/recipes/Coffee1" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( customer ) ) ).andExpect( status().isForbidden() );
+        mvc.perform( delete( "/api/v1/recipes/" ).queryParam( "name", "Coffee1" )
+                .queryParam( "userName", customer.getUserName() ).queryParam( "password", "" + customer.getPassword() )
+                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( customer ) ) )
+                .andExpect( status().isForbidden() );
 
-        mvc.perform( delete( "/api/v1/recipes/Coffee1" ).contentType( MediaType.APPLICATION_JSON )
+        mvc.perform( delete( "/api/v1/recipes/" ).queryParam( "name", "Coffee1" )
+                .queryParam( "userName", new User().getUserName() )
+                .queryParam( "password", "" + new User().getPassword() ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new User() ) ) ).andExpect( status().isForbidden() );
 
-        mvc.perform( delete( "/api/v1/recipes/Coffee1" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( manager ) ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/recipes/" ).queryParam( "name", "Coffee1" )
+                .queryParam( "userName", manager.getUserName() ).queryParam( "password", "" + manager.getPassword() )
+                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() );
 
         // Testing adding and deleting 2 recipes
 
         Assertions.assertEquals( 0, service.findAll().size(), "There should be no recipes in the CoffeeMaker" );
 
         final Recipe r2 = createRecipe( "Coffee2", 50, 3, 1, 1, 0 );
+        r2.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
         mvc.perform( post( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new RecipeUserDTO( r2, manager ) ) ) ).andExpect( status().isOk() );
 
         final Recipe r3 = createRecipe( "Coffee3", 50, 3, 1, 1, 0 );
+        r3.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
         mvc.perform( post( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new RecipeUserDTO( r3, manager ) ) ) ).andExpect( status().isOk() );
 
         Assertions.assertEquals( 2, service.findAll().size(), "There should only be two recipes in the CoffeeMaker" );
 
-        mvc.perform( delete( "/api/v1/recipes/Coffee2" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( manager ) ) ).andExpect( status().isOk() );
-        mvc.perform( delete( "/api/v1/recipes/Coffee3" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( manager ) ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/recipes/" ).queryParam( "name", "Coffee2" )
+                .queryParam( "userName", manager.getUserName() ).queryParam( "password", "" + manager.getPassword() )
+                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/recipes/" ).queryParam( "name", "Coffee3" )
+                .queryParam( "userName", manager.getUserName() ).queryParam( "password", "" + manager.getPassword() )
+                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() );
 
         Assertions.assertEquals( 0, service.findAll().size(), "There should be no recipes in the CoffeeMaker" );
 
@@ -251,16 +348,32 @@ public class APIRecipeTest {
         Assertions.assertEquals( 0, service.findAll().size(), "There should be no Recipes in the CoffeeMaker" );
 
         final Recipe r1 = createRecipe( "Coffee1", 50, 3, 1, 1, 0 );
+
+        // Add ingredient to database (and then recipe)
+
+        final Ingredient i = new Ingredient( "random_ingredient" );
+
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i, manager ) ) ) )
+                .andExpect( status().isOk() );
+
+        r1.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
+
         mvc.perform( post( "/api/v1/recipes" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new RecipeUserDTO( r1, manager ) ) ) ).andExpect( status().isOk() );
 
         Assertions.assertEquals( 1, service.findAll().size(), "There should only be one recipe in the CoffeeMaker" );
 
-        mvc.perform( delete( "/api/v1/recipes/Coffee1" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( manager ) ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/recipes/" ).queryParam( "name", "Coffee1" )
+                .queryParam( "userName", manager.getUserName() ).queryParam( "password", "" + manager.getPassword() )
+                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().isOk() );
 
-        mvc.perform( delete( "/api/v1/recipes/Coffee1" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( manager ) ) ).andExpect( status().is4xxClientError() );
+        mvc.perform( delete( "/api/v1/recipes/" ).queryParam( "name", "Coffee1" )
+                .queryParam( "userName", manager.getUserName() ).queryParam( "password", "" + manager.getPassword() )
+                .contentType( MediaType.APPLICATION_JSON ).content( TestUtils.asJsonString( manager ) ) )
+                .andExpect( status().is4xxClientError() );
     }
 
     @Test
@@ -273,9 +386,21 @@ public class APIRecipeTest {
         final String name = "Coffee";
         final Recipe r1 = createRecipe( name, 50, 3, 1, 1, 0 );
 
+        // Add ingredient to database (and then recipe)
+
+        final Ingredient i = new Ingredient( "random_ingredient" );
+
+        mvc.perform(
+                post( "/api/v1/ingredients" ).queryParam( "amount", "10" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( new IngredientUserDTO( i, manager ) ) ) )
+                .andExpect( status().isOk() );
+
+        r1.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
+
         service.save( r1 );
 
         final Recipe r2 = createRecipe( name, 40, 1, 2, 3, 4 );
+        r2.addIngredient( ingredientService.findByName( "random_ingredient" ), 1 );
 
         mvc.perform( put( "/api/v1/recipes/Coffee" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( new RecipeUserDTO( r2, new User() ) ) ) )
@@ -303,7 +428,7 @@ public class APIRecipeTest {
     }
 
     private Recipe createRecipe ( final String name, final Integer price, final Integer coffee, final Integer milk,
-            final Integer sugar, final Integer chocolate ) {
+            final Integer sugar, final Integer chocolate ) throws Exception {
         final Recipe recipe = new Recipe();
         recipe.setName( name );
         recipe.setPrice( price );

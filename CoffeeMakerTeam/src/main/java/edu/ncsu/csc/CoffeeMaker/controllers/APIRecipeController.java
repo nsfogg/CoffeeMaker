@@ -1,6 +1,7 @@
 package edu.ncsu.csc.CoffeeMaker.controllers;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.controllers.DTO.RecipeUserDTO;
+import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
@@ -136,11 +138,19 @@ public class APIRecipeController extends APIController {
             return new ResponseEntity( errorResponse( recipe.getName() + " cannot be created without ingredients" ),
                     HttpStatus.FORBIDDEN );
         }
-        if ( recipe.getIngredients().containsValue( 0 ) ) {
-            return new ResponseEntity(
-                    errorResponse( recipe.getName() + " cannot be have an ingredient with an amount of 0" ),
-                    HttpStatus.FORBIDDEN );
+        for ( final Entry<Ingredient, Integer> i : recipe.getIngredients().entrySet() ) {
+            if ( i.getValue() <= 0 ) {
+                return new ResponseEntity(
+                        errorResponse( recipe.getName() + " cannot be have an ingredient with an amount of 0" ),
+                        HttpStatus.FORBIDDEN );
+            }
         }
+        // if ( recipe.getIngredients().containsValue( 0 ) ) {
+        // return new ResponseEntity(
+        // errorResponse( recipe.getName() + " cannot be have an ingredient with
+        // an amount of 0" ),
+        // HttpStatus.FORBIDDEN );
+        // }
         if ( service.findAll().size() < 3 ) {
             service.save( recipe );
             return new ResponseEntity( successResponse( recipe.getName() + " successfully created" ), HttpStatus.OK );
