@@ -167,6 +167,64 @@
 			$scope.moveToCreateCustomer = function () {
 				window.location.href = 'newcustomer';
 			}
+			
+			$scope.moveToCreateGuest = async function () {
+				
+				let body = {};
+
+				body.name = "Guest";
+				body.password = "dsa";
+				body.permission = 0;
+				
+				await $http.get("/api/v1/users/admin/password").then(function (successResponse) {
+
+						// Save the user response data
+						$scope.guestAuthUser = successResponse.data;
+				
+						$scope.message = successResponse.data.message;
+					}, function (errorResponse) {
+
+						$scope.reset();
+
+						// Save the message in scope and display it in html
+						$scope.message = errorResponse.data.message;
+					});
+					
+				body.authUser = $scope.guestAuthUser;
+
+				//API Call
+				//POST customer user
+				await $http.post("/api/v1/users/", body).then(function (successResponse) {
+					
+					$scope.reset();
+
+					// Save the message in scope and display it in html
+					$scope.message = successResponse.data.message;
+
+				}, function (errorResponse) {
+
+					// Save the message in scope and display it in html
+					$scope.message = errorResponse.data.message;
+				});
+				
+				// Get guest object
+				await $http.get("/api/v1/users/Guest/dsa").then(function (successResponse) {
+
+						// Save the user response data
+						$scope.guestCustomer = successResponse.data;
+
+					}, function (errorResponse) {
+
+						// Save the message in scope and display it in html
+						$scope.message = errorResponse.data.message;
+					});
+				
+				console.log($scope.guestCustomer);	
+					
+				sessionStorage.setItem("currentUser", JSON.stringify($scope.guestCustomer));
+				
+				window.location.href = 'customerindex';
+			}
 
 			$scope.checkUserPermission = function () {
 				//Check user permission to lead to correct index page
@@ -202,9 +260,6 @@
 						// Save the message in scope and display it in html
 						$scope.message = errorResponse.data.message;
 					});
-
-					// Cool animation for the message changing
-
 
 				}
 
@@ -263,6 +318,9 @@
 
 					<a href="recipe.html"><button type="submit" class="float-left bottom-button bottom-button1 ms-3"
 							ng-click="moveToCreateCustomer()">Create Account</button></a>
+							
+					<a href="recipe.html"><button type="submit" class="float-left bottom-button bottom-button1 ms-3"
+							ng-click="moveToCreateGuest()">Guest Login</button></a>
 
 					<button type="submit" class="float-end bottom-button ms-3" ng-click="submitUser()">Submit</button>
 

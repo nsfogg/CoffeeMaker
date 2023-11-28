@@ -197,6 +197,9 @@
 				for (recipe of $scope.recipeList) {
 					document.getElementById(recipe.name).classList.remove("fw-bold");
 				}
+				
+				/* Get the ingredient list immediately */
+				$scope.getIngredients();
 
 			}
 

@@ -193,17 +193,14 @@ public class APIUserController extends APIController {
      *
      * @param userName
      *            The name of the user
-     * @param user
-     *            the current user
+     * @param password
+     *            the password of the user
      * @return Success if the recipe could be deleted; an error if the recipe
      *         does not exist
      */
     @DeleteMapping ( BASE_PATH + "/users/{userName}" )
-    public ResponseEntity deleteUser ( @PathVariable final String userName, @RequestBody final User user ) {
-        if ( !authenticate( user.getUserName(), user.getPassword() ) || !user.isManager() ) {
-            return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
-                    HttpStatus.FORBIDDEN );
-        }
+    public ResponseEntity deleteUser ( @PathVariable final String userName ) {
+
         final User userToDelete = service.findByName( userName );
         if ( null == userToDelete ) {
             return new ResponseEntity( errorResponse( "No user found for username " + userName ),

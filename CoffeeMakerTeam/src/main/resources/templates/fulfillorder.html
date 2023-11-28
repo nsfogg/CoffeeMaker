@@ -127,6 +127,7 @@
 		app.controller('fufillOrderCtrl', function ($scope, $http) {
 
 			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
+			console.log($scope.user);
 
 			/**
 			* Order list to hold all incomplete orders for barista
@@ -143,7 +144,7 @@
 			$scope.getOrders = async function () {
 
 				$http.get("/api/v1/order/status" + "?userName=" + $scope.user.userName + "&password=" + $scope.user.password).then(function (successResponse) {
-
+					
 					$scope.ordersList.orders = successResponse.data;
 
 					// Filter orders where order.complete is false

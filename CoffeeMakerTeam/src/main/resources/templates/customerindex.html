@@ -79,9 +79,28 @@
 		app.controller('customerCtrl', function ($scope, $http) {
 			
 			$scope.customer = JSON.parse(sessionStorage.getItem("currentUser"));
+			
+			console.log($scope.customer);
+			
 			$scope.userName = $scope.customer.userName
 			
 			$scope.logout = function () {
+				
+				if($scope.customer.userName == "Guest"){
+					
+					$http.delete("/api/v1/users/Guest").then(function (successResponse) {
+
+						$scope.message = successResponse.data.message;
+
+					}, function (errorResponse) {
+
+						// Save the message in scope and display it in html
+						$scope.message = errorResponse.data.message;
+					});
+					
+					console.log($scope.message);
+					
+				}
 				
 				sessionStorage.clear();
 				window.location.href = 'login';

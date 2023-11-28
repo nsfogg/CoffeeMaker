@@ -188,7 +188,12 @@ public class APIOrderController extends APIController {
         final List<OrderUserDTO> orders = new ArrayList();
         for ( final Order order : orderService.findAll() ) {
 
-            orders.add( new OrderUserDTO( order, userService.findById( order.getUser() ).getUserName() ) );
+            if ( userService.findById( order.getUser() ) == null ) {
+                orders.add( new OrderUserDTO( order, "Guest" ) );
+            }
+            else {
+                orders.add( new OrderUserDTO( order, userService.findById( order.getUser() ).getUserName() ) );
+            }
 
         }
         return new ResponseEntity( orders, HttpStatus.OK );
@@ -221,9 +226,14 @@ public class APIOrderController extends APIController {
         order.completeOrder();
         orderService.save( order );
         // This message may be modifed to match what we want
-        return new ResponseEntity( successResponse(
-                order.getRecipe() + " for " + userService.findById( order.getUser() ).getUserName() + " is complete" ),
-                HttpStatus.OK );
+
+        if ( userService.findById( order.getUser() ) == null ) {
+            return new ResponseEntity( successResponse( order.getRecipe() + " for Guest is complete" ), HttpStatus.OK );
+        }
+        else {
+            return new ResponseEntity( successResponse( order.getRecipe() + " for "
+                    + userService.findById( order.getUser() ).getUserName() + " is complete" ), HttpStatus.OK );
+        }
     }
 
     /**
