@@ -24,7 +24,8 @@
 			}
 
 			function deleteRecipe(recipe) {
-				$http.delete("/api/v1/recipes/" + recipe, $scope.user)
+				console.log(recipe);
+				$http.delete("/api/v1/recipes/" + "?name=" + recipe + "&userName=" + $scope.user.userName + "&password=" + $scope.user.password)
 					.then(
 						function (response) {
 							console.log(response);
@@ -226,10 +227,11 @@
 
 			</div>
 
-
-			<div ng-if="0 >= recipes.length">There are no recipes in the
-				Coffee Maker.</div>
 			<div ng-if="submissionSuccess">Recipe deleted successfully</div>
+			<div ng-if="0 >= recipes.length">There are no recipes in the Coffee Maker.<br>
+					<button onclick="window.location.href='managerindex'" class="index-button"
+								style="text-align: center; width: 10%"> Home </button>
+				</div>
 
 
 		</div>

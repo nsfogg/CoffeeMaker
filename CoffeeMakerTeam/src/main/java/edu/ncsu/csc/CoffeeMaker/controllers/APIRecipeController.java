@@ -132,6 +132,15 @@ public class APIRecipeController extends APIController {
             return new ResponseEntity( errorResponse( "Recipe with the name " + recipe.getName() + " already exists" ),
                     HttpStatus.CONFLICT );
         }
+        if ( recipe.getIngredients().size() == 0 ) {
+            return new ResponseEntity( errorResponse( recipe.getName() + " cannot be created without ingredients" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        if ( recipe.getIngredients().containsValue( 0 ) ) {
+            return new ResponseEntity(
+                    errorResponse( recipe.getName() + " cannot be have an ingredient with an amount of 0" ),
+                    HttpStatus.FORBIDDEN );
+        }
         if ( service.findAll().size() < 3 ) {
             service.save( recipe );
             return new ResponseEntity( successResponse( recipe.getName() + " successfully created" ), HttpStatus.OK );
@@ -156,13 +165,15 @@ public class APIRecipeController extends APIController {
      * @return Success if the recipe could be deleted; an error if the recipe
      *         does not exist
      */
-    @DeleteMapping ( BASE_PATH + "/recipes/{name}" )
-    public ResponseEntity deleteRecipe ( @PathVariable final String name, @RequestBody final User user ) {
-        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+    @DeleteMapping ( BASE_PATH + "/recipes/" )
+    public ResponseEntity deleteRecipe ( @RequestParam ( name = "name", required = true ) final String name,
+            @RequestParam ( name = "userName", required = true ) final String userName,
+            @RequestParam ( name = "password", required = true ) final Integer password ) {
+        if ( !control.authenticate( userName, password ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
         }
-        final User checkUser = userService.findByName( user.getUserName() );
+        final User checkUser = userService.findByName( userName );
         if ( !checkUser.isManager() ) {
             return new ResponseEntity( errorResponse( " Current user cannot create a Recipe" ), HttpStatus.FORBIDDEN );
         }
@@ -204,6 +215,15 @@ public class APIRecipeController extends APIController {
         final Recipe r = service.findByName( name );
         if ( null == r ) {
             return new ResponseEntity( errorResponse( "No recipe found for name " + name ), HttpStatus.NOT_FOUND );
+        }
+        if ( recipe.getIngredients().size() == 0 ) {
+            return new ResponseEntity( errorResponse( recipe.getName() + " cannot be edited to have no ingredients" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        if ( recipe.getIngredients().containsValue( 0 ) ) {
+            return new ResponseEntity(
+                    errorResponse( recipe.getName() + " cannot be have an ingredient with an amount of 0" ),
+                    HttpStatus.FORBIDDEN );
         }
 
         r.updateRecipe( recipe );

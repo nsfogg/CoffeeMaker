@@ -25,7 +25,6 @@
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
 		app.controller('ingredientCtrl', function ($scope, $http) {
-			console.log(JSON.parse(sessionStorage.getItem("currentUser")));
 
 			/* Define the Ingredient Model */
 			$scope.ingredient = {
@@ -75,7 +74,13 @@
 
 				}
 
-
+				if($scope.ingredient.name == ""){
+					$scope.message = "Cannot create an unamed Ingredient";
+					animateMessage();
+				} else if($scope.amount == null || $scope.amount == undefined){
+					$scope.message = "Cannot create " + $scope.ingredient.name + " with a quantity of 0";
+					animateMessage();
+				}
 
 			};
 
