@@ -7,12 +7,11 @@
 	<link rel="stylesheet" href="css/bootstrap.css" />
 	<link rel="stylesheet" href="css/app.css" />
 </head>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 
 <body>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 	<script>
 		/*<![CDATA[*/
-
 		var app = angular.module('myApp', []);
 		app.controller('recipesCtrl', function ($scope, $http, $q) {
 
@@ -158,25 +157,24 @@
 			</li>
 		</ul>
 
-
-		<table>
+		<table style="margin-left: auto; margin-right: 0; width: 100%;">
 			<tr>
-				<td>
-
+				<td style="text-align: right;">
+					<!-- Empty cell for spacing -->
 				</td>
-				<td>
-					<label for="amtPaid" style="font-size: 18px; display: flex; justify-content: flex-end;">Enter
+				<td style="text-align: right;">
+					<label for="amtPaid" style="font-size: 18px; display: flex; justify-content: flex-end; padding-right: 1%;" >Enter
 						payment</label>
-					<input type="text" ng-model="amtPaid" name="amtPaid" required="true" />
+					<input type="number" ng-model="amtPaid" name="amtPaid" required="true" style="margin-right: 1%; width: 20%;"/>
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td style="text-align: left;">
 					<button onclick="window.location.href='customerindex'" class="bottom-button"
-						style="text-align: center;"> Home </button>
+						style="text-align: center; width: 25%; "> Home </button>
 				</td>
-				<td class="float-right right">
-					<button type="button" ng-click="make()" class="bottom-button float-right">Make Coffee</button>
+				<td style="text-align: right;">
+					<button type="button" ng-click="make()" class="bottom-button" style="width: 20%;">Make Coffee</button>
 				</td>
 			</tr>
 		</table>
