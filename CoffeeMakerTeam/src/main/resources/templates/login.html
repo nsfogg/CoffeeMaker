@@ -12,6 +12,9 @@
 		href="https://fonts.googleapis.com/css2?family=Montserrat&family=Open+Sans+Condensed:ital,wght@1,300&display=swap"
 		rel="stylesheet">
 
+	<link rel="icon"
+		href="https://raw.github.ncsu.edu/engr-csc326-fall2023/csc326-OBP-204-1/217288939a496c99f4d3dc62ebcb85a7047cb8aa/CoffeeMakerTeam/src/main/resources/templates/logo.png?token=GHSAT0AAAAAAAAAY7HBQEKRGOPTMCOFZMKGZLHVUSQ"
+		type="image/png">
 </head>
 
 <style>
@@ -46,6 +49,7 @@
 		padding-bottom: 1%;
 		text-align: center;
 		border-radius: 10px;
+		align-items: flex;
 	}
 
 	.index-button {
@@ -167,35 +171,35 @@
 			$scope.moveToCreateCustomer = function () {
 				window.location.href = 'newcustomer';
 			}
-			
+
 			$scope.moveToCreateGuest = async function () {
-				
+
 				let body = {};
 
 				body.name = "Guest";
 				body.password = "dsa";
 				body.permission = 0;
-				
+
 				await $http.get("/api/v1/users/admin/password").then(function (successResponse) {
 
-						// Save the user response data
-						$scope.guestAuthUser = successResponse.data;
-				
-						$scope.message = successResponse.data.message;
-					}, function (errorResponse) {
+					// Save the user response data
+					$scope.guestAuthUser = successResponse.data;
 
-						$scope.reset();
+					$scope.message = successResponse.data.message;
+				}, function (errorResponse) {
 
-						// Save the message in scope and display it in html
-						$scope.message = errorResponse.data.message;
-					});
-					
+					$scope.reset();
+
+					// Save the message in scope and display it in html
+					$scope.message = errorResponse.data.message;
+				});
+
 				body.authUser = $scope.guestAuthUser;
 
 				//API Call
 				//POST customer user
 				await $http.post("/api/v1/users/", body).then(function (successResponse) {
-					
+
 					$scope.reset();
 
 					// Save the message in scope and display it in html
@@ -206,23 +210,23 @@
 					// Save the message in scope and display it in html
 					$scope.message = errorResponse.data.message;
 				});
-				
+
 				// Get guest object
 				await $http.get("/api/v1/users/Guest/dsa").then(function (successResponse) {
 
-						// Save the user response data
-						$scope.guestCustomer = successResponse.data;
+					// Save the user response data
+					$scope.guestCustomer = successResponse.data;
 
-					}, function (errorResponse) {
+				}, function (errorResponse) {
 
-						// Save the message in scope and display it in html
-						$scope.message = errorResponse.data.message;
-					});
-				
-				console.log($scope.guestCustomer);	
-					
+					// Save the message in scope and display it in html
+					$scope.message = errorResponse.data.message;
+				});
+
+				console.log($scope.guestCustomer);
+
 				sessionStorage.setItem("currentUser", JSON.stringify($scope.guestCustomer));
-				
+
 				window.location.href = 'customerindex';
 			}
 
@@ -292,8 +296,10 @@
 
 	<div class="panel" ng-app="myApp" ng-controller="loginCtrl">
 
+
+
 		<h1 class="ms-0 header-box">Login</h1>
-		<img src="https://raw.github.ncsu.edu/engr-csc326-fall2023/csc326-OBP-204-1/subteam_frontend/CoffeeMakerTeam/src/main/resources/templates/logo1.jpg?token=GHSAT0AAAAAAAAAY7HBS4AOQS2E5DKBX5PYZLHTMOA" alt="GitHub Image">
+
 
 		<form>
 
@@ -313,15 +319,23 @@
 				<input type="password" class="input-button mt-1" placeholder="Password" aria-describedby="password"
 					ng-model="user.password" id="password" required>
 			</div>
+			
+			<br />
+
+			<div align="center">
+				<img src="https://raw.github.ncsu.edu/engr-csc326-fall2023/csc326-OBP-204-1/217288939a496c99f4d3dc62ebcb85a7047cb8aa/CoffeeMakerTeam/src/main/resources/templates/logo.png?token=GHSAT0AAAAAAAAAY7HBQEKRGOPTMCOFZMKGZLHVUSQ"
+					alt="Logo Image" width="80" height="65">
+			</div>
 
 			<div class="row w-100 ms-3 mt-5">
 				<div class="col p-0 mt-0">
 
 					<a href="recipe.html"><button type="submit" class="float-left bottom-button bottom-button1 ms-3"
 							ng-click="moveToCreateCustomer()">Create Account</button></a>
-							
+
 					<a href="recipe.html"><button type="submit" class="float-left bottom-button bottom-button1 ms-3"
 							ng-click="moveToCreateGuest()">Guest Login</button></a>
+
 
 					<button type="submit" class="float-end bottom-button ms-3" ng-click="submitUser()">Submit</button>
 
@@ -333,7 +347,7 @@
 		</form>
 
 		<div class="col m-3 w-75">
-			<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
+			<label id="message" style="border-radius: 5px" class="fs-6 p-1">{{message}}</label>
 		</div>
 
 	</div>
