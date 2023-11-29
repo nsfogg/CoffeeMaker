@@ -1,35 +1,40 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<title>CoffeeMaker</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<head>
+	<title>CoffeeMaker</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="icon"
+		href="https://raw.github.ncsu.edu/engr-csc326-fall2023/csc326-OBP-204-1/217288939a496c99f4d3dc62ebcb85a7047cb8aa/CoffeeMakerTeam/src/main/resources/templates/logo.png?token=GHSAT0AAAAAAAAAY7HBQEKRGOPTMCOFZMKGZLHVUSQ"
+		type="image/png">
 </head>
+
 <body>
 	<style>
 		body {
 			background-color: #4b3120;
-	
+
 		}
+
 		.panel {
 			background-color: #DAC3A2;
 			width: 90%;
 			margin: auto;
 			margin-top: 3%;
 			margin-bottom: 3%;
-			height:100vh;
+			height: 100vh;
 			z-index: -1;
 			padding: 3%;
 			border-radius: 10px;
 		}
-		
-		h1{
+
+		h1 {
 			color: #FFFFFF;
 			font-family: Arial;
 			font-weight: bold;
 			font-size: 28px;
 		}
-		
+
 		.header-box {
 			background-color: #4b3120;
 			padding-left: 2%;
@@ -38,13 +43,13 @@
 			text-align: left;
 			border-radius: 10px;
 		}
-		
+
 		.index-button {
 			background-color: #896145;
 			color: white;
 			font-size: 20px;
 			font-weight: bold;
-			padding:1%;
+			padding: 1%;
 			width: 20%;
 			text-align: left;
 			border: none;
@@ -54,52 +59,56 @@
 			cursor: pointer;
 			transition: background-color 0.3s;
 		}
-		
+
 		.index-button:hover {
 			background-color: #5E371D;
 		}
-		
+
 		table {
 			width: 100%;
-			margin-top:1%;
+			margin-top: 1%;
 		}
-		
-
 	</style>
 	<div class="panel">
-		
+
 		<div class="header-box">
 			<h1>Old Index</h1>
 		</div>
-		
+
 		<table>
 			<tr>
 				<td><button class="index-button" onclick="window.location.href='recipe.html'"> Add Recipe </button></td>
 			</tr>
-			
+
 			<tr>
-				<td><button class="index-button" onclick="window.location.href='inventory.html'"> Update Inventory </button></td>
+				<td><button class="index-button" onclick="window.location.href='inventory.html'"> Update Inventory
+					</button></td>
 			</tr>
-			
+
 			<tr>
-				<td><button class="index-button" onclick="window.location.href='editrecipe.html'"> Edit Recipe </button></td>
+				<td><button class="index-button" onclick="window.location.href='editrecipe.html'"> Edit Recipe </button>
+				</td>
 			</tr>
-			
+
 			<tr>
-				<td><button class="index-button" onclick="window.location.href='deleterecipe.html'"> Delete Recipe </button></td>
+				<td><button class="index-button" onclick="window.location.href='deleterecipe.html'"> Delete Recipe
+					</button></td>
 			</tr>
-			
+
 			<tr>
-				<td><button class="index-button" onclick="window.location.href='makecoffee.html'"> Make Coffee </button></td>
+				<td><button class="index-button" onclick="window.location.href='makecoffee.html'"> Make Coffee </button>
+				</td>
 			</tr>
-			
+
 			<tr>
-				<td><button class="index-button" onclick="window.location.href='ingredient.html'"> Add Ingredient </button></td>
-				
+				<td><button class="index-button" onclick="window.location.href='ingredient.html'"> Add Ingredient
+					</button></td>
+
 			</tr>
 		</table>
 
 	</div>
 
 </body>
+
 </html>

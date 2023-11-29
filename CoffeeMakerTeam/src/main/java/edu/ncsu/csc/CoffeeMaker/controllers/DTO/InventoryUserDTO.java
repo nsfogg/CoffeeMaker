@@ -30,4 +30,41 @@ public class InventoryUserDTO {
         this.inventory = inv;
         this.authUser = user;
     }
+
+    /**
+     *
+     */
+    public InventoryUserDTO () {
+        super();
+    }
+
+    /**
+     * @return the inventory
+     */
+    public Inventory getInventory () {
+        return inventory;
+    }
+
+    /**
+     * @param inventory
+     *            the inventory to set
+     */
+    public void setInventory ( final Inventory inventory ) {
+        this.inventory = inventory;
+    }
+
+    /**
+     * @return the authUser
+     */
+    public User getAuthUser () {
+        return authUser;
+    }
+
+    /**
+     * @param authUser
+     *            the authUser to set
+     */
+    public void setAuthUser ( final User authUser ) {
+        this.authUser = authUser;
+    }
 }

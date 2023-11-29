@@ -126,7 +126,7 @@
 
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
-		app.controller('orderStatusCtrl', function ($scope, $http) {
+		app.controller('orderHistoryCtrl', function ($scope, $http) {
 
 			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
 			$scope.ordersList = {
@@ -144,15 +144,7 @@
 
 					$scope.ordersList.orders = successResponse.data;
 
-					// Filter orders where order.complete is false
-					$scope.ordersList.pickedUpOrders = $scope.ordersList.orders.filter(function (order) {
-						return order.pickedUp === false;
-					});
-
 					$scope.addStatus();
-
-					console.log($scope.ordersList.orders);
-					console.log($scope.ordersList.pickedUpOrders);
 
 				}, function (errorResponse) {
 
@@ -176,44 +168,23 @@
 				}
 			}
 
-			$scope.pickup = function (order) {
-
-				let body = {};
-
-				body.id = order.id
-				body.authUser = $scope.user;
-
-				$http.post("/api/v1/order/pickup", body).then(function (successResponse) {
-
-					$scope.getOrders();
-
-					$scope.message = successResponse.data.message;
-
-				}, function (errorResponse) {
-
-					// Save the message in scope and display it in html
-					$scope.message = errorResponse.data.message;
-				});
-
-			}
-
 			$scope.getOrders();
 
 		});
 
 	</script>
 
-	<div class="panel" ng-app="myApp" ng-controller="orderStatusCtrl">
+	<div class="panel" ng-app="myApp" ng-controller="orderHistoryCtrl">
 
 		<div class="header-box">
-			<h1 align="center">Order Status</h1>
+			<h1 align="center">Order History</h1>
 		</div>
 
 		<div class="heading">
 
-			<h3>Order Name</h3>
-			<h3 style="padding-left: 7%;">Status</h3>
-			<h3>Customer Pickup</h3>
+			<h3>Customer Name</h3>
+			<h3>Beverage</h3>
+			<h3>Order Status</h3>
 
 		</div>
 
@@ -221,15 +192,10 @@
 
 			<tbody>
 
-				<tr ng-repeat="order in ordersList.pickedUpOrders">
-
-					<td style="float:left; font-family:Arial;">{{order.recipe}}</td>
-					<td style="padding-left: 5%; font-family:Arial;">{{order.status}}</td>
-					<td style="float:right; font-family:Arial;"><button
-							ng-style="!order.complete && {'visibility': 'hidden'}"
-							class="orderindex-button {{order.status}}" ng-click="pickup(order)"
-							onclick="window.location.href='orderstatus'"> Pickup </button></td>
-
+				<tr ng-repeat="order in ordersList.orders">
+					<td style="float:left; font-family:Arial;">{{order.userName}}</td>
+					<td style="font-family:Arial; padding-left: 5%;" align="center">{{order.recipe}}</td>
+					<td style="float:right; font-family:Arial;">{{order.status}}</td>
 				</tr>
 
 			</tbody>
@@ -239,14 +205,13 @@
 		<div class="container mt-3">
 			<div class="row">
 				<div class="col-md-6 offset-md-3 text-left">
-					<button onclick="window.location.href='customerindex'" class="index-button" style="width: 10%">
+
+					<button onclick="window.location.href='managerindex'" class="index-button" style="width: 10%">
 						Home
 					</button>
 				</div>
 			</div>
 		</div>
-
-		<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
 
 	</div>
 
