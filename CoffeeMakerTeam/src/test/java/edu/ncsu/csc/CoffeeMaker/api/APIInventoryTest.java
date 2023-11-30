@@ -33,9 +33,7 @@ import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
- *
  * The APIInventoryTest is responsible for testing Inventory API calls.
- *
  *
  * @author CSC326 204 Team 1
  *
@@ -46,8 +44,7 @@ import edu.ncsu.csc.CoffeeMaker.services.UserService;
 public class APIInventoryTest {
 
     /**
-     * MockMvc uses Spring's testing framework to handle requests to the REST
-     * API
+     * context for web application
      */
     private MockMvc               mvc;
 
@@ -58,30 +55,34 @@ public class APIInventoryTest {
     private WebApplicationContext context;
 
     /**
-     * Inventory Service
+     * InventoryService for interacting with inventory database
      */
     @Autowired
     private InventoryService      inventoryService;
 
     /**
-     * Ingredient Service
+     * IngredientService for interacting with ingredient database
      */
     @Autowired
     private IngredientService     ingredientService;
 
     /**
-     * User Service
+     * UserService for interacting with user database
      */
     @Autowired
     private UserService           userService;
 
-    /** Customer User */
+    /** tests user for customer */
     final User                    customer = new User( "customer", "password", 0 );
 
-    /** Barista User */
+    /**
+     * Test user for barista
+     */
     final User                    barista  = new User( "barista", "password", 1 );
 
-    /** Manager User */
+    /**
+     * test user for manager
+     */
     final User                    manager  = new User( "manager", "password", 2 );
 
     /**
@@ -100,10 +101,10 @@ public class APIInventoryTest {
     }
 
     /**
-     * Test GET request for Inventory
+     * Will test getting the current inventory
      *
      * @throws Exception
-     *             exceptions to be thrown when GET Inventory fails
+     *             if the inventory is empty
      */
     @Test
     @Transactional
@@ -161,10 +162,11 @@ public class APIInventoryTest {
     }
 
     /**
-     * Test PUT request for Inventory
+     * Will test updating the inventory
      *
      * @throws Exception
-     *             exceptions to be thrown when PUT Inventory fails
+     *             if there is an error with the ingredient added or amount to
+     *             change
      */
     @Test
     @Transactional
@@ -254,10 +256,10 @@ public class APIInventoryTest {
     }
 
     /**
-     * Test Inventory Exceptions
+     * Will test adding an invalid ingredient as a manager
      *
      * @throws Exception
-     *             exceptions to be thrown when Inventory requests fails
+     *             if an invalid ingredient is added
      */
     @Test
     @Transactional

@@ -17,9 +17,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * Finds an Order object with the provided name. Spring will generate code
      * to make this happen.
      *
-     * @param name
-     *            Name of the ingredient
-     * @return Found ingredient, null if none.
+     * @param id
+     *            id of the user
+     * @return Found orders, null if none.
      */
     List<Order> findByUser ( Long id );
 

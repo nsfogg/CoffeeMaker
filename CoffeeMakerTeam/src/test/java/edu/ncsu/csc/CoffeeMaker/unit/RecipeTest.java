@@ -23,22 +23,37 @@ import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 
+/**
+ * Will test the Recipe class, methods, and expected exceptions
+ */
 @ExtendWith ( SpringExtension.class )
 @EnableAutoConfiguration
 @SpringBootTest ( classes = TestConfig.class )
 public class RecipeTest {
 
+    /**
+     * RecipeService for interacting with recipe database
+     */
     @Autowired
     private RecipeService     service;
 
+    /**
+     * IngredientService for interacting with ingredient database
+     */
     @Autowired
     private IngredientService ingredientService;
 
+    /**
+     * Will set up the tests
+     */
     @BeforeEach
     public void setup () {
         service.deleteAll();
     }
 
+    /**
+     * Will test adding a recipe
+     */
     @Test
     @Transactional
     public void testAddRecipe () {
@@ -62,6 +77,9 @@ public class RecipeTest {
         Assertions.assertEquals( r1, recipes.get( 0 ), "The retrieved recipe should match the created one" );
     }
 
+    /**
+     * Test adding a collection of recipes where one is invlaid
+     */
     @Test
     @Transactional
     public void testNoRecipes () {
@@ -90,6 +108,9 @@ public class RecipeTest {
 
     }
 
+    /**
+     * Will test adding a recipe
+     */
     @Test
     @Transactional
     public void testAddRecipe1 () {
@@ -127,8 +148,9 @@ public class RecipeTest {
 
     }
 
-    /* Test2 is done via the API for different validation */
-
+    /**
+     * Will test adding a recipe with invalid price
+     */
     @Test
     @Transactional
     public void testAddRecipe3 () {
@@ -155,6 +177,9 @@ public class RecipeTest {
 
     }
 
+    /**
+     * Will test adding a recipe with invalid ingredients
+     */
     @Test
     @Transactional
     public void testAddRecipe4 () {
@@ -183,6 +208,9 @@ public class RecipeTest {
 
     }
 
+    /**
+     * Will test adding a recipe with invalid ingredients
+     */
     @Test
     @Transactional
     public void testAddRecipe5 () {
@@ -211,6 +239,9 @@ public class RecipeTest {
 
     }
 
+    /**
+     * Will test adding a recipe with invalid ingredients
+     */
     @Test
     @Transactional
     public void testAddRecipe6 () {
@@ -239,6 +270,9 @@ public class RecipeTest {
 
     }
 
+    /**
+     * Will test adding a recipe with invalid ingredients
+     */
     @Test
     @Transactional
     public void testAddRecipe7 () {
@@ -267,6 +301,9 @@ public class RecipeTest {
 
     }
 
+    /**
+     * Will test adding multiple recipes
+     */
     @Test
     @Transactional
     public void testAddRecipe13 () {
@@ -313,6 +350,9 @@ public class RecipeTest {
 
     }
 
+    /**
+     * Will test adding multiple recipes
+     */
     @Test
     @Transactional
     public void testAddRecipe14 () {
@@ -366,6 +406,9 @@ public class RecipeTest {
                 "Creating three recipes should result in three recipes in the database" );
     }
 
+    /**
+     * Will test adding ingredient to recipes
+     */
     @Test
     @Transactional
     public void testValidAddIngToRecipe () {
@@ -405,6 +448,9 @@ public class RecipeTest {
         Assertions.assertNotNull( service.findByName( name ) );
     }
 
+    /**
+     * Will test adding invalid ingredient to recipes
+     */
     @Test
     @Transactional
     public void testInvalidAddIngToRecipe () {
@@ -449,6 +495,9 @@ public class RecipeTest {
 
     }
 
+    /**
+     * Will test getting a recipe
+     */
     @Test
     @Transactional
     public void testGetRecipe1 () {
@@ -490,6 +539,9 @@ public class RecipeTest {
 
     }
 
+    /**
+     * Will test updating a recipe
+     */
     @Test
     @Transactional
     public void testUpdateRecipe () {
@@ -532,6 +584,9 @@ public class RecipeTest {
 
     }
 
+    /**
+     * Will test the Recipes toString method
+     */
     @Test
     @Transactional
     public void testToString () {
@@ -555,6 +610,10 @@ public class RecipeTest {
 
     }
 
+    /**
+     * Will test the equals method for recipes
+     */
+    @SuppressWarnings ( "unlikely-arg-type" )
     @Test
     @Transactional
     public void testEquals () {

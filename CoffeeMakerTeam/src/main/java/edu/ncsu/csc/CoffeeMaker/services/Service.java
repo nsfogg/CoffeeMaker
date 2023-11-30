@@ -30,7 +30,7 @@ import edu.ncsu.csc.CoffeeMaker.models.DomainObject;
  * @author Bruno Volpato da Cunha
  *
  */
-abstract public class Service <T extends DomainObject, K> {
+abstract public class Service<T extends DomainObject, K> {
 
     /**
      * Returns the Repository that Spring uses for interacting with the
@@ -125,7 +125,7 @@ abstract public class Service <T extends DomainObject, K> {
 
     /**
      * Checks to see if an object with the provided ID exists or not
-     * 
+     *
      * @param id
      *            Id to check for existence of
      * @return If the object was found
@@ -136,7 +136,7 @@ abstract public class Service <T extends DomainObject, K> {
 
     /**
      * Finds an object with the provided ID
-     * 
+     *
      * @param id
      *            ID of the object to find
      * @return The found object, null if none

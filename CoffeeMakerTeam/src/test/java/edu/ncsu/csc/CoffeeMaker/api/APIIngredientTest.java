@@ -40,8 +40,7 @@ import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
- *
- * The APIIngredientTest is responsible for testing ingredient API calls.
+ * Will test the API methods for created, editing, and deleting a recipe
  *
  *
  * @author CSC326 204 Team 1
@@ -56,48 +55,52 @@ public class APIIngredientTest {
     // ingredients from everywhere
 
     /**
-     * MockMvc uses Spring's testing framework to handle requests to the REST
-     * API
-     */
-    private MockMvc               mvc;
-
-    /**
      * Web Application Context
      */
     @Autowired
     private WebApplicationContext context;
 
     /**
-     * Ingredient Service
+     * MockMvc for testing http requests
      */
     @Autowired
-    private IngredientService     ingredientService;
+    private MockMvc               mvc;
 
     /**
-     * Inventory Service
-     */
-    @Autowired
-    private InventoryService      inventoryService;
-
-    /**
-     * Recipe Service
+     * RecipeService for interacting with recipe database
      */
     @Autowired
     private RecipeService         rService;
 
     /**
-     * User Service
+     * InventoryService for interacting with inventory database
+     */
+    @Autowired
+    private InventoryService      inventoryService;
+
+    /**
+     * IngredientService for interacting with ingredient database
+     */
+    @Autowired
+    private IngredientService     ingredientService;
+
+    /**
+     * UserService for interacting with user database
      */
     @Autowired
     private UserService           userService;
 
-    /** Customer User */
+    /** tests user for customer */
     final User                    customer = new User( "customer", "password", 0 );
 
-    /** Barista User */
+    /**
+     * Test user for barista
+     */
     final User                    barista  = new User( "barista", "password", 1 );
 
-    /** Manager User */
+    /**
+     * test user for manager
+     */
     final User                    manager  = new User( "manager", "password", 2 );
 
     /**
@@ -118,10 +121,10 @@ public class APIIngredientTest {
     }
 
     /**
-     * Test successfully creating an ingredient
+     * Will test adding a new ingredient
      *
      * @throws Exception
-     *             exception to be thrown when ingredient cannot be added
+     *             if the ingredient is already in the inventory
      */
     @Test
     @Transactional
@@ -137,10 +140,10 @@ public class APIIngredientTest {
     }
 
     /**
-     * Test getting an ingredient by name
+     * Will test getting an ingredient that is already in the inventory
      *
      * @throws Exception
-     *             exception to be thrown when ingredient cannot be returned
+     *             if the ingredient does not exist
      */
     @Test
     @Transactional
@@ -179,10 +182,10 @@ public class APIIngredientTest {
     }
 
     /**
-     * Test duplicate ingredient
+     * Will test adding an ingredient that is already in the system
      *
      * @throws Exception
-     *             exception to be thrown when ingredient is a duplicate
+     *             if a duplicate ingredient is added
      */
     @Test
     @Transactional
@@ -219,10 +222,10 @@ public class APIIngredientTest {
     }
 
     /**
-     * Test adding multiple ingredients
+     * Will test adding multiple ingredient
      *
      * @throws Exception
-     *             exception to be thrown when ingredient cannot be added
+     *             if a duplicate ingredient is added
      */
     @Test
     @Transactional
@@ -251,11 +254,10 @@ public class APIIngredientTest {
     }
 
     /**
-     * Test deleting ingredients
+     * Will test deleting an ingredient
      *
      * @throws Exception
-     *             exception to be thrown when ingredient are not deleted
-     *             correctly
+     *             if the ingredient has already been delete
      */
     @Test
     @Transactional
@@ -319,11 +321,10 @@ public class APIIngredientTest {
     }
 
     /**
-     * Test deleting ingredients
+     * Will test deleting an ingredient that is in a recipe
      *
      * @throws Exception
-     *             exception to be thrown when ingredient are not deleted
-     *             correctly
+     *             if the ingredient cannot be deleted from the current recipe
      */
     @Test
     @Transactional
@@ -376,11 +377,10 @@ public class APIIngredientTest {
     }
 
     /**
-     * Test getting ingredients
+     * Will test getting an ingredient
      *
      * @throws Exception
-     *             exception to be thrown when ingredient are not get correctly
-     *             correctly
+     *             if the ingredient is not in the inventory
      */
     @Test
     @Transactional
@@ -420,10 +420,10 @@ public class APIIngredientTest {
     }
 
     /**
-     * Test creating ingredients with the same name
+     * will testing creating an ingredient with a duplicate name
      *
      * @throws Exception
-     *             exception to be thrown when ingredient have same names
+     *             if an ingredient with the same name is added
      */
     @Test
     @Transactional
@@ -452,11 +452,10 @@ public class APIIngredientTest {
     }
 
     /**
-     * Test updating ingredients
+     * Will test updating the amount of an ingredient in the inventory
      *
      * @throws Exception
-     *             exception to be thrown when ingredient are not updated
-     *             correctly
+     *             if the amount added ec=exceeds the limit of the inventory
      */
     @Test
     @Transactional

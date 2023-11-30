@@ -56,9 +56,9 @@ public class APIInventoryController extends APIController {
      * Inventory. This will convert the Inventory to JSON.
      *
      * @param userName
-     *            the username
+     *            the user name of the authentication user
      * @param password
-     *            the password
+     *            The hashed password of the the authentication user
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/inventory" )
