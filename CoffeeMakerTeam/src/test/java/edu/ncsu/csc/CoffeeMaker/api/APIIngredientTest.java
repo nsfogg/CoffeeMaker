@@ -39,6 +39,14 @@ import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ *
+ * The APIIngredientTest is responsible for testing ingredient API calls.
+ *
+ *
+ * @author CSC326 204 Team 1
+ *
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith ( SpringExtension.class )
@@ -53,25 +61,43 @@ public class APIIngredientTest {
      */
     private MockMvc               mvc;
 
+    /**
+     * Web Application Context
+     */
     @Autowired
     private WebApplicationContext context;
 
+    /**
+     * Ingredient Service
+     */
     @Autowired
     private IngredientService     ingredientService;
 
+    /**
+     * Inventory Service
+     */
     @Autowired
     private InventoryService      inventoryService;
 
+    /**
+     * Recipe Service
+     */
     @Autowired
     private RecipeService         rService;
 
+    /**
+     * User Service
+     */
     @Autowired
     private UserService           userService;
 
+    /** Customer User */
     final User                    customer = new User( "customer", "password", 0 );
 
+    /** Barista User */
     final User                    barista  = new User( "barista", "password", 1 );
 
+    /** Manager User */
     final User                    manager  = new User( "manager", "password", 2 );
 
     /**
@@ -91,6 +117,12 @@ public class APIIngredientTest {
         userService.save( manager );
     }
 
+    /**
+     * Test successfully creating an ingredient
+     *
+     * @throws Exception
+     *             exception to be thrown when ingredient cannot be added
+     */
     @Test
     @Transactional
     public void testIngredientAPI () throws Exception {
@@ -104,6 +136,12 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * Test getting an ingredient by name
+     *
+     * @throws Exception
+     *             exception to be thrown when ingredient cannot be returned
+     */
     @Test
     @Transactional
     public void testGetIngredientByNameAPI () throws Exception {
@@ -140,6 +178,12 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * Test duplicate ingredient
+     *
+     * @throws Exception
+     *             exception to be thrown when ingredient is a duplicate
+     */
     @Test
     @Transactional
     public void testAddIngredientDuplicate () throws Exception {
@@ -174,6 +218,12 @@ public class APIIngredientTest {
         Assertions.assertEquals( 1, ingredientService.count(), "There should only one ingredient in the CoffeeMaker" );
     }
 
+    /**
+     * Test adding multiple ingredients
+     *
+     * @throws Exception
+     *             exception to be thrown when ingredient cannot be added
+     */
     @Test
     @Transactional
     public void testAddMultipleIngredient () throws Exception {
@@ -200,6 +250,13 @@ public class APIIngredientTest {
         Assertions.assertEquals( 2, ingredientService.count() );
     }
 
+    /**
+     * Test deleting ingredients
+     *
+     * @throws Exception
+     *             exception to be thrown when ingredient are not deleted
+     *             correctly
+     */
     @Test
     @Transactional
     public void testDeleteIngredient () throws Exception {
@@ -261,6 +318,13 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * Test deleting ingredients
+     *
+     * @throws Exception
+     *             exception to be thrown when ingredient are not deleted
+     *             correctly
+     */
     @Test
     @Transactional
     public void testDeleteIngredientWithRecipe () throws Exception {
@@ -311,6 +375,13 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * Test getting ingredients
+     *
+     * @throws Exception
+     *             exception to be thrown when ingredient are not get correctly
+     *             correctly
+     */
     @Test
     @Transactional
     public void testGetIngredients () throws Exception {
@@ -348,6 +419,12 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * Test creating ingredients with the same name
+     *
+     * @throws Exception
+     *             exception to be thrown when ingredient have same names
+     */
     @Test
     @Transactional
     public void testCreateSameNameIngredient () throws Exception {
@@ -374,6 +451,13 @@ public class APIIngredientTest {
 
     }
 
+    /**
+     * Test updating ingredients
+     *
+     * @throws Exception
+     *             exception to be thrown when ingredient are not updated
+     *             correctly
+     */
     @Test
     @Transactional
     public void testUpdateIngredient () throws Exception {

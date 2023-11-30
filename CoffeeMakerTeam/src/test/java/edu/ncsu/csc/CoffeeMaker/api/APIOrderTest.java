@@ -37,34 +37,65 @@ import edu.ncsu.csc.CoffeeMaker.services.OrderService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ *
+ * The APIOrderTest is responsible for testing Order API calls.
+ *
+ *
+ * @author CSC326 204 Team 1
+ *
+ */
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
 @AutoConfigureMockMvc
 public class APIOrderTest {
 
+    /**
+     * MockMvc uses Spring's testing framework to handle requests to the REST
+     * API
+     */
     @Autowired
     private MockMvc           mvc;
 
+    /**
+     * Recipe Service
+     */
     @Autowired
     private RecipeService     recipeService;
 
+    /**
+     * Inventory Service
+     */
     @Autowired
     private InventoryService  inventoryService;
 
+    /**
+     * Ingredient Service
+     */
     @Autowired
     private IngredientService ingredientService;
 
+    /**
+     * User Service
+     */
     @Autowired
     private UserService       userService;
 
+    /**
+     * Order Service
+     */
     @Autowired
     private OrderService      orderService;
 
+    /** Customer User */
     User                      customer  = new User( "customer", "password", 0 );
+    /** Secondary Customer User */
     User                      customer2 = new User( "customer2", "password", 0 );
 
+    /** Barista User */
     User                      barista   = new User( "barista", "password", 1 );
 
+    /** Manager User */
     User                      manager   = new User( "manager", "password", 2 );
 
     /**
@@ -128,6 +159,12 @@ public class APIOrderTest {
         recipeService.save( recipe2 );
     }
 
+    /**
+     * Test Ordering Beverages
+     *
+     * @throws Exception
+     *             exception thrown when ordering beverages fails
+     */
     @Test
     @Transactional
     public void testOrderBeverage1 () throws Exception {
@@ -250,6 +287,12 @@ public class APIOrderTest {
 
     }
 
+    /**
+     * Test failing to order Beverages due to insufficient amount paid
+     *
+     * @throws Exception
+     *             exception thrown when ordering beverages fails
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage2 () throws Exception {
@@ -264,6 +307,12 @@ public class APIOrderTest {
 
     }
 
+    /**
+     * Test failing to order Beverages due to not selecting recipe
+     *
+     * @throws Exception
+     *             exception thrown when ordering beverages fails
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage3 () throws Exception {
@@ -278,6 +327,12 @@ public class APIOrderTest {
 
     }
 
+    /**
+     * Test failing to order Beverages due to insufficient inventory
+     *
+     * @throws Exception
+     *             exception thrown when ordering beverages fails
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage4 () throws Exception {
@@ -304,6 +359,12 @@ public class APIOrderTest {
                 .andExpect( jsonPath( "$.message" ).value( "Not enough inventory" ) );
     }
 
+    /**
+     * Test failing to order Beverages due to not being a customer as barista
+     *
+     * @throws Exception
+     *             exception thrown when ordering beverages fails
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage5 () throws Exception {
@@ -317,6 +378,12 @@ public class APIOrderTest {
 
     }
 
+    /**
+     * Test failing to order Beverages due to not being a customer as manager
+     *
+     * @throws Exception
+     *             exception thrown when ordering beverages fails
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage6 () throws Exception {
@@ -330,6 +397,12 @@ public class APIOrderTest {
 
     }
 
+    /**
+     * Test failing to order Beverages due to not being an authenticated user
+     *
+     * @throws Exception
+     *             exception thrown when ordering beverages fails
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage7 () throws Exception {

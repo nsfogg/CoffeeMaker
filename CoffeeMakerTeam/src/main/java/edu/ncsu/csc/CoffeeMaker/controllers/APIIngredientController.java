@@ -74,8 +74,11 @@ public class APIIngredientController extends APIController {
      * list. This will convert the ingredients list to a JSON Array of
      * Ingredient objects.
      *
-     * @param user
-     *            the current user
+     * @param userName
+     *            the username
+     *
+     * @param password
+     *            user password
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/ingredients" )

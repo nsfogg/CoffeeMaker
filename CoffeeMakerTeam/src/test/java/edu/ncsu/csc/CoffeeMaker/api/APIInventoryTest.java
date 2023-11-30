@@ -32,6 +32,14 @@ import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ *
+ * The APIInventoryTest is responsible for testing Inventory API calls.
+ *
+ *
+ * @author CSC326 204 Team 1
+ *
+ */
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -43,22 +51,37 @@ public class APIInventoryTest {
      */
     private MockMvc               mvc;
 
+    /**
+     * Web Application Context
+     */
     @Autowired
     private WebApplicationContext context;
 
+    /**
+     * Inventory Service
+     */
     @Autowired
     private InventoryService      inventoryService;
 
+    /**
+     * Ingredient Service
+     */
     @Autowired
     private IngredientService     ingredientService;
 
+    /**
+     * User Service
+     */
     @Autowired
     private UserService           userService;
 
+    /** Customer User */
     final User                    customer = new User( "customer", "password", 0 );
 
+    /** Barista User */
     final User                    barista  = new User( "barista", "password", 1 );
 
+    /** Manager User */
     final User                    manager  = new User( "manager", "password", 2 );
 
     /**
@@ -76,6 +99,12 @@ public class APIInventoryTest {
         userService.save( manager );
     }
 
+    /**
+     * Test GET request for Inventory
+     *
+     * @throws Exception
+     *             exceptions to be thrown when GET Inventory fails
+     */
     @Test
     @Transactional
     public void testGetInventory () throws Exception {
@@ -131,6 +160,12 @@ public class APIInventoryTest {
 
     }
 
+    /**
+     * Test PUT request for Inventory
+     *
+     * @throws Exception
+     *             exceptions to be thrown when PUT Inventory fails
+     */
     @Test
     @Transactional
     public void testUpdateInventory () throws Exception {
@@ -218,6 +253,12 @@ public class APIInventoryTest {
 
     }
 
+    /**
+     * Test Inventory Exceptions
+     *
+     * @throws Exception
+     *             exceptions to be thrown when Inventory requests fails
+     */
     @Test
     @Transactional
     public void testThrowsExceptionInventory () throws Exception {

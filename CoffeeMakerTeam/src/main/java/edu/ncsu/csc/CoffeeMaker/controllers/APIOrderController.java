@@ -68,6 +68,10 @@ public class APIOrderController extends APIController {
     @Autowired
     private APIUserController control;
 
+    /**
+     * orderService object, to be autowired in by Spring to allow for
+     * manipulating the User Controller
+     */
     @Autowired
     private OrderService      orderService;
 
@@ -76,7 +80,7 @@ public class APIOrderController extends APIController {
      * of the recipe as the path variable and the amount that has been paid as
      * the body of the response
      *
-     * @param name
+     * @param recipeName
      *            recipe name
      * @param body
      *            User information
@@ -123,6 +127,8 @@ public class APIOrderController extends APIController {
      *            recipe that we want to make
      * @param amtPaid
      *            money that the user has given the machine
+     * @param user
+     *            user making coffee
      * @return change if there was enough money to make the coffee, throws
      *         exceptions if not
      */
@@ -162,8 +168,10 @@ public class APIOrderController extends APIController {
      * REST API method get a user's orders by completing a POST request with the
      * user as the body
      *
-     * @param user
-     *            User information
+     * @param userName
+     *            the username
+     * @param password
+     *            the password
      * @return the User's order. Or all orders if a barista or manager
      */
     @GetMapping ( BASE_PATH + "/order/status" )
@@ -203,8 +211,6 @@ public class APIOrderController extends APIController {
     /**
      * REST API method to complete a order with a POST request
      *
-     * @param name
-     *            recipe name
      * @param body
      *            User information and the id of the order to complete
      * @return A message saying the order has been completed
@@ -241,8 +247,6 @@ public class APIOrderController extends APIController {
      * of the recipe as the path variable and the amount that has been paid as
      * the body of the response
      *
-     * @param name
-     *            recipe name
      * @param body
      *            User information
      * @return The change the customer is due if successful
