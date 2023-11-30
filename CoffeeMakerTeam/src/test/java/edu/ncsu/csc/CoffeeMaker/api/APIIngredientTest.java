@@ -41,6 +41,10 @@ import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
  * Will test the API methods for created, editing, and deleting a recipe
+ *
+ *
+ * @author CSC326 204 Team 1
+ *
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -51,7 +55,7 @@ public class APIIngredientTest {
     // ingredients from everywhere
 
     /**
-     * context for web application
+     * Web Application Context
      */
     @Autowired
     private WebApplicationContext context;

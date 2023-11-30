@@ -29,4 +29,41 @@ public class PaidUserDTO {
         this.authUser = user;
     }
 
+    /**
+     *
+     */
+    public PaidUserDTO () {
+        super();
+    }
+
+    /**
+     * @return the paid
+     */
+    public int getPaid () {
+        return paid;
+    }
+
+    /**
+     * @param paid
+     *            the paid to set
+     */
+    public void setPaid ( final int paid ) {
+        this.paid = paid;
+    }
+
+    /**
+     * @return the authUser
+     */
+    public User getAuthUser () {
+        return authUser;
+    }
+
+    /**
+     * @param authUser
+     *            the authUser to set
+     */
+    public void setAuthUser ( final User authUser ) {
+        this.authUser = authUser;
+    }
+
 }

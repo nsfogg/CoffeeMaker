@@ -33,7 +33,10 @@ import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
- * Tests for api inventory
+ * The APIInventoryTest is responsible for testing Inventory API calls.
+ *
+ * @author CSC326 204 Team 1
+ *
  */
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
@@ -43,14 +46,13 @@ public class APIInventoryTest {
     /**
      * context for web application
      */
-    @Autowired
-    private WebApplicationContext context;
+    private MockMvc               mvc;
 
     /**
-     * MockMvc for testing http requests
+     * Web Application Context
      */
     @Autowired
-    private MockMvc               mvc;
+    private WebApplicationContext context;
 
     /**
      * InventoryService for interacting with inventory database

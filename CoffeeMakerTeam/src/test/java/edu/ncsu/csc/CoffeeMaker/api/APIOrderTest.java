@@ -38,7 +38,10 @@ import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
- * Test for order APIs
+ * The APIOrderTest is responsible for testing Order API calls.
+ *
+ *
+ * @author CSC326 204 Team 1
  */
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
@@ -80,6 +83,7 @@ public class APIOrderTest {
      */
     @Autowired
     private UserService       userService;
+
 
     /** tests user for customer */
     User                      customer  = new User( "customer", "password", 0 );

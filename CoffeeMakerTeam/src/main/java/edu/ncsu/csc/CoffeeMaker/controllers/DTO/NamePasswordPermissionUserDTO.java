@@ -43,4 +43,77 @@ public class NamePasswordPermissionUserDTO {
         this.permission = permission;
         this.authUser = user;
     }
+
+    /**
+     * @param name
+     * @param password
+     * @param authUser
+     */
+    public NamePasswordPermissionUserDTO () {
+        super();
+        this.permission = 0;
+        this.name = "";
+        this.password = "";
+        this.authUser = null;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName () {
+        return name;
+    }
+
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName ( final String name ) {
+        this.name = name;
+    }
+
+    /**
+     * @return the password
+     */
+    public String getPassword () {
+        return password;
+    }
+
+    /**
+     * @param password
+     *            the password to set
+     */
+    public void setPassword ( final String password ) {
+        this.password = password;
+    }
+
+    /**
+     * @return the permission
+     */
+    public int getPermission () {
+        return permission;
+    }
+
+    /**
+     * @param permission
+     *            the permission to set
+     */
+    public void setPermission ( final int permission ) {
+        this.permission = permission;
+    }
+
+    /**
+     * @return the authUser
+     */
+    public User getAuthUser () {
+        return authUser;
+    }
+
+    /**
+     * @param authUser
+     *            the authUser to set
+     */
+    public void setAuthUser ( final User authUser ) {
+        this.authUser = authUser;
+    }
 }

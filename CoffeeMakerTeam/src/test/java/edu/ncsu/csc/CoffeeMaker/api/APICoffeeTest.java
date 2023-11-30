@@ -32,7 +32,12 @@ import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
- * Tests for making coffee
+ * The APICoffeeTest is responsible for testing making coffee when a user
+ * submits a request to do so.
+ *
+ *
+ * @author CSC326 204 Team 1
+ *
  */
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest

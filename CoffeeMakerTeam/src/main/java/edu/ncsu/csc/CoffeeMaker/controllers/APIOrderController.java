@@ -1,5 +1,8 @@
 package edu.ncsu.csc.CoffeeMaker.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.controllers.DTO.IdUserDTO;
+import edu.ncsu.csc.CoffeeMaker.controllers.DTO.OrderUserDTO;
 import edu.ncsu.csc.CoffeeMaker.controllers.DTO.PaidUserDTO;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Order;
@@ -181,9 +185,26 @@ public class APIOrderController extends APIController {
         final User checkUser = userService.findByName( userName );
 
         if ( checkUser.isCustomer() ) {
-            return new ResponseEntity( orderService.findByUser( checkUser.getId() ), HttpStatus.OK );
+
+            final List<OrderUserDTO> orders = new ArrayList();
+            for ( final Order order : orderService.findByUser( checkUser.getId() ) ) {
+                orders.add( new OrderUserDTO( order, userService.findById( order.getUser() ).getUserName() ) );
+            }
+            return new ResponseEntity( orders, HttpStatus.OK );
         }
-        return new ResponseEntity( orderService.findAll(), HttpStatus.OK );
+
+        final List<OrderUserDTO> orders = new ArrayList();
+        for ( final Order order : orderService.findAll() ) {
+
+            if ( userService.findById( order.getUser() ) == null ) {
+                orders.add( new OrderUserDTO( order, "Guest" ) );
+            }
+            else {
+                orders.add( new OrderUserDTO( order, userService.findById( order.getUser() ).getUserName() ) );
+            }
+
+        }
+        return new ResponseEntity( orders, HttpStatus.OK );
 
     }
 
@@ -211,14 +232,20 @@ public class APIOrderController extends APIController {
         order.completeOrder();
         orderService.save( order );
         // This message may be modifed to match what we want
-        return new ResponseEntity( order.getRecipe() + "for" + order.getUser() + "is complete", HttpStatus.OK );
+
+        if ( userService.findById( order.getUser() ) == null ) {
+            return new ResponseEntity( successResponse( order.getRecipe() + " for Guest is complete" ), HttpStatus.OK );
+        }
+        else {
+            return new ResponseEntity( successResponse( order.getRecipe() + " for "
+                    + userService.findById( order.getUser() ).getUserName() + " is complete" ), HttpStatus.OK );
+        }
     }
 
     /**
      * REST API method to make coffee by completing a POST request with the ID
      * of the recipe as the path variable and the amount that has been paid as
      * the body of the response
-     *
      *
      * @param body
      *            User information
@@ -247,7 +274,9 @@ public class APIOrderController extends APIController {
         order.pickUpOrder();
         orderService.save( order );
         // This message may be modifed to match what we want
-        return new ResponseEntity( order.getRecipe() + "for" + order.getUser() + "is picked up", HttpStatus.OK );
+        return new ResponseEntity( successResponse(
+                order.getRecipe() + " for " + userService.findById( order.getUser() ).getUserName() + " is picked up" ),
+                HttpStatus.OK );
     }
 
 }
