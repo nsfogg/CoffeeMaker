@@ -31,13 +31,15 @@ public class IngredientUserDTO {
     }
 
     /**
-     *
+     * Will return the DTO for a user interacting with an ingredient
      */
     public IngredientUserDTO () {
         super();
     }
 
     /**
+     * Gets the ingredient
+     *
      * @return the ingredient
      */
     public Ingredient getIngredient () {
@@ -45,6 +47,8 @@ public class IngredientUserDTO {
     }
 
     /**
+     * Sets the ingredient
+     *
      * @param ingredient
      *            the ingredient to set
      */
@@ -53,6 +57,8 @@ public class IngredientUserDTO {
     }
 
     /**
+     * Gets the authentication User
+     *
      * @return the authUser
      */
     public User getAuthUser () {
@@ -60,6 +66,8 @@ public class IngredientUserDTO {
     }
 
     /**
+     * Sets the authentication User
+     *
      * @param authUser
      *            the authUser to set
      */

@@ -30,13 +30,15 @@ public class IdUserDTO {
     }
 
     /**
-     *
+     * Will return the DTO for a user and an id
      */
     public IdUserDTO () {
         super();
     }
 
     /**
+     * Gets the id
+     *
      * @return the id
      */
     public Long getId () {
@@ -44,6 +46,8 @@ public class IdUserDTO {
     }
 
     /**
+     * Sets the id
+     *
      * @param id
      *            the id to set
      */
@@ -52,6 +56,8 @@ public class IdUserDTO {
     }
 
     /**
+     * Gets the authentication user
+     *
      * @return the authUser
      */
     public User getAuthUser () {
@@ -59,6 +65,8 @@ public class IdUserDTO {
     }
 
     /**
+     * Sets the authentication user
+     *
      * @param authUser
      *            the authUser to set
      */

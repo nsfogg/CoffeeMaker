@@ -31,13 +31,16 @@ public class RecipeUserDTO {
     }
 
     /**
-     *
+     * Will return the DTO for a user that has requested the information of a
+     * recipe
      */
     public RecipeUserDTO () {
         super();
     }
 
     /**
+     * Gets the new recipe object
+     *
      * @return the newRecipe
      */
     public Recipe getNewRecipe () {
@@ -45,6 +48,8 @@ public class RecipeUserDTO {
     }
 
     /**
+     * Sets the new recipe object
+     *
      * @param newRecipe
      *            the newRecipe to set
      */
@@ -53,6 +58,8 @@ public class RecipeUserDTO {
     }
 
     /**
+     * Gets the authentication user
+     *
      * @return the authUser
      */
     public User getAuthUser () {
@@ -60,6 +67,8 @@ public class RecipeUserDTO {
     }
 
     /**
+     * Sets the authentication user
+     *
      * @param authUser
      *            the authUser to set
      */

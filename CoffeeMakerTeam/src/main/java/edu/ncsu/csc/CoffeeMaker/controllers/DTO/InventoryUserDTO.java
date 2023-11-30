@@ -32,13 +32,15 @@ public class InventoryUserDTO {
     }
 
     /**
-     *
+     * Will return the DTO for a user interacting with the inventory
      */
     public InventoryUserDTO () {
         super();
     }
 
     /**
+     * Gets the inventory
+     *
      * @return the inventory
      */
     public Inventory getInventory () {
@@ -46,6 +48,8 @@ public class InventoryUserDTO {
     }
 
     /**
+     * Sets the inventory
+     *
      * @param inventory
      *            the inventory to set
      */
@@ -54,6 +58,8 @@ public class InventoryUserDTO {
     }
 
     /**
+     * Gets the authentication user
+     *
      * @return the authUser
      */
     public User getAuthUser () {
@@ -61,6 +67,8 @@ public class InventoryUserDTO {
     }
 
     /**
+     * Sets the authentication user
+     *
      * @param authUser
      *            the authUser to set
      */

@@ -30,13 +30,15 @@ public class PaidUserDTO {
     }
 
     /**
-     *
+     * Will return the DTO for a user that has paid for their order
      */
     public PaidUserDTO () {
         super();
     }
 
     /**
+     * Gets the paid amount
+     *
      * @return the paid
      */
     public int getPaid () {
@@ -44,6 +46,8 @@ public class PaidUserDTO {
     }
 
     /**
+     * Sets the paid amount
+     *
      * @param paid
      *            the paid to set
      */
@@ -52,6 +56,8 @@ public class PaidUserDTO {
     }
 
     /**
+     * Gets the authentication user
+     *
      * @return the authUser
      */
     public User getAuthUser () {
@@ -59,6 +65,8 @@ public class PaidUserDTO {
     }
 
     /**
+     * Sets the authentication user
+     *
      * @param authUser
      *            the authUser to set
      */

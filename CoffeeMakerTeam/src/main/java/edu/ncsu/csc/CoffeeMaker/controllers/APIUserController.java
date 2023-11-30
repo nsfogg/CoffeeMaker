@@ -173,8 +173,6 @@ public class APIUserController extends APIController {
      *
      * @param userName
      *            The name of the user to delete
-     * @param user
-     *            the user authenticating the deletion.
      * @return Success if the user was deleted; an error if the user does not
      *         exist or the authentication user may not delete
      */

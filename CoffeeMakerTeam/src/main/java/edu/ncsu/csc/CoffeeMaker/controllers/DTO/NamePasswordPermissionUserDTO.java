@@ -45,9 +45,7 @@ public class NamePasswordPermissionUserDTO {
     }
 
     /**
-     * @param name
-     * @param password
-     * @param authUser
+     * Will return the DTO for a user that has been authenticated
      */
     public NamePasswordPermissionUserDTO () {
         super();
@@ -58,6 +56,8 @@ public class NamePasswordPermissionUserDTO {
     }
 
     /**
+     * Gets the name
+     *
      * @return the name
      */
     public String getName () {
@@ -65,6 +65,8 @@ public class NamePasswordPermissionUserDTO {
     }
 
     /**
+     * Sets the name
+     *
      * @param name
      *            the name to set
      */
@@ -73,6 +75,8 @@ public class NamePasswordPermissionUserDTO {
     }
 
     /**
+     * Gets the password
+     *
      * @return the password
      */
     public String getPassword () {
@@ -80,6 +84,8 @@ public class NamePasswordPermissionUserDTO {
     }
 
     /**
+     * Sets the password
+     *
      * @param password
      *            the password to set
      */
@@ -88,6 +94,8 @@ public class NamePasswordPermissionUserDTO {
     }
 
     /**
+     * Gets the permission status
+     *
      * @return the permission
      */
     public int getPermission () {
@@ -95,6 +103,8 @@ public class NamePasswordPermissionUserDTO {
     }
 
     /**
+     * Sets the permission status
+     *
      * @param permission
      *            the permission to set
      */
@@ -103,6 +113,8 @@ public class NamePasswordPermissionUserDTO {
     }
 
     /**
+     * Gets the authentication user
+     *
      * @return the authUser
      */
     public User getAuthUser () {
@@ -110,6 +122,8 @@ public class NamePasswordPermissionUserDTO {
     }
 
     /**
+     * Sets the authentication user
+     *
      * @param authUser
      *            the authUser to set
      */
