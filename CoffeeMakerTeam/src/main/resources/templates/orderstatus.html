@@ -224,7 +224,7 @@
 				<tr ng-repeat="order in ordersList.pickedUpOrders">
 
 					<td style="float:left; font-family:Arial;">{{order.recipe}}</td>
-					<td style="padding-left: 5%; font-family:Arial;">{{order.status}}</td>
+					<td style="padding-left: 12%; font-family:Arial;">{{order.status}}</td>
 					<td style="float:right; font-family:Arial;"><button
 							ng-style="!order.complete && {'visibility': 'hidden'}"
 							class="orderindex-button {{order.status}}" ng-click="pickup(order)"
