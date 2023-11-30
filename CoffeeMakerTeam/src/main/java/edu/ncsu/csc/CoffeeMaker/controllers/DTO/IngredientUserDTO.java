@@ -29,4 +29,49 @@ public class IngredientUserDTO {
         this.ingredient = ingr;
         this.authUser = user;
     }
+
+    /**
+     * Will return the DTO for a user interacting with an ingredient
+     */
+    public IngredientUserDTO () {
+        super();
+    }
+
+    /**
+     * Gets the ingredient
+     *
+     * @return the ingredient
+     */
+    public Ingredient getIngredient () {
+        return ingredient;
+    }
+
+    /**
+     * Sets the ingredient
+     *
+     * @param ingredient
+     *            the ingredient to set
+     */
+    public void setIngredient ( final Ingredient ingredient ) {
+        this.ingredient = ingredient;
+    }
+
+    /**
+     * Gets the authentication User
+     *
+     * @return the authUser
+     */
+    public User getAuthUser () {
+        return authUser;
+    }
+
+    /**
+     * Sets the authentication User
+     *
+     * @param authUser
+     *            the authUser to set
+     */
+    public void setAuthUser ( final User authUser ) {
+        this.authUser = authUser;
+    }
 }

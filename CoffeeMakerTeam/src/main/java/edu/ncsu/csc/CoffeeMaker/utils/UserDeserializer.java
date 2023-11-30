@@ -38,7 +38,7 @@ public class UserDeserializer extends StdDeserializer<User> implements JsonDeser
      * @param vc
      *            helper class for Recipe Deserializer
      */
-    public UserDeserializer ( final Class< ? > vc ) {
+    public UserDeserializer ( final Class<?> vc ) {
         super( vc );
     }
 

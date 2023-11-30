@@ -55,8 +55,10 @@ public class APIInventoryController extends APIController {
      * REST API endpoint to provide GET access to the CoffeeMaker's singleton
      * Inventory. This will convert the Inventory to JSON.
      *
-     * @param user
-     *            the current user
+     * @param userName
+     *            the user name of the authentication user
+     * @param password
+     *            The hashed password of the the authentication user
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/inventory" )

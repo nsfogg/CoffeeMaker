@@ -75,7 +75,7 @@ public class User extends DomainObject {
      *            the id of the user
      * @param password
      *            the password of the user
-     * @param perms
+     * @param permissions
      *            the permissions of the user
      */
     public User ( final String userName, final Long id, final String password, final int permissions ) {

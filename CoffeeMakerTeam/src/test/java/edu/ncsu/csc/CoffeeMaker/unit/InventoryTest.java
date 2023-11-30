@@ -26,27 +26,57 @@ import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 
+/**
+ * Will test the inventory class, its method, and expected exceptions
+ */
 @ExtendWith ( SpringExtension.class )
 @EnableAutoConfiguration
 @SpringBootTest ( classes = TestConfig.class )
 public class InventoryTest {
 
+    /**
+     * InventoryService for interacting with inventory database
+     */
     @Autowired
     private InventoryService  inventoryService;
 
+    /**
+     * IngredientService for interacting with ingredient database
+     */
     @Autowired
     private IngredientService ingredientService;
 
+    /**
+     * RecipeService for interacting with recipe database
+     */
     @Autowired
     private RecipeService     recipeService;
 
+    /**
+     * Chocolate ingredient
+     */
     Ingredient                chocolate = new Ingredient( "Chocolate" );
+    /**
+     * Vanilla ingredient
+     */
     Ingredient                vanilla   = new Ingredient( "Vanilla" );
+    /**
+     * Coffee ingredient
+     */
     Ingredient                coffee    = new Ingredient( "Coffee" );
+    /**
+     * Milk ingredient
+     */
     Ingredient                milk      = new Ingredient( "Milk" );
 
+    /**
+     * List of ingredients
+     */
     List<Ingredient>          ingredients;
 
+    /**
+     * Sets up each test
+     */
     @BeforeEach
     public void setup () {
         inventoryService.deleteAll();
@@ -73,6 +103,9 @@ public class InventoryTest {
         inventoryService.save( ivt );
     }
 
+    /**
+     * Will test using ingredients in the inventory
+     */
     @Test
     @Transactional
     public void testConsumeInventory () {
@@ -111,6 +144,9 @@ public class InventoryTest {
 
     }
 
+    /**
+     * Will test updating the inventory
+     */
     @Test
     @Transactional
     public void testUpdateInventory1 () {
@@ -158,6 +194,9 @@ public class InventoryTest {
 
     }
 
+    /**
+     * Will test adding ingredients to the inventory
+     */
     @Test
     @Transactional
     public void testAddInventory2 () {
@@ -208,6 +247,9 @@ public class InventoryTest {
         }
     }
 
+    /**
+     * Will test adding ingredients to the inventory
+     */
     @Test
     @Transactional
     public void testAddInventory3 () {
@@ -250,6 +292,9 @@ public class InventoryTest {
 
     }
 
+    /**
+     * Will test adding ingredients to the inventory
+     */
     @Test
     @Transactional
     public void testAddInventory4 () {
@@ -292,6 +337,9 @@ public class InventoryTest {
 
     }
 
+    /**
+     * Will test adding new ingredients to the inventory
+     */
     @Test
     @Transactional
     public void testAddNewIngredientToInventory () {
@@ -326,6 +374,9 @@ public class InventoryTest {
 
     }
 
+    /**
+     * Will test adding ingredients to the inventory
+     */
     @Test
     @Transactional
     public void testAddInventory5 () {
@@ -369,6 +420,9 @@ public class InventoryTest {
 
     }
 
+    /**
+     * Will test the toString method of the inventory
+     */
     @Test
     @Transactional
     public void testToString () {
@@ -388,6 +442,9 @@ public class InventoryTest {
 
     }
 
+    /**
+     * Will test the amount of ingredients in the inventory
+     */
     @Test
     @Transactional
     public void testNotEnoughIngredients () {

@@ -1,6 +1,7 @@
 package edu.ncsu.csc.CoffeeMaker.controllers;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.controllers.DTO.RecipeUserDTO;
+import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.models.User;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
@@ -59,9 +61,13 @@ public class APIRecipeController extends APIController {
     /**
      * REST API method to provide GET access to all recipes in the system
      *
-     * @param user
-     *            the current user
-     * @return JSON representation of all recipies
+     * @param userName
+     *            the authentication user name
+     *
+     * @param password
+     *            the hashed password for the authentication user
+     *
+     * @return JSON representation of all recipes
      */
     @GetMapping ( BASE_PATH + "/recipes/" )
     public List<Recipe> getRecipes ( @RequestParam ( name = "userName", required = true ) final String userName,
@@ -81,8 +87,10 @@ public class APIRecipeController extends APIController {
      *
      * @param name
      *            recipe name
-     * @param user
-     *            the current user
+     * @param userName
+     *            the authentication user name
+     * @param password
+     *            the hashed password of the authentication user
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/recipes/{name}/" )
@@ -132,6 +140,23 @@ public class APIRecipeController extends APIController {
             return new ResponseEntity( errorResponse( "Recipe with the name " + recipe.getName() + " already exists" ),
                     HttpStatus.CONFLICT );
         }
+        if ( recipe.getIngredients().size() == 0 ) {
+            return new ResponseEntity( errorResponse( recipe.getName() + " cannot be created without ingredients" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        for ( final Entry<Ingredient, Integer> i : recipe.getIngredients().entrySet() ) {
+            if ( i.getValue() <= 0 ) {
+                return new ResponseEntity(
+                        errorResponse( recipe.getName() + " cannot be have an ingredient with an amount of 0" ),
+                        HttpStatus.FORBIDDEN );
+            }
+        }
+        // if ( recipe.getIngredients().containsValue( 0 ) ) {
+        // return new ResponseEntity(
+        // errorResponse( recipe.getName() + " cannot be have an ingredient with
+        // an amount of 0" ),
+        // HttpStatus.FORBIDDEN );
+        // }
         if ( service.findAll().size() < 3 ) {
             service.save( recipe );
             return new ResponseEntity( successResponse( recipe.getName() + " successfully created" ), HttpStatus.OK );
@@ -151,18 +176,22 @@ public class APIRecipeController extends APIController {
      *
      * @param name
      *            The name of the Recipe to delete
-     * @param user
-     *            the current user
+     * @param userName
+     *            the username
+     * @param password
+     *            the password
      * @return Success if the recipe could be deleted; an error if the recipe
      *         does not exist
      */
-    @DeleteMapping ( BASE_PATH + "/recipes/{name}" )
-    public ResponseEntity deleteRecipe ( @PathVariable final String name, @RequestBody final User user ) {
-        if ( !control.authenticate( user.getUserName(), user.getPassword() ) ) {
+    @DeleteMapping ( BASE_PATH + "/recipes/" )
+    public ResponseEntity deleteRecipe ( @RequestParam ( name = "name", required = true ) final String name,
+            @RequestParam ( name = "userName", required = true ) final String userName,
+            @RequestParam ( name = "password", required = true ) final Integer password ) {
+        if ( !control.authenticate( userName, password ) ) {
             return new ResponseEntity( errorResponse( " Current user is not authenticated for this operation" ),
                     HttpStatus.FORBIDDEN );
         }
-        final User checkUser = userService.findByName( user.getUserName() );
+        final User checkUser = userService.findByName( userName );
         if ( !checkUser.isManager() ) {
             return new ResponseEntity( errorResponse( " Current user cannot create a Recipe" ), HttpStatus.FORBIDDEN );
         }
@@ -204,6 +233,15 @@ public class APIRecipeController extends APIController {
         final Recipe r = service.findByName( name );
         if ( null == r ) {
             return new ResponseEntity( errorResponse( "No recipe found for name " + name ), HttpStatus.NOT_FOUND );
+        }
+        if ( recipe.getIngredients().size() == 0 ) {
+            return new ResponseEntity( errorResponse( recipe.getName() + " cannot be edited to have no ingredients" ),
+                    HttpStatus.FORBIDDEN );
+        }
+        if ( recipe.getIngredients().containsValue( 0 ) ) {
+            return new ResponseEntity(
+                    errorResponse( recipe.getName() + " cannot be have an ingredient with an amount of 0" ),
+                    HttpStatus.FORBIDDEN );
         }
 
         r.updateRecipe( recipe );

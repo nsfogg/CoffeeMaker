@@ -37,35 +37,71 @@ import edu.ncsu.csc.CoffeeMaker.services.OrderService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ * The APIOrderTest is responsible for testing Order API calls.
+ *
+ *
+ * @author CSC326 204 Team 1
+ */
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
 @AutoConfigureMockMvc
 public class APIOrderTest {
 
+    /**
+     * MockMvc for testing http requests
+     */
     @Autowired
     private MockMvc           mvc;
 
+    /**
+     * RecipeService for interacting with recipe database
+     */
     @Autowired
     private RecipeService     recipeService;
 
+    /**
+     * InventoryService for interacting with inventory database
+     */
     @Autowired
     private InventoryService  inventoryService;
 
+    /**
+     * IngredientService for interacting with ingredient database
+     */
     @Autowired
     private IngredientService ingredientService;
 
-    @Autowired
-    private UserService       userService;
-
+    /**
+     * OrderService for interacting with ingredient database
+     */
     @Autowired
     private OrderService      orderService;
 
-    User                      customer  = new User( "customer", "password", 0 );
-    User                      customer2 = new User( "customer2", "password", 0 );
+    /**
+     * UserService for interacting with user database
+     */
+    @Autowired
+    private UserService       userService;
 
+
+    /** tests user for customer */
+    User                      customer  = new User( "customer", "password", 0 );
+
+    /**
+     * Test user for barista
+     */
     User                      barista   = new User( "barista", "password", 1 );
 
+    /**
+     * test user for manager
+     */
     User                      manager   = new User( "manager", "password", 2 );
+
+    /**
+     * test user for cusomer2
+     */
+    User                      customer2 = new User( "customer2", "password", 0 );
 
     /**
      * Sets up the tests.
@@ -128,6 +164,12 @@ public class APIOrderTest {
         recipeService.save( recipe2 );
     }
 
+    /**
+     * Will test creating an order object
+     *
+     * @throws Exception
+     *             if an invalid user attempts to order a beverage
+     */
     @Test
     @Transactional
     public void testOrderBeverage1 () throws Exception {
@@ -250,6 +292,12 @@ public class APIOrderTest {
 
     }
 
+    /**
+     * Will test purchasing from an order
+     *
+     * @throws Exception
+     *             if an insufficient ammount is paid
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage2 () throws Exception {
@@ -264,6 +312,12 @@ public class APIOrderTest {
 
     }
 
+    /**
+     * Will test purchasing a beverage from an order
+     *
+     * @throws Exception
+     *             if there is an invalid recipe ordered
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage3 () throws Exception {
@@ -278,6 +332,12 @@ public class APIOrderTest {
 
     }
 
+    /**
+     * Will test purchasing a beverage from an order
+     *
+     * @throws Exception
+     *             if there is not enough ingredients in the inventory
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage4 () throws Exception {
@@ -304,6 +364,12 @@ public class APIOrderTest {
                 .andExpect( jsonPath( "$.message" ).value( "Not enough inventory" ) );
     }
 
+    /**
+     * Will test purchasing a beverage from an order
+     *
+     * @throws Exception
+     *             if a customer is not making the order (barista)
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage5 () throws Exception {
@@ -317,6 +383,12 @@ public class APIOrderTest {
 
     }
 
+    /**
+     * Will test purchasing a beverage from an order
+     *
+     * @throws Exception
+     *             if a customer is not making the order (manager)
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage6 () throws Exception {
@@ -330,6 +402,12 @@ public class APIOrderTest {
 
     }
 
+    /**
+     * Will test purchasing a beverage from an order
+     *
+     * @throws Exception
+     *             if a customer is not making the order (manager)
+     */
     @Test
     @Transactional
     public void testPurchaseBeverage7 () throws Exception {

@@ -4,7 +4,9 @@
 <head>
 	<title>CoffeeMaker</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
+	<link rel="icon"
+		href="https://drive.google.com/uc?export=view&id=15CUAZOSxawhdWDe9cJoGQPY3dVgbQ0R_"
+		type="image/png">
 </head>
 
 <body>
@@ -127,6 +129,7 @@
 		app.controller('fufillOrderCtrl', function ($scope, $http) {
 
 			$scope.user = JSON.parse(sessionStorage.getItem("currentUser"));
+			console.log($scope.user);
 
 			/**
 			* Order list to hold all incomplete orders for barista
@@ -140,7 +143,7 @@
 			/**
 			* Gets the orders from the user orders
 			*/
-			$scope.getOrders = function () {
+			$scope.getOrders = async function () {
 
 				$http.get("/api/v1/order/status" + "?userName=" + $scope.user.userName + "&password=" + $scope.user.password).then(function (successResponse) {
 
@@ -151,36 +154,12 @@
 						return order.complete === false;
 					});
 
-					// Log the completed orders
-					console.log($scope.ordersList.completedOrders);
-
-
-					$scope.addStatus();
-
-					console.log($scope.ordersList.orders);
-
 				}, function (errorResponse) {
 
 					$scope.message = errorResponse.data.message;
 
 				});
 
-			}
-
-
-			$scope.addStatus = function () {
-
-				for (order of $scope.ordersList.orders) {
-
-					order.userName
-
-					if (order.complete) {
-						order.status = "Completed";
-					} else {
-						order.status = "In Progress";
-					}
-
-				}
 			}
 
 			$scope.fulfill = function (order) {
@@ -192,20 +171,17 @@
 
 				$http.post("/api/v1/order/order", body).then(function (successResponse) {
 
-					$scope.getOrders();
-
-					// Reload the page
-					location.reload();
-
 					// Return success message once order is fulfilled
 					$scope.message = successResponse.data.message;
-					
+
 
 				}, function (errorResponse) {
 
 					// Save the error message in scope and display it in html
 					$scope.message = errorResponse.data.message;
 				});
+
+				$scope.ordersList.completedOrders.splice($scope.ordersList.completedOrders.indexOf(order), 1);
 
 			}
 
@@ -224,7 +200,7 @@
 		<div class="heading">
 
 			<h3>Customer Name</h3>
-			<h3 style="padding-left: 7%;">Beverage Ordered</h3>
+			<h3 style="padding-right: 3%">Beverage Ordered</h3>
 			<h3>Fulfill Order</h3>
 
 		</div>
@@ -236,10 +212,10 @@
 				<tr ng-repeat="order in ordersList.completedOrders">
 
 
-					<td style="float:left; font-family:Arial;">{{order.user}}</td>
-					<td style="width: 28%; font-family:Arial;">{{order.recipe}}</td>
+					<td style="float:left; font-family:Arial;">{{order.userName}}</td>
+					<td style="font-family:Arial;">{{order.recipe}}</td>
 					<td style="float:right; font-family:Arial;"><button class="orderindex-button"
-							ng-click="fulfill(order)"onclick="window.location.href='fulfillorder'"> Fulfill </button></td>
+							ng-click="fulfill(order)"> Fulfill </button></td>
 
 				</tr>
 
@@ -247,12 +223,18 @@
 
 		</table>
 
-		<table>
-			<tr>
-				<td style="text-align: right;"><button onclick="window.location.href='baristaindex'"
-						class="index-button" style="text-align: center; width: 10%"> Home </button></td>
-			</tr>
-		</table>
+		<div class="container mt-3">
+			<div class="row">
+				<div class="col-md-6 offset-md-3 text-left">
+
+					<button onclick="window.location.href='baristaindex'" class="index-button" style="width: 10%">
+						Home
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<br />
 
 		<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
 

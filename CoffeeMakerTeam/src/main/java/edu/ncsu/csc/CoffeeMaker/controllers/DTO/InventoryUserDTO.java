@@ -30,4 +30,49 @@ public class InventoryUserDTO {
         this.inventory = inv;
         this.authUser = user;
     }
+
+    /**
+     * Will return the DTO for a user interacting with the inventory
+     */
+    public InventoryUserDTO () {
+        super();
+    }
+
+    /**
+     * Gets the inventory
+     *
+     * @return the inventory
+     */
+    public Inventory getInventory () {
+        return inventory;
+    }
+
+    /**
+     * Sets the inventory
+     *
+     * @param inventory
+     *            the inventory to set
+     */
+    public void setInventory ( final Inventory inventory ) {
+        this.inventory = inventory;
+    }
+
+    /**
+     * Gets the authentication user
+     *
+     * @return the authUser
+     */
+    public User getAuthUser () {
+        return authUser;
+    }
+
+    /**
+     * Sets the authentication user
+     *
+     * @param authUser
+     *            the authUser to set
+     */
+    public void setAuthUser ( final User authUser ) {
+        this.authUser = authUser;
+    }
 }

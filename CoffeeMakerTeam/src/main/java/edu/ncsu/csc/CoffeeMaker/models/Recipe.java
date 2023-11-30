@@ -249,7 +249,7 @@ public class Recipe extends DomainObject {
      *
      * @param obj
      *            in which to be compared
-     * 
+     *
      * @return true if object equal, false if not
      *
      */

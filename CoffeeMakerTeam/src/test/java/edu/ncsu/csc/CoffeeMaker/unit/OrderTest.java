@@ -8,8 +8,14 @@ import edu.ncsu.csc.CoffeeMaker.models.Order;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.models.User;
 
+/**
+ * Will test the Order class, methods, and expected exceptions
+ */
 public class OrderTest {
 
+    /**
+     * Will test creating an order object
+     */
     @Test
     @Transactional
     public void testOrder () {
@@ -22,6 +28,9 @@ public class OrderTest {
 
     }
 
+    /**
+     * Will test creating an order object wiht the correct parameters
+     */
     @Test
     @Transactional
     public void testOrderParams () {
@@ -38,6 +47,9 @@ public class OrderTest {
         Assertions.assertEquals( false, order.isPickedUp() );
     }
 
+    /**
+     * Will test fufilling an Order
+     */
     @Test
     @Transactional
     public void testCompletePickup () {

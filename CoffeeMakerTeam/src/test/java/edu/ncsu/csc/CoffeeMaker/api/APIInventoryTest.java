@@ -32,33 +32,57 @@ import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ * The APIInventoryTest is responsible for testing Inventory API calls.
+ *
+ * @author CSC326 204 Team 1
+ *
+ */
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
 @AutoConfigureMockMvc
 public class APIInventoryTest {
 
     /**
-     * MockMvc uses Spring's testing framework to handle requests to the REST
-     * API
+     * context for web application
      */
     private MockMvc               mvc;
 
+    /**
+     * Web Application Context
+     */
     @Autowired
     private WebApplicationContext context;
 
+    /**
+     * InventoryService for interacting with inventory database
+     */
     @Autowired
     private InventoryService      inventoryService;
 
+    /**
+     * IngredientService for interacting with ingredient database
+     */
     @Autowired
     private IngredientService     ingredientService;
 
+    /**
+     * UserService for interacting with user database
+     */
     @Autowired
     private UserService           userService;
 
+    /** tests user for customer */
     final User                    customer = new User( "customer", "password", 0 );
 
+    /**
+     * Test user for barista
+     */
     final User                    barista  = new User( "barista", "password", 1 );
 
+    /**
+     * test user for manager
+     */
     final User                    manager  = new User( "manager", "password", 2 );
 
     /**
@@ -76,6 +100,12 @@ public class APIInventoryTest {
         userService.save( manager );
     }
 
+    /**
+     * Will test getting the current inventory
+     *
+     * @throws Exception
+     *             if the inventory is empty
+     */
     @Test
     @Transactional
     public void testGetInventory () throws Exception {
@@ -131,6 +161,13 @@ public class APIInventoryTest {
 
     }
 
+    /**
+     * Will test updating the inventory
+     *
+     * @throws Exception
+     *             if there is an error with the ingredient added or amount to
+     *             change
+     */
     @Test
     @Transactional
     public void testUpdateInventory () throws Exception {
@@ -218,6 +255,12 @@ public class APIInventoryTest {
 
     }
 
+    /**
+     * Will test adding an invalid ingredient as a manager
+     *
+     * @throws Exception
+     *             if an invalid ingredient is added
+     */
     @Test
     @Transactional
     public void testThrowsExceptionInventory () throws Exception {

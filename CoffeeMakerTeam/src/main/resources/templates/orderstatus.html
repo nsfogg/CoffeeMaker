@@ -4,7 +4,9 @@
 <head>
 	<title>CoffeeMaker</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
+	<link rel="icon"
+		href="https://drive.google.com/uc?export=view&id=15CUAZOSxawhdWDe9cJoGQPY3dVgbQ0R_"
+		type="image/png">
 </head>
 
 <body>
@@ -222,10 +224,11 @@
 				<tr ng-repeat="order in ordersList.pickedUpOrders">
 
 					<td style="float:left; font-family:Arial;">{{order.recipe}}</td>
-					<td style="width: 28%; font-family:Arial;">{{order.status}}</td>
+					<td style="padding-left: 5%; font-family:Arial;">{{order.status}}</td>
 					<td style="float:right; font-family:Arial;"><button
 							ng-style="!order.complete && {'visibility': 'hidden'}"
-							class="orderindex-button {{order.status}}" ng-click="pickup(order)" onclick="window.location.href='orderstatus'"> Pickup </button></td>
+							class="orderindex-button {{order.status}}" ng-click="pickup(order)"
+							onclick="window.location.href='orderstatus'"> Pickup </button></td>
 
 				</tr>
 
@@ -233,12 +236,15 @@
 
 		</table>
 
-		<table>
-			<tr>
-				<td style="text-align: right;"><button onclick="window.location.href='customerindex'"
-						class="index-button" style="text-align: center; width: 10%"> Home </button></td>
-			</tr>
-		</table>
+		<div class="container mt-3">
+			<div class="row">
+				<div class="col-md-6 offset-md-3 text-left">
+					<button onclick="window.location.href='customerindex'" class="index-button" style="width: 10%">
+						Home
+					</button>
+				</div>
+			</div>
+		</div>
 
 		<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
 

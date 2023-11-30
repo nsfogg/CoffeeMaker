@@ -43,7 +43,7 @@ public class RecipeDeserializer extends StdDeserializer<Recipe> implements JsonD
      * @param vc
      *            helper class for Recipe Deserializer
      */
-    public RecipeDeserializer ( final Class< ? > vc ) {
+    public RecipeDeserializer ( final Class<?> vc ) {
         super( vc );
     }
 

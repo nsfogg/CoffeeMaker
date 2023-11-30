@@ -17,69 +17,75 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 
-@ExtendWith(SpringExtension.class)
+/**
+ * Tests for interacting with database
+ */
+@ExtendWith ( SpringExtension.class )
 @EnableAutoConfiguration
-@SpringBootTest(classes = TestConfig.class)
+@SpringBootTest ( classes = TestConfig.class )
 public class TestDatabaseInteraction {
 
-	@Autowired
-	private RecipeService recipeService;
+    /**
+     * RecipeService for interacting with recipe database
+     */
+    @Autowired
+    private RecipeService recipeService;
 
-	/**
-	 * Sets up the tests.
-	 */
-	@BeforeEach
-	public void setup() {
-		recipeService.deleteAll();
-	}
+    /**
+     * Sets up the tests.
+     */
+    @BeforeEach
+    public void setup () {
+        recipeService.deleteAll();
+    }
 
-	/**
-	 * Tests the RecipeService class
-	 */
-	@Test
-	@Transactional
-	public void testAddRecipes() {
+    /**
+     * Tests the RecipeService class
+     */
+    @Test
+    @Transactional
+    public void testAddRecipes () {
 
-		// Creating a recipe and adding values
-		final Recipe r = new Recipe();
+        // Creating a recipe and adding values
+        final Recipe r = new Recipe();
 
-		r.setName("Mocha");
-		r.setPrice(350);
+        r.setName( "Mocha" );
+        r.setPrice( 350 );
 
-		// Save the recipe using the recipe services
-		recipeService.save(r);
+        // Save the recipe using the recipe services
+        recipeService.save( r );
 
-		// Get a list of the recipes in the recipe service and test for our
-		// added recipe
-		final List<Recipe> dbRecipes = recipeService.findAll();
+        // Get a list of the recipes in the recipe service and test for our
+        // added recipe
+        final List<Recipe> dbRecipes = recipeService.findAll();
 
-		assertEquals(1, dbRecipes.size());
+        assertEquals( 1, dbRecipes.size() );
 
-		final Recipe dbRecipe = dbRecipes.get(0);
+        final Recipe dbRecipe = dbRecipes.get( 0 );
 
-		assertEquals(r.getName(), dbRecipe.getName());
+        assertEquals( r.getName(), dbRecipe.getName() );
 
-		assertEquals(r.getName(), "Mocha");
-		assertEquals(r.getPrice(), 350);
+        assertEquals( r.getName(), "Mocha" );
+        assertEquals( r.getPrice(), 350 );
 
-		// Test the recipe service find by name functionality
-		assertEquals(recipeService.findByName("Mocha"), r);
+        // Test the recipe service find by name functionality
+        assertEquals( recipeService.findByName( "Mocha" ), r );
 
-		// Test the edit recipe functionality
-		dbRecipe.setPrice(15);
+        // Test the edit recipe functionality
+        dbRecipe.setPrice( 15 );
 
-		recipeService.save(dbRecipe);
+        recipeService.save( dbRecipe );
 
-		// Test the recipe list after edit and ensure values are changed
-		final List<Recipe> testRecipes = recipeService.findAll();
+        // Test the recipe list after edit and ensure values are changed
+        final List<Recipe> testRecipes = recipeService.findAll();
 
-		assertEquals(testRecipes.size(), 1);
-		assertEquals(testRecipes.get(0), r);
+        assertEquals( testRecipes.size(), 1 );
+        assertEquals( testRecipes.get( 0 ), r );
 
-		final Recipe testRecipe = testRecipes.get(0);
+        final Recipe testRecipe = testRecipes.get( 0 );
 
-		assertEquals(testRecipe.getPrice(), 15);
+        assertEquals( testRecipe.getPrice(), 15 );
 
-	}
+    }
 
 }

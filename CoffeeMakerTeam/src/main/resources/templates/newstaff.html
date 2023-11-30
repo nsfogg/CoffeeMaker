@@ -11,7 +11,9 @@
 	<link
 		href="https://fonts.googleapis.com/css2?family=Montserrat&family=Open+Sans+Condensed:ital,wght@1,300&display=swap"
 		rel="stylesheet">
-
+	<link rel="icon"
+		href="https://drive.google.com/uc?export=view&id=15CUAZOSxawhdWDe9cJoGQPY3dVgbQ0R_"
+		type="image/png">
 </head>
 
 <style>
@@ -158,7 +160,7 @@
 
 				return false;
 			};
-			
+
 			$scope.moveToManagerIndex = function () {
 				window.location.href = 'managerindex';
 			}
@@ -189,13 +191,7 @@
 						// Save the message in scope and display it in html
 						$scope.message = errorResponse.data.message;
 					});
-
-				
-
 				}
-
-
-
 			};
 
 
@@ -223,14 +219,7 @@
 				};
 
 				$scope.message = "";
-
-
 			}
-
-			// Userfunction existed here
-
-
-
 		});
 
 		function updateDropdown(text) {
@@ -241,14 +230,15 @@
 
 	<div class="panel" ng-app="myApp" ng-controller="staffCtrl">
 
+		<!-- Header -->
 		<h1 class="ms-0 header-box">New Staff Account</h1>
 
 		<h4 class="body-text mt-4" align="center">Type of Account</h4>
 
 		<div class="dropdown ms-2 mb-1 w-75 mt-0" align="center">
-			<button class="btn btn-secondary btn-sm dropdown-toggle index-button" type="button"
+			<button class="btn btn-secondary btn-sm dropdown-toggle index-button text-truncate" type="button"
 				data-bs-toggle="dropdown" aria-expanded="false">
-				<span id="selected-option">Account Type</span>
+				<span id="selected-option" class="text-truncate">Account Type</span>
 			</button>
 			<ul class="dropdown-menu body-box">
 				<li><a class="dropdown-item body-box" onclick="updateDropdown('Barista')"
@@ -257,6 +247,7 @@
 						ng-click="updatePermission(2)">Manager</a></li>
 			</ul>
 		</div>
+
 
 		<form>
 
@@ -280,23 +271,21 @@
 			<div class="row w-100 ms-3 mt-5">
 				<div class="col p-0 mt-0">
 
-					<button type="button" class="float-left bottom-button ms-3" 
+					<button type="button" class="float-left bottom-button ms-3"
 						ng-click="moveToManagerIndex()">Home</button>
 
-					<button type="button" class="float-end bottom-button ms-3"
-						ng-click="submitStaff()">Submit</button>
+					<button type="button" class="float-end bottom-button ms-3" ng-click="submitStaff()">Submit</button>
 
-					<button type="button" class="float-end bottom-button ms-3"
-						ng-click="reset()">Reset</button>
+					<button type="button" class="float-end bottom-button ms-3" ng-click="reset()">Reset</button>
 				</div>
 
 			</div>
 
 		</form>
-		
+
 		<div class="col m-3 w-75">
-            <label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
-        </div>
+			<label id="message" style="border-radius: 5px;" class="fs-6 p-1">{{message}}</label>
+		</div>
 
 	</div>
 

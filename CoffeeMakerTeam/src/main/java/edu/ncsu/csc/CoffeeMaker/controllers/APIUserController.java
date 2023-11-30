@@ -18,13 +18,10 @@ import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
  * This is the controller that holds the REST endpoints that handle CRUD
- * operations for Recipes.
+ * operations for Users.
  *
  * Spring will automatically convert all of the ResponseEntity and List results
  * to JSON
- *
- * @author Kai Presler-Marshall
- * @author Michelle Lemons
  *
  */
 @SuppressWarnings ( { "unchecked", "rawtypes" } )
@@ -32,8 +29,8 @@ import edu.ncsu.csc.CoffeeMaker.services.UserService;
 public class APIUserController extends APIController {
 
     /**
-     * RecipeService object, to be autowired in by Spring to allow for
-     * manipulating the Recipe model
+     * UserService object, to be autowired in by Spring to allow for
+     * manipulating the User model
      */
     @Autowired
     private UserService service;
@@ -49,12 +46,13 @@ public class APIUserController extends APIController {
     }
 
     /**
-     * REST API method to provide GET access to a specific user, as indicated by
-     * the path variable provided (the name of the user desired)
+     * Helper method to get a user object from the list of all users based on
+     * the user name. This should only be used after a user has been
+     * authenticated
      *
      * @param userName
-     *            user name
-     * @return User
+     *            the user name of the User to get
+     * @return User the user object from the get
      */
     public User getUser ( final String userName ) {
         final User user = service.findByName( userName );
@@ -62,14 +60,15 @@ public class APIUserController extends APIController {
     }
 
     /**
-     * Logs a user into the system to authenicate their account
+     * Authenticates a user in the system. Will return the user object for the
+     * front end to store for authentication for other REST API calls
      *
      * @param userName
-     *            username for the user
+     *            the user name for the user logging in
      * @param password
-     *            password for the user
-     * @return ResponseEntity indicating success if user successfully logged in
-     *         or failure otherwise
+     *            password for the user logging in
+     * @return ResponseEntity containing a user body after the user has
+     *         successfully logged in or failure otherwise
      */
     @GetMapping ( BASE_PATH + "/users/{userName}/{password}" )
     public ResponseEntity login ( @PathVariable final String userName, @PathVariable final String password ) {
@@ -86,6 +85,30 @@ public class APIUserController extends APIController {
         }
 
         return new ResponseEntity( errorResponse( "Incorrect username or password " ), HttpStatus.NOT_FOUND );
+    }
+
+    /**
+     * Gets a user's username given their id
+     *
+     * @param id
+     *            id for the user
+     * @return ResponseEntity indicating success if user successfully logged in
+     *         or failure otherwise
+     */
+    @GetMapping ( BASE_PATH + "/users/{id}" )
+    public ResponseEntity getUsernameById ( @PathVariable final Long id ) {
+
+        if ( service.findById( id ) == null ) {
+            return new ResponseEntity( errorResponse( "User not found" ), HttpStatus.NOT_FOUND );
+        }
+
+        final User user = service.findById( id );
+
+        if ( user != null ) {
+            return new ResponseEntity( successResponse( user.getUserName() ), HttpStatus.OK );
+        }
+
+        return new ResponseEntity( errorResponse( "User not found" ), HttpStatus.NOT_FOUND );
     }
 
     /**
@@ -106,17 +129,16 @@ public class APIUserController extends APIController {
         return false;
     }
 
-    // getOrders
-
     /**
      * REST API method to provide POST access to the User model. This is used to
      * create a new User by automatically converting the JSON RequestBody
      * provided to a User object. Invalid JSON will fail.
      *
      * @param body
-     *            current users information to authenticate
-     * @return ResponseEntity indicating success if the User could be saved, or
-     *         an error if it could not be
+     *            DTO that contains the name, password, permission, and an
+     *            authentication user
+     * @return ResponseEntity indicating success if the User could be created,
+     *         or an error if it could not be
      */
     @PostMapping ( BASE_PATH + "/users" )
     public ResponseEntity makeUser ( @RequestBody final NamePasswordPermissionUserDTO body ) {
@@ -145,41 +167,18 @@ public class APIUserController extends APIController {
     }
 
     /**
-     * REST API method to provide POST access to the User model. This is used to
-     * create a new User by automatically converting the JSON RequestBody
-     * provided to a User object. Invalid JSON will fail.
-     *
-     * @param recipe
-     *            The valid User to be saved.
-     * @return ResponseEntity indicating success if the User could be saved, or
-     *         an error if it could not be
-     */
-    @PostMapping ( BASE_PATH + "/makeadmin" )
-    public ResponseEntity makeAdmin () {
-
-        final User u = new User( "admin", "password", 2 );
-        service.save( u );
-        return new ResponseEntity( successResponse( "Admin made" ), HttpStatus.OK );
-    }
-
-    /**
-     * REST API method to allow deleting a Recipe from the CoffeeMaker's
-     * Inventory, by making a DELETE request to the API endpoint and indicating
-     * the recipe to delete (as a path variable)
+     * REST API method to allow deleting a user from the CoffeeMaker system, by
+     * making a DELETE request to the API endpoint and indicating the user to
+     * delete (as a path variable)
      *
      * @param userName
-     *            The name of the user
-     * @param user
-     *            the current user
-     * @return Success if the recipe could be deleted; an error if the recipe
-     *         does not exist
+     *            The name of the user to delete
+     * @return Success if the user was deleted; an error if the user does not
+     *         exist or the authentication user may not delete
      */
     @DeleteMapping ( BASE_PATH + "/users/{userName}" )
-    public ResponseEntity deleteUser ( @PathVariable final String userName, @RequestBody final User user ) {
-        if ( !authenticate( user.getUserName(), user.getPassword() ) || !user.isManager() ) {
-            return new ResponseEntity( errorResponse( "Current user is not authenticated for this operation" ),
-                    HttpStatus.FORBIDDEN );
-        }
+    public ResponseEntity deleteUser ( @PathVariable final String userName ) {
+
         final User userToDelete = service.findByName( userName );
         if ( null == userToDelete ) {
             return new ResponseEntity( errorResponse( "No user found for username " + userName ),
