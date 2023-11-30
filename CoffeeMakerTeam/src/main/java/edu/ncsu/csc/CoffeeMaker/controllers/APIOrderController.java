@@ -27,8 +27,8 @@ import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
  *
- * The APICoffeeController is responsible for making coffee when a user submits
- * a request to do so.
+ * The APIOrderController is responsible for connecting the user with their
+ * specific order and actions to be performed with a request to do so.
  *
  * Spring will automatically convert all of the ResponseEntity and List results
  * to JSON
@@ -69,8 +69,8 @@ public class APIOrderController extends APIController {
     private APIUserController control;
 
     /**
-     * orderService object, to be autowired in by Spring to allow for
-     * manipulating the User Controller
+     * The OrderService object, to be autowired in by Spring to allow for
+     * manipulating the Order Model
      */
     @Autowired
     private OrderService      orderService;
@@ -128,7 +128,7 @@ public class APIOrderController extends APIController {
      * @param amtPaid
      *            money that the user has given the machine
      * @param user
-     *            user making coffee
+     *            the current user
      * @return change if there was enough money to make the coffee, throws
      *         exceptions if not
      */
@@ -169,9 +169,9 @@ public class APIOrderController extends APIController {
      * user as the body
      *
      * @param userName
-     *            the username
+     *            User information
      * @param password
-     *            the password
+     *            the users password to authenticate
      * @return the User's order. Or all orders if a barista or manager
      */
     @GetMapping ( BASE_PATH + "/order/status" )

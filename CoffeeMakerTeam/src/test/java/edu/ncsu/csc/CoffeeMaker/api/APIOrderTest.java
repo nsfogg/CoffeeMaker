@@ -38,12 +38,10 @@ import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
- *
  * The APIOrderTest is responsible for testing Order API calls.
  *
  *
  * @author CSC326 204 Team 1
- *
  */
 @ExtendWith ( SpringExtension.class )
 @SpringBootTest
@@ -51,52 +49,59 @@ import edu.ncsu.csc.CoffeeMaker.services.UserService;
 public class APIOrderTest {
 
     /**
-     * MockMvc uses Spring's testing framework to handle requests to the REST
-     * API
+     * MockMvc for testing http requests
      */
     @Autowired
     private MockMvc           mvc;
 
     /**
-     * Recipe Service
+     * RecipeService for interacting with recipe database
      */
     @Autowired
     private RecipeService     recipeService;
 
     /**
-     * Inventory Service
+     * InventoryService for interacting with inventory database
      */
     @Autowired
     private InventoryService  inventoryService;
 
     /**
-     * Ingredient Service
+     * IngredientService for interacting with ingredient database
      */
     @Autowired
     private IngredientService ingredientService;
 
     /**
-     * User Service
-     */
-    @Autowired
-    private UserService       userService;
-
-    /**
-     * Order Service
+     * OrderService for interacting with ingredient database
      */
     @Autowired
     private OrderService      orderService;
 
-    /** Customer User */
-    User                      customer  = new User( "customer", "password", 0 );
-    /** Secondary Customer User */
-    User                      customer2 = new User( "customer2", "password", 0 );
+    /**
+     * UserService for interacting with user database
+     */
+    @Autowired
+    private UserService       userService;
 
-    /** Barista User */
+
+    /** tests user for customer */
+    User                      customer  = new User( "customer", "password", 0 );
+
+    /**
+     * Test user for barista
+     */
     User                      barista   = new User( "barista", "password", 1 );
 
-    /** Manager User */
+    /**
+     * test user for manager
+     */
     User                      manager   = new User( "manager", "password", 2 );
+
+    /**
+     * test user for cusomer2
+     */
+    User                      customer2 = new User( "customer2", "password", 0 );
 
     /**
      * Sets up the tests.
@@ -160,10 +165,10 @@ public class APIOrderTest {
     }
 
     /**
-     * Test Ordering Beverages
+     * Will test creating an order object
      *
      * @throws Exception
-     *             exception thrown when ordering beverages fails
+     *             if an invalid user attempts to order a beverage
      */
     @Test
     @Transactional
@@ -288,10 +293,10 @@ public class APIOrderTest {
     }
 
     /**
-     * Test failing to order Beverages due to insufficient amount paid
+     * Will test purchasing from an order
      *
      * @throws Exception
-     *             exception thrown when ordering beverages fails
+     *             if an insufficient ammount is paid
      */
     @Test
     @Transactional
@@ -308,10 +313,10 @@ public class APIOrderTest {
     }
 
     /**
-     * Test failing to order Beverages due to not selecting recipe
+     * Will test purchasing a beverage from an order
      *
      * @throws Exception
-     *             exception thrown when ordering beverages fails
+     *             if there is an invalid recipe ordered
      */
     @Test
     @Transactional
@@ -328,10 +333,10 @@ public class APIOrderTest {
     }
 
     /**
-     * Test failing to order Beverages due to insufficient inventory
+     * Will test purchasing a beverage from an order
      *
      * @throws Exception
-     *             exception thrown when ordering beverages fails
+     *             if there is not enough ingredients in the inventory
      */
     @Test
     @Transactional
@@ -360,10 +365,10 @@ public class APIOrderTest {
     }
 
     /**
-     * Test failing to order Beverages due to not being a customer as barista
+     * Will test purchasing a beverage from an order
      *
      * @throws Exception
-     *             exception thrown when ordering beverages fails
+     *             if a customer is not making the order (barista)
      */
     @Test
     @Transactional
@@ -379,10 +384,10 @@ public class APIOrderTest {
     }
 
     /**
-     * Test failing to order Beverages due to not being a customer as manager
+     * Will test purchasing a beverage from an order
      *
      * @throws Exception
-     *             exception thrown when ordering beverages fails
+     *             if a customer is not making the order (manager)
      */
     @Test
     @Transactional
@@ -398,10 +403,10 @@ public class APIOrderTest {
     }
 
     /**
-     * Test failing to order Beverages due to not being an authenticated user
+     * Will test purchasing a beverage from an order
      *
      * @throws Exception
-     *             exception thrown when ordering beverages fails
+     *             if a customer is not making the order (manager)
      */
     @Test
     @Transactional

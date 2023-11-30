@@ -31,33 +31,56 @@ import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
+/**
+ * Testing for API recipe
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith ( SpringExtension.class )
 public class APIRecipeTest {
 
     /**
-     * MockMvc uses Spring's testing framework to handle requests to the REST
-     * API
+     * context for web application
      */
-    private MockMvc               mvc;
-
     @Autowired
     private WebApplicationContext context;
 
+    /**
+     * MockMvc for testing http requests
+     */
+    @Autowired
+    private MockMvc               mvc;
+
+    /**
+     * RecipeService for interacting with recipe database
+     */
     @Autowired
     private RecipeService         service;
-
+    /**
+     * UserService for interacting with user database
+     */
     @Autowired
     private UserService           userService;
 
+    /**
+     * IngredientService for interacting with user database
+     */
     @Autowired
     private IngredientService     ingredientService;
 
+    /**
+     * Test user for customer
+     */
     final User                    customer = new User( "customer", "password", 0 );
 
+    /**
+     * Test user for barista
+     */
     final User                    barista  = new User( "barista", "password", 1 );
 
+    /**
+     * test user for manager
+     */
     final User                    manager  = new User( "manager", "password", 2 );
 
     /**
@@ -76,6 +99,13 @@ public class APIRecipeTest {
         userService.save( manager );
     }
 
+    /**
+     * Will ensure the recipe has all of the correct fields
+     *
+     * @throws Exception
+     *             if the current recipe has an invalid name, amount, or
+     *             ingredients
+     */
     @Test
     @Transactional
     public void ensureRecipe () throws Exception {
@@ -114,6 +144,13 @@ public class APIRecipeTest {
 
     }
 
+    /**
+     * Will test creating a recipe through API end points
+     *
+     * @throws Exception
+     *             if the current recipe has an invalid name, amount, or
+     *             ingredients
+     */
     @Test
     @Transactional
     public void testRecipeAPI () throws Exception {
@@ -143,6 +180,13 @@ public class APIRecipeTest {
 
     }
 
+    /**
+     * Will test getting a recipe by name
+     *
+     * @throws Exception
+     *             if the current recipe has an invalid name, amount, or
+     *             ingredients
+     */
     @Test
     @Transactional
     public void testGetRecipeByNameAPI () throws Exception {
@@ -196,6 +240,12 @@ public class APIRecipeTest {
 
     }
 
+    /**
+     * Will test adding a recipe with a duplicate name
+     *
+     * @throws Exception
+     *             if a duplicate recipe is attempted to be added
+     */
     @Test
     @Transactional
     public void testAddRecipe2 () throws Exception {
@@ -228,6 +278,12 @@ public class APIRecipeTest {
         Assertions.assertEquals( 1, service.findAll().size(), "There should only one recipe in the CoffeeMaker" );
     }
 
+    /**
+     * Ensures no more than 3 recipes at a time are in the system
+     *
+     * @throws Exception
+     *             if more than 3 recipes are added
+     */
     @Test
     @Transactional
     public void testAddRecipe15 () throws Exception {
@@ -268,6 +324,12 @@ public class APIRecipeTest {
         Assertions.assertEquals( 3, service.count(), "Creating a fourth recipe should not get saved" );
     }
 
+    /**
+     * Will test deleting a recipe
+     *
+     * @throws Exception
+     *             if there are no recipes in the system
+     */
     @Test
     @Transactional
     public void testDeleteRecipe1 () throws Exception {
@@ -339,6 +401,12 @@ public class APIRecipeTest {
 
     }
 
+    /**
+     * Will test deleting the same recipe by concurrent users
+     *
+     * @throws Exception
+     *             if multiple users are able to delete the same recipe
+     */
     @Test
     @Transactional
     public void testConcurrentUsers () throws Exception {
@@ -376,6 +444,13 @@ public class APIRecipeTest {
                 .andExpect( status().is4xxClientError() );
     }
 
+    /**
+     * Will test editing a recipe
+     *
+     * @throws Exception
+     *             if the current recipe has an invalid name, amount, or
+     *             ingredients
+     */
     @Test
     @Transactional
     public void testEditRecipe () throws Exception {

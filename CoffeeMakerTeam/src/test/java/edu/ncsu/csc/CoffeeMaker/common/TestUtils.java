@@ -18,6 +18,9 @@ import edu.ncsu.csc.CoffeeMaker.utils.RecipeSerializer;
  */
 public class TestUtils {
 
+    /**
+     * JSON generator
+     */
     // Build the GSON instance with inventory serializer and deserializer
     public static Gson gson = new GsonBuilder().registerTypeAdapter( Inventory.class, new InventorySerializer( null ) )
             .registerTypeAdapter( Inventory.class, new InventoryDeserializer() )
@@ -36,10 +39,24 @@ public class TestUtils {
         return gson.toJson( obj );
     }
 
+    /**
+     * creates the inventory from json version
+     *
+     * @param response
+     *            the json version of the inventory
+     * @return the inventory
+     */
     public static Inventory asInventory ( final String response ) {
         return gson.fromJson( response, Inventory.class );
     }
 
+    /**
+     * creates the recipe from json
+     *
+     * @param response
+     *            the json version of the recipe
+     * @return the recipe
+     */
     public static Recipe asRecipe ( final String response ) {
         return gson.fromJson( response, Recipe.class );
     }

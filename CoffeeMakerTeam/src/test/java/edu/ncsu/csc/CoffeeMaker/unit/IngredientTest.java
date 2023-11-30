@@ -24,22 +24,49 @@ import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.services.IngredientService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 
+/**
+ * Test for ingredients
+ */
 @ExtendWith ( SpringExtension.class )
 @EnableAutoConfiguration
 @SpringBootTest ( classes = TestConfig.class )
 public class IngredientTest {
 
+    /**
+     * RecipeService for interacting with recipe database
+     */
     @Autowired
     private RecipeService     recipeService;
 
+    /**
+     * IngredientService for interacting with ingredient database
+     */
     @Autowired
     private IngredientService ingredientService;
+    /**
+     * chocolate ingredient
+     */
     Ingredient                chocolate;
+    /**
+     * vanilla ingredient
+     */
     Ingredient                vanilla;
+    /**
+     * coffee ingredient
+     */
     Ingredient                coffee;
+    /**
+     * milk ingredient
+     */
     Ingredient                milk;
+    /**
+     * id for choclate ingredinet
+     */
     Long                      chocolateId;
 
+    /**
+     * Setup method for tests
+     */
     @BeforeEach
     public void setup () {
         recipeService.deleteAll();
@@ -70,6 +97,9 @@ public class IngredientTest {
 
     }
 
+    /**
+     * Test getting ingredients
+     */
     @Test
     @Transactional
     public void testGetIngredientFields () {
@@ -78,6 +108,9 @@ public class IngredientTest {
 
     }
 
+    /**
+     * test changing ingredients
+     */
     @Test
     @Transactional
     public void testSetIngredientFields () {
@@ -100,6 +133,10 @@ public class IngredientTest {
 
     }
 
+    /**
+     * Test for equal ingredients
+     */
+    @SuppressWarnings ( "unlikely-arg-type" )
     @Test
     @Transactional
     public void testIngredientEquals () {
@@ -111,11 +148,14 @@ public class IngredientTest {
 
     }
 
+    /**
+     * Tests the toString method for ingredients
+     */
     @Test
     @Transactional
     public void testIngredientToString () {
-        // TODO: Make this better!
         assertNotNull( chocolate.toString() );
+        // Assertions.assertEquals( "Chocolate", chocolate.toString() );
     }
 
 }

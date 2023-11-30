@@ -62,10 +62,12 @@ public class APIRecipeController extends APIController {
      * REST API method to provide GET access to all recipes in the system
      *
      * @param userName
-     *            the username
+     *            the authentication user name
+     *
      * @param password
-     *            the password
-     * @return JSON representation of all recipies
+     *            the hashed password for the authentication user
+     *
+     * @return JSON representation of all recipes
      */
     @GetMapping ( BASE_PATH + "/recipes/" )
     public List<Recipe> getRecipes ( @RequestParam ( name = "userName", required = true ) final String userName,
@@ -86,9 +88,9 @@ public class APIRecipeController extends APIController {
      * @param name
      *            recipe name
      * @param userName
-     *            the username
+     *            the authentication user name
      * @param password
-     *            the password
+     *            the hashed password of the authentication user
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/recipes/{name}/" )

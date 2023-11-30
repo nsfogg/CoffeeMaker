@@ -56,7 +56,7 @@ public class APIIngredientController extends APIController {
     private InventoryService  inventoryService;
 
     /**
-     * UserController object, to be autowired in by Spring to allow for
+     * APIUserController object, to be autowired in by Spring to allow for
      * manipulating the User Controller
      */
     @Autowired
@@ -74,12 +74,11 @@ public class APIIngredientController extends APIController {
      * list. This will convert the ingredients list to a JSON Array of
      * Ingredient objects.
      *
-     * @param userName
-     *            the username
-     *
      * @param password
-     *            user password
-     * @return response to the request
+     *            the hashed password for the authentication user
+     * @param userName
+     *            the user name for the authentication user
+     * @return The list of ingredients
      */
     @GetMapping ( BASE_PATH + "/ingredients" )
     public ResponseEntity getIngredients ( @RequestParam ( name = "userName", required = true ) final String userName,

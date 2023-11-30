@@ -12,9 +12,9 @@ import edu.ncsu.csc.CoffeeMaker.models.Order;
 import edu.ncsu.csc.CoffeeMaker.repositories.OrderRepository;
 
 /**
- * The UserService is used to handle CRUD operations on the User model. In
+ * The OrderService is used to handle CRUD operations on the ORder model. In
  * addition to all functionality from `Service`, we also have functionality for
- * retrieving a single User by name.
+ * retrieving a single Order by name.
  *
  * @author Kai Presler-Marshall
  *
@@ -36,11 +36,11 @@ public class OrderService extends Service<Order, Long> {
     }
 
     /**
-     * Find a recipe with the provided name
+     * Find a Order with the given customer id
      *
-     * @param userName
-     *            Name of the recipe to find
-     * @return found recipe, null if none
+     * @param id
+     *            Name of the users order to find
+     * @return found uer order, null if none
      */
     public List<Order> findByUser ( final long id ) {
         return orderRepository.findByUser( id );

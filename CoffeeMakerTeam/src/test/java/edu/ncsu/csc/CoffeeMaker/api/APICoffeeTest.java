@@ -32,7 +32,6 @@ import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 import edu.ncsu.csc.CoffeeMaker.services.UserService;
 
 /**
- *
  * The APICoffeeTest is responsible for testing making coffee when a user
  * submits a request to do so.
  *
@@ -46,43 +45,46 @@ import edu.ncsu.csc.CoffeeMaker.services.UserService;
 public class APICoffeeTest {
 
     /**
-     * MockMvc uses Spring's testing framework to handle requests to the REST
-     * API
+     * MockMvc for testing http requests
      */
     @Autowired
     private MockMvc           mvc;
 
     /**
-     * Recipe Service
+     * RecipeService for interacting with recipe database
      */
     @Autowired
     private RecipeService     recipeService;
 
     /**
-     * Inventory Service
+     * InventoryService for interacting with inventory database
      */
     @Autowired
     private InventoryService  inventoryService;
 
     /**
-     * Ingredient Service
+     * IngredientService for interacting with ingredient database
      */
     @Autowired
     private IngredientService ingredientService;
 
     /**
-     * User Service
+     * UserService for interacting with user database
      */
     @Autowired
     private UserService       userService;
 
-    /** Customer User */
+    /** tests user for customer */
     final User                customer = new User( "customer", "password", 0 );
 
-    /** Barista User */
+    /**
+     * Test user for barista
+     */
     final User                barista  = new User( "barista", "password", 1 );
 
-    /** Manager User */
+    /**
+     * test user for manager
+     */
     final User                manager  = new User( "manager", "password", 2 );
 
     /**
@@ -133,10 +135,10 @@ public class APICoffeeTest {
     }
 
     /**
-     * Test successfully purchasing beverage
+     * Will test creating an order and purchasing it
      *
      * @throws Exception
-     *             exception to be thrown when purchase of beverage fails
+     *             if either the amount or recipe is invalid
      */
     @Test
     @Transactional
@@ -150,10 +152,10 @@ public class APICoffeeTest {
     }
 
     /**
-     * Test failing to purchase beverage due to insufficient amount paid
+     * Will test creating an order and purchasing it
      *
      * @throws Exception
-     *             exception to be thrown when purchase of beverage fails
+     *             if the correct amount cannot be paid
      */
     @Test
     @Transactional
@@ -170,10 +172,10 @@ public class APICoffeeTest {
     }
 
     /**
-     * Test failing to purchase beverage due to not selecting a recipe
+     * Will test creating an order and purchasing it
      *
      * @throws Exception
-     *             exception to be thrown when purchase of beverage fails
+     *             if the recipe is not found
      */
     @Test
     @Transactional
@@ -190,10 +192,10 @@ public class APICoffeeTest {
     }
 
     /**
-     * Test failing to purchase beverage due to insufficient inventory items
+     * Will test creating an order and purchasing it
      *
      * @throws Exception
-     *             exception to be thrown when purchase of beverage fails
+     *             if there is not enough ingredients in the inventory
      */
     @Test
     @Transactional
@@ -222,10 +224,10 @@ public class APICoffeeTest {
     }
 
     /**
-     * Test failing to purchase beverage due to not being a customer as barista
+     * Will test creating an order and purchasing it
      *
      * @throws Exception
-     *             exception to be thrown when purchase of beverage fails
+     *             if a barista or manager attempts to order a beverage
      */
     @Test
     @Transactional
@@ -241,10 +243,10 @@ public class APICoffeeTest {
     }
 
     /**
-     * Test failing to purchase beverage due to not being a customer as manager
+     * Will test creating an order and purchasing it
      *
      * @throws Exception
-     *             exception to be thrown when purchase of beverage fails
+     *             if a barista or manager attempts to order a beverage
      */
     @Test
     @Transactional
@@ -260,11 +262,10 @@ public class APICoffeeTest {
     }
 
     /**
-     * Test failing to purchase beverage due to not being a customer as generic
-     * user
+     * Will test creating an order and purchasing it
      *
      * @throws Exception
-     *             exception to be thrown when purchase of beverage fails
+     *             if a barista or manager attempts to order a beverage
      */
     @Test
     @Transactional
